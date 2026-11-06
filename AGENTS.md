@@ -59,7 +59,7 @@ Scenario clock: snapshot **2026-11-06** for the 2026 season and **2025-11-06** f
 11. Read-only: `START_HERE.md`, `data/`, `evaluation/`, `labels/`, `examples/`, `mock_api/`, `docs/`. Our code lives in `result/` (one folder per part: `A_prediction_engine`, `B_contact_decide`, `C_apply_yext`, `D_learning_permission`, `E_demo_submission`).
 
 ### 2.4 Product rules (affect later parts, respect them now)
-12. Every SUGGEST and FLAG must carry a **basis** and **evidence** (audit trail). Keep an `explain(eid, d, day_key) -> (action, hours, basis, evidence)` function; Part B builds customer messages from it.
+12. Every SUGGEST and FLAG must carry a **basis** and **evidence** (audit trail). Keep an `explain(eid, d, day_key) -> (action, hours, basis, evidence)` function. Part B builds customer messages from `explain_full(eid, d, day_key)`, which returns a dict (action, hours, shown_hours, basis, readable evidence list, confidence, day_key, day_name, mismatch) and must never change a prediction.
 13. Evidence must be human-readable and true: e.g. `("LAST_YEAR", "2025-12-26 closed")`, `("PEERS", "86% of peers who entered hours were closed")`.
 14. When unsure, stay quiet. A wrong open/closed state costs −1, the same as a perfect answer earns.
 15. FLAG only with evidence; a FLAG on a business that is actually open loses points on every one of its rows.
@@ -199,7 +199,9 @@ Team plan:
 
 This section applies only to Part A hypothesis testing. Section 6 steps 2–3 (reproduce the baseline, build `result/A_prediction_engine/analysis/error_report.py`) are done by **one agent, sequentially**, before any parallel work starts.
 
-**Setup (2026-11-07):**
+> **Part A is frozen** at tag `part-a-freeze` (dev 2026 65.92 · back-test 2025 62.73). All three branches were merged; the worktrees were removed and the `hyp/*` branches kept locally for reference. Do not start new hypothesis branches.
+
+**Setup (2026-11-07, historical):**
 
 | Orca worktree | Branch | Path | Hypothesis | Basis | Place in the cascade |
 |---|---|---|---|---|---|

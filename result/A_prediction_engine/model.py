@@ -32,6 +32,21 @@ def day_str(obj):
     return ",".join(f"{i['start']}-{i['end']}" for i in obj.get("openIntervals", [])) or "closed"
 
 
+def _hours_text(h):
+    """'closed' / '09:00-17:00' / '10:00-14:00,17:00-22:00' / '00:00-23:59' → words for a customer message."""
+    if h in (None, "", "closed"):
+        return "closed"
+    if h == "REGULAR":
+        return "its regular hours"
+    if h == "00:00-23:59":
+        return "open 24 hours"
+    return "open " + " and ".join(iv.replace("-", "–") for iv in h.split(" (")[0].split(","))
+
+
+def _nice_date(d):
+    return d.strftime("%a %d %b %Y")
+
+
 def cycle(d):
     return d.year if d.month >= 2 else d.year - 1
 
@@ -122,6 +137,89 @@ class Baseline:
         if cand and cand != shown:
             return "SUGGEST", cand, basis, ev
         return "NO_ACTION", "", basis, ev
+
+    # ---- Part B helper, added after tag part-a-freeze. It only reads explain(); no prediction changes. ----
+    # How often each basis was right on the dev labels, both seasons pooled (dev 2026 + back-test 2025), measured with
+    # analysis/error_report.py at part-a-freeze and add-one smoothed: (right + 1) / (n + 2). "Right" means exact hours
+    # for SUGGEST, a correct flag for FLAG, a correct silence for NO_ACTION. One constant per rule, never per business
+    # (AGENTS.md rule 3). Used for ranking and messages only; explain() and the predictions never read it.
+    CONFIDENCE = {
+        "CLOSED_SIGNALS": 0.92,           # 11 / 11
+        "LAST_YEAR": 0.92,                # 3,963 / 4,288
+        "SHOPPING_CENTRE": 0.85,          # 700 / 822
+        "TWO_YEARS_AGO": 0.84,            # 1,480 / 1,771
+        "OLDER_SEASON": 0.70,             # 351 / 500 (dev 2026 only: the back-test has no older season)
+        "OWNER_PATTERN": 0.88,            # 587 / 666
+        "PEERS": 0.77,                    # 846 / 1,098
+        "NO_ACTION:MATCHES_SHOWN": 0.96,  # 749 / 776: a rule's candidate equals what is shown
+        "NO_ACTION:NONE": 0.80,           # 9,845 / 12,286: no rule had a candidate
+    }
+
+    def explain_full(self, eid, d: date, day_key: str) -> dict:
+        """Everything Part B needs to write a message about one (business, date). Calls explain() unchanged.
+
+        Returns a dict: entity_id, date, day_key, day_name, action, hours (None unless SUGGEST), shown_hours, basis,
+        evidence (list of readable sentences), confidence (0–1, see CONFIDENCE), mismatch (inferred from what is shown
+        vs what we suggest: SHOWN_OPEN_ACTUALLY_CLOSED | SHOWN_CLOSED_ACTUALLY_OPEN | DIFFERENT_HOURS |
+        CLOSED_FOR_GOOD for a FLAG | None when we stay quiet)."""
+        action, hours, basis, ev = self.explain(eid, d, day_key)
+        shown = self.displayed(eid, d)
+        cand = hours if action == "SUGGEST" else shown
+        name = self._day_name(eid, d, day_key)
+        evidence = self._evidence_lines(basis, ev, action, cand, name)
+        evidence.append(f"The channels currently show {_hours_text(shown)} for {name}, {_nice_date(d)}.")
+        if action == "SUGGEST":
+            conf = self.CONFIDENCE.get(basis)
+            mismatch = ("SHOWN_OPEN_ACTUALLY_CLOSED" if hours == "closed" and shown != "closed" else
+                        "SHOWN_CLOSED_ACTUALLY_OPEN" if shown == "closed" and hours != "closed" else "DIFFERENT_HOURS")
+        elif action == "FLAG":
+            conf, mismatch = self.CONFIDENCE.get(basis), "CLOSED_FOR_GOOD"
+        else:
+            conf, mismatch = self.CONFIDENCE["NO_ACTION:MATCHES_SHOWN" if basis else "NO_ACTION:NONE"], None
+        return {"entity_id": eid, "date": d.isoformat(), "day_key": day_key, "day_name": name, "action": action,
+                "hours": hours if action == "SUGGEST" else None, "shown_hours": shown, "basis": basis,
+                "evidence": evidence, "confidence": conf, "mismatch": mismatch}
+
+    def _day_name(self, eid, d: date, day_key: str) -> str:
+        if getattr(self, "_day_names", None) is None:
+            self._day_names = {(r["country"], r["date"]): r["name_en"] for r in self.cal}
+        name = self._day_names.get((self.ents[eid]["meta"]["countryCode"], d.isoformat()))
+        if name:
+            return name
+        return {"EVENT": "an event night nearby", "SCHOOL_BREAK": "a school-break day"}.get(
+            day_key, day_key.replace("_", " ").title())
+
+    def _evidence_lines(self, basis, ev, action, cand, name) -> list:
+        """Readable sentences for one explain() result (the evidence formats differ by basis)."""
+        if basis is None:
+            return ["No rule found reliable evidence for this date, so we do not suggest a change."]
+        if basis == "CLOSED_SIGNALS":
+            return ["Recent reviews or edits on Google and other channels say the business has closed for good. "
+                    "A person should check before anything is published."]
+        if basis == "SHOPPING_CENTRE":
+            lines = [f"{ev}, the shopping centre the business is in, has entered {_hours_text(cand)} for {name}."]
+        elif basis == "LAST_YEAR":
+            p, last = ev
+            what = "its regular hours" if last == "REGULAR" else _hours_text(last)
+            lines = [f"Last season the owner entered {what} for {name} ({_nice_date(date.fromisoformat(p))})."]
+        elif basis in ("TWO_YEARS_AGO", "OLDER_SEASON"):
+            p, what = ev
+            when = "Two seasons ago" if basis == "TWO_YEARS_AGO" else "In an earlier season"
+            lines = [f"{when} the owner entered {_hours_text(what)} for {name} ({_nice_date(date.fromisoformat(p))}); "
+                     f"nothing was entered for it last season."]
+            if "(opened as usual" in what:
+                lines.append(f"We keep that closing time and use today's regular opening: {_hours_text(cand)}.")
+        elif basis == "OWNER_PATTERN":
+            if str(ev).startswith("already entered"):  # a same-season sibling date, e.g. another day between holidays
+                lines = [f"The owner {ev}, so we use the same for {name}."]
+            else:                                      # closed on every other major holiday it entered
+                lines = [f"The owner has never entered {name}, but was {ev}."]
+        else:  # PEERS and anything newer: the evidence is already a sentence
+            text = str(ev)
+            lines = [text[:1].upper() + text[1:] + ("" if text.endswith(".") else ".")]
+        if action == "NO_ACTION":
+            lines.append("That matches what the channels show, so no change is needed.")
+        return lines
 
     _older_idx = None  # (entity_id, history day_key) -> dates with an entry before the snapshot; built on first use
 
