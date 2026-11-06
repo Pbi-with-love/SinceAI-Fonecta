@@ -190,3 +190,47 @@ Score: 60.38 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5233, "missed": 1631, "exact": 3745, "harmful_wrong_state": 310, "same_state_off": 112, "spam_wrong_hours": 87}
 ```
+
+## #5 skip an old opening that falls on today's regular day off
+Hypothesis: an old entry with open hours, made for a weekday the business normally opened, says little about a date
+that now falls on a weekday the business is regularly closed (the special hours were a variation of a normal working
+day). Label check on #2: such rows were 10 good / 9 wrong (dev) and 3 good / 15 wrong (back-test).
+Change: in `_two_seasons_ago()`, if today's regular hours for d are `closed`, the old entry is open hours and the
+regular hours in force on the old date (its weekday) were open, return no candidate (fall through to the next block).
+An old opening on a weekday that was *also* a regular day off (e.g. a florist opening on Father's Day Sunday) is still
+copied. `_regular_on()` factored out of `_align_to_regular()`; no other behaviour change.
+Dev 2026: 64.49 → 64.60   Back-test 2025: 60.38 → 60.59
+Wrong-state: 346 → 338 (2026), 310 → 295 (2025)   Missed: 1245 → 1247 (2026), 1631 → 1634 (2025)
+Exact: 3868 → 3866 (2026), 3745 → 3742 (2025)
+Error report: TWO_YEARS_AGO wrong-state 64 → 61 (2026), 90 → 75 (2025); OLDER_SEASON 87 → 82 (2026).
+Decision: KEEP (rule 7: both seasons up, sum +0.32).
+
+```
+Score: 64.6 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     4463
+  precision_exact                      0.866
+  recall_exact                         0.719
+  harmful_suggestions                  338
+  search_views_protected_pct           71.0
+  closed_door_views_prevented_pct      80.8
+  businesses_contacted                 750
+  avg_dates_per_contacted_business     5.95
+  ignored_prediction_rows_not_in_labels 12200
+  breakdown: {"correct_silence": 5375, "missed": 1247, "exact": 3866, "harmful_wrong_state": 338, "same_state_off": 91, "spam_wrong_hours": 140, "redundant_confirm": 21, "flag_correct": 11, "missed_closed_business": 4, "suggest_to_closed_business": 7}
+
+Score: 60.59 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     4236
+  precision_exact                      0.883
+  recall_exact                         0.662
+  harmful_suggestions                  295
+  search_views_protected_pct           64.6
+  closed_door_views_prevented_pct      75.6
+  businesses_contacted                 746
+  avg_dates_per_contacted_business     5.68
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5248, "missed": 1634, "exact": 3742, "harmful_wrong_state": 295, "same_state_off": 112, "spam_wrong_hours": 87}
+```

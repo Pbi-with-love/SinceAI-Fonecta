@@ -140,21 +140,30 @@ class Baseline:
             return None, None, None
         p = old[-1]  # newest season two or more back; latest date in it
         e = self.entry(eid, p, self.snap)
-        basis = "TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"
+        basis, ev = ("TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"), (p.isoformat(), e)
         if e == "REGULAR":
-            return self.regular(eid, d), basis, (p.isoformat(), e)
-        return self._align_to_regular(eid, e, p, d), basis, (p.isoformat(), e)
+            return self.regular(eid, d), basis, ev
+        if e == "closed":
+            return e, basis, ev
+        reg_then, reg_now = self._regular_on(eid, p), self.regular(eid, d)
+        if reg_now == "closed" and reg_then not in (None, "closed"):
+            return None, None, None  # opened on a weekday it normally opened; d falls on a regular day off
+        return self._align_to_regular(e, reg_then, reg_now), basis, ev
 
-    def _align_to_regular(self, eid, e, p: date, d: date):
+    def _regular_on(self, eid, p: date):
+        """Published regular hours in force on the (past) date p for its weekday, or None if none was published."""
+        then = [r for r in self.reg[eid] if r["effective_from"] == "before-2024" or r["effective_from"] <= p.isoformat()]
+        if not then:
+            return None
+        best = max(then, key=lambda r: "0000" if r["effective_from"] == "before-2024" else r["effective_from"])
+        return day_str(best["hours"][DAYS[p.weekday()]])
+
+    @staticmethod
+    def _align_to_regular(e, reg_then, reg_now):
         """An old special day that opened as usual and closed early ("open as usual, close at 15:00") opens at the
         regular opening of d and keeps the closing time as entered. (A day that kept only the regular closing is a
         fixed-hours day such as 12:00-18:00 and is copied as is.)"""
-        then = [r for r in self.reg[eid] if r["effective_from"] == "before-2024" or r["effective_from"] <= p.isoformat()]
-        if e == "closed" or "," in e or not then:
-            return e
-        best = max(then, key=lambda r: "0000" if r["effective_from"] == "before-2024" else r["effective_from"])
-        reg_then, reg_now = day_str(best["hours"][DAYS[p.weekday()]]), self.regular(eid, d)
-        if reg_then == "closed" or reg_now == "closed":
+        if "," in e or reg_then in (None, "closed") or reg_now == "closed":
             return e
         o, c = e.split("-")
         if o == reg_then[:5] and c != reg_then[-5:] and reg_now[:5] < c:
