@@ -51,3 +51,25 @@ Decision: KEEP — freeze rule passes (and rule 7: sum 127.11 → 128.65).
 
 ## Part A frozen (2026-11-07)
 Final: **dev 2026 65.92 · back-test 2025 62.73** (baseline 54.49 · 53.23). No new hypotheses. Correctness fixes #10 and #11 (AGENTS.md section 5b) are not applied; #12 cannot be fixed (organisers' data).
+
+## Reviews feasibility (analysis only, after part-a-freeze, 2026-11-07)
+Question: can customer reviews recover the rows the frozen engine still misses? No model change. Scripts: `analysis/reviews_feasibility.py` (steps 1–4), `analysis/reviews_filters.py` (filters) and `analysis/reviews_split.py` (closed all day vs closed early). They score with `analysis/error_report.py`'s outcome rules against the final error-report rows; prerequisites are in each script's docstring.
+
+1. **Filter.** Reviews with text and `publisherDate` before the season's snapshot that mention a holiday (fi/sv/nb/en aliases with Finnish inflections, longest alias first) or a closure / opening-hours word ("closed for good" excluded).
+2. **Counts** (dev 2026 cutoff, back-test 2025 cutoff in brackets): 3,804 (2,356) reviews on 2,019 (1,544) businesses; 3,581 (2,210) name a holiday; 2,952 (1,818) have a closure word. Dev businesses with a missed row: 465 (557). Reviews on those businesses: 662 (458), on 329 (293) businesses.
+3. **Match with missed rows.** Only 61 (49) reviews name the `day_key` of one of that business's missed rows, on 57 (44) businesses. 266 of the 662 (190 of 458) contain a time, but mostly the hours shown online ("Online it said open 09:00–17:00") or the time of the visit ("klo 18.20"). 1,388 reviews name a target holiday together with a time.
+4. **Rule "suggest closed when a closure review names the day_key"** (dev labels):
+   - All touched rows: 398 (226). Truth is closed on 64 % (65 %) and open on 36 % (35 %), so 36 % would be wrong state.
+   - On rows where the engine is quiet today (the only place it could add points): 43 exact vs **76 wrong state → −0.61** (33 vs 46 → −0.23).
+   - Filters tried on those rows:
+
+     | Filter | Score |
+     |---|---|
+     | Posted 0–10 days after that holiday | Identical: every review is "timely" |
+     | Timely and from last season | −0.22 (−0.16) |
+     | Peer closed share ≥ 0.5 | −0.07 (−0.04) |
+     | ≥ 2 reviews | +0.09 (+0.04), but only 5 (2) rows |
+   - **Split by meaning** (the regex read "closed early" as "closed"):
+     - "Closed all day" reviews: 66 (36) rows, truth closed on only 27 (16); 38 (19) were already right and open. The reviews are wrong, not misread.
+     - "Closed early" reviews: suggesting `<shown opening>-<closing time in the review>` gives 7 exact of 16 (3 of 9) → +0.11 (+0.04).
+5. **Conclusion: not worth an LLM for the score.** Better parsing only helps the small "closed early" group. On the rows the engine still misses, full-day closure reviews are wrong more often than right: the truthful ones sit on businesses whose history the engine already uses. Best case about +0.1–0.2 on roughly 20 dev rows (~55 test rows). Use reviews in Part B as **evidence quoted in the message** and for prioritisation, not as a predictor.

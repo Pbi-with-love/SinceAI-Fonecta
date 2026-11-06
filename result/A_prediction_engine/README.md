@@ -2,6 +2,8 @@
 
 - `model.py`: our engine. Started as an exact copy of `examples/baseline.py`.
 - `analysis/error_report.py`: where points are won and lost, by basis, history, day_key, segment… (labels are read here only, never in `model.py`).
+- `analysis/reviews_*.py`: the reviews feasibility study (EXPERIMENTS.md, "Reviews feasibility"): reviews do not recover missed rows.
+- `analysis/reports/`: the final error reports for both seasons at `part-a-freeze`.
 - `EXPERIMENTS.md`: every attempt, kept or reverted, with scores.
 
 Run from the repo root:
