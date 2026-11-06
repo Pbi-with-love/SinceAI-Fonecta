@@ -39,3 +39,15 @@ Wrong-state: 339 → 353 (296 → 327)   Missed: 1,246 → 1,185 (1,622 → 1,52
 Checks on merged main: byte-identical on two runs, both seasons; snapshot audit PASS on both seasons, including all 58,158 entries of the owner-pattern index; no labels/ or entity IDs.
 Caveat (fix #12): the peer gate uses the undated peer_benchmarks, so the back-test gain may be inflated; the dev gain is clean.
 Decision: KEEP — rule 7 passes (sum 125.47 → 127.11, neither season drops).
+
+## #3 hyp/peer-tuning merged (#3 + #4 peer rule) — KEEP under the freeze rule (2026-11-07)
+Hypothesis: peers' closures only carry over on public holidays and major eves; a lower "closed among entered" threshold with the same "entered closed" floor; never for round-the-clock businesses. (#3, peer median special hours, was tested and reverted on the branch: 72–78 % of its messages were needless or wrong.) Full log: `experiments/hyp-peer-tuning.md`.
+Change: peer block moved into `_peer_candidate()`: day_class in MAJOR/EVE_MAJOR/SOFT, closed_share_among_entered ≥ 0.5 (was 0.7), share_entered_closed ≥ 0.15, skip "00:00-23:59". Synced twice with main (conflicts resolved by keeping both sides in cascade order; verified line by line). Merge commit bef8bb5.
+Dev 2026: 65.42 → 65.92   Back-test 2025: 61.69 → 62.73
+Wrong-state: 353 → 383 (327 → 377)   Missed: 1,185 → 1,099 (1,523 → 1,369)   Precision 0.865 → 0.861 (0.879 → 0.873)   Recall 0.730 → 0.741 (0.678 → 0.698)
+Freeze rule (human): keep if dev gains ≥ +0.5 and the back-test does not drop; the back-test gain itself is not used (fix #12). Unrounded dev gain: **+0.500185** (+27.0 points; the threshold is 26.99). It passes by less than one row.
+Checks on merged main: byte-identical on two runs and identical to the synced branch's output, both seasons; snapshot audit PASS on both seasons; no labels/ or entity IDs.
+Decision: KEEP — freeze rule passes (and rule 7: sum 127.11 → 128.65).
+
+## Part A frozen (2026-11-07)
+Final: **dev 2026 65.92 · back-test 2025 62.73** (baseline 54.49 · 53.23). No new hypotheses. Correctness fixes #10 and #11 (AGENTS.md section 5b) are not applied; #12 cannot be fixed (organisers' data).
