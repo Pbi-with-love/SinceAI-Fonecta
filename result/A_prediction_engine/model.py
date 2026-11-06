@@ -146,8 +146,9 @@ class Baseline:
         return self._align_to_regular(eid, e, p, d), basis, (p.isoformat(), e)
 
     def _align_to_regular(self, eid, e, p: date, d: date):
-        """An old special day that kept one end of that day's regular hours ("open as usual, close at 15:00") keeps
-        that end tied to the regular hours: move it to the regular hours of d, keep the special end as entered."""
+        """An old special day that opened as usual and closed early ("open as usual, close at 15:00") opens at the
+        regular opening of d and keeps the closing time as entered. (A day that kept only the regular closing is a
+        fixed-hours day such as 12:00-18:00 and is copied as is.)"""
         then = [r for r in self.reg[eid] if r["effective_from"] == "before-2024" or r["effective_from"] <= p.isoformat()]
         if e == "closed" or "," in e or not then:
             return e
@@ -155,12 +156,9 @@ class Baseline:
         reg_then, reg_now = day_str(best["hours"][DAYS[p.weekday()]]), self.regular(eid, d)
         if reg_then == "closed" or reg_now == "closed":
             return e
-        (o, c), (ro, rc), (no, nc) = e.split("-"), (reg_then.split(",")[0][:5], reg_then[-5:]), \
-            (reg_now.split(",")[0][:5], reg_now[-5:])
-        if o == ro and c != rc and no < c:
-            return f"{no}-{c}"
-        if c == rc and o != ro and o < nc:
-            return f"{o}-{nc}"
+        o, c = e.split("-")
+        if o == reg_then[:5] and c != reg_then[-5:] and reg_now[:5] < c:
+            return f"{reg_now[:5]}-{c}"
         return e
 
     def predict(self, eid, d: date, key: str):

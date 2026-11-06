@@ -148,3 +148,45 @@ Score: 60.21 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5233, "missed": 1631, "exact": 3733, "harmful_wrong_state": 310, "same_state_off": 124, "spam_wrong_hours": 87}
 ```
+
+## #4 alignment: opening side only
+Hypothesis: #3's closing-side shift is wrong in general (a day that kept only the regular closing is a fixed-hours
+day such as 12:00-18:00), while the opening-side shift is right; dropping the closing side should help both seasons.
+Change: `_align_to_regular()` only handles "same opening as the regular hours then, different closing": it returns
+today's regular opening + the old closing (if that is still a valid interval). Everything else is copied as is.
+Dev 2026: 64.34 → 64.49   Back-test 2025: 60.21 → 60.38
+Wrong-state: 346 → 346 (2026), 310 → 310 (2025)   Missed: 1245 → 1245 (2026), 1631 → 1631 (2025)
+Exact: 3858 → 3868 (2026), 3733 → 3745 (2025); same_state_off 101 → 91, 124 → 112
+Error report: TWO_YEARS_AGO exact 741 → 742 (2026), 729 → 741 (2025); OLDER_SEASON exact 344 → 353 (2026).
+Decision: KEEP (rule 7: both seasons up, sum +0.32). Both seasons agree on the direction, so this is not a
+dev-only choice (rule 8).
+
+```
+Score: 64.49 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     4473
+  precision_exact                      0.865
+  recall_exact                         0.719
+  harmful_suggestions                  346
+  search_views_protected_pct           71.2
+  closed_door_views_prevented_pct      80.8
+  businesses_contacted                 750
+  avg_dates_per_contacted_business     5.96
+  ignored_prediction_rows_not_in_labels 12228
+  breakdown: {"correct_silence": 5367, "missed": 1245, "exact": 3868, "harmful_wrong_state": 346, "same_state_off": 91, "spam_wrong_hours": 140, "redundant_confirm": 21, "flag_correct": 11, "missed_closed_business": 4, "suggest_to_closed_business": 7}
+
+Score: 60.38 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     4254
+  precision_exact                      0.88
+  recall_exact                         0.662
+  harmful_suggestions                  310
+  search_views_protected_pct           64.6
+  closed_door_views_prevented_pct      75.6
+  businesses_contacted                 746
+  avg_dates_per_contacted_business     5.7
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5233, "missed": 1631, "exact": 3745, "harmful_wrong_state": 310, "same_state_off": 112, "spam_wrong_hours": 87}
+```
