@@ -72,24 +72,25 @@ Scenario clock: snapshot **2026-11-06** for the 2026 season and **2025-11-06** f
 
 ## 3. Data map
 
-Keys marked † are confirmed in `examples/baseline.py`. Verify the rest against the data dictionary in `docs/` and by printing file headers before relying on them.
+† = key used in `examples/baseline.py`. ✓ = header printed and checked on 2026-11-07. Every key below matches the data.
 
 | File | Key | Contents relevant to Part A |
 |---|---|---|
-| `evaluation/targets_2026.csv` | `entity_id, date, day_key` † | Rows to predict (test + dev + demo) |
-| `evaluation/targets_2025_backtest.csv` | same | Back-test rows (dev only) |
-| `data/entities.json` → `response.entities[]` | `meta.id` † | `meta.countryCode`, `address.city`, `c_segment`, `c_shoppingCenterEntityId`, `closed`, `hours` |
-| `data/regular_hours_history.jsonl` | `entity_id` † | Published weekly versions with `effective_from`. 97 % have one row; ~40 seasonal businesses have 7–8. Does **not** reveal real-world changes that were never published |
-| `data/holiday_hours_history.jsonl` | `(entity_id, date)` † | `day_key`, `holidayHours`, `entered_at`, `source`. Latest `entered_at` wins. Shopping centres appear here too |
-| `data/calendar_special_days.csv` | `(country, day_key)` † | Dates per country and season; maps last season's date to this season's |
-| `data/cities.csv` | `city` † | `city_tier` |
-| `data/peer_benchmarks.csv` | `(country, city_tier, segment, day_key)` † | `closed_share_among_entered`, `share_entered_closed`, median special open/close times. Biased towards owners who entered something |
-| `data/reviews.json` → `response.reviews[]` | `locationId` † | `content`, `publisherDate` (ms), rating; fi/sv/nb/en; some deliberately misleading |
-| `data/publisher_suggestions.json` → `response.suggestions[]` | `locationId` † | `fieldName`, `dateCreated`; ~50 % noise |
-| `data/pilot_decision_log_2025.csv` | business id | 2025 suggestions, decisions, owner-edited final hours (FI only) |
-| `labels/dev_labels_2026.csv` | `(entity_id, date)` | `truth_hours`, `displayed_hours_at_snapshot`, `expected_action`, `mismatch_type`, `expected_search_views`. **Analysis only** |
-| `labels/dev_labels_2025_backtest.csv` | same | Back-test answers. **Analysis only** |
-| `labels/dev_truth_history.csv` | `(entity_id, date)` | True hours on every special day for dev businesses. **Analysis only** |
+| `evaluation/targets_2026.csv` | `entity_id, date, day_key` † ✓ | Rows to predict (test + dev + demo). Also `day_type`, `event_id`, `country`, `split` |
+| `evaluation/targets_2025_backtest.csv` | same ✓ | Back-test rows (dev only) |
+| `data/entities.json` → `response.entities[]` | `meta.id` † ✓ | `meta.countryCode`, `address.city`, `c_segment`, `c_shoppingCenterEntityId`, `closed`, `hours`. **State as of 2026-11-05** (`meta.timestamp`): using `closed` in the 2025 back-test leaks 2026 knowledge |
+| `data/regular_hours_history.jsonl` | `entity_id` † ✓ | Published weekly versions with `effective_from`. 97 % have one row; ~40 seasonal businesses have 7–8. Does **not** reveal real-world changes that were never published |
+| `data/holiday_hours_history.jsonl` | `(entity_id, date)` † ✓ | `day_key`, `holidayHours`, `entered_at`, `source`. Latest `entered_at` wins. Shopping centres appear here too. Dates 2023-12-06 → 2027-01-06, **including 4,959 rows dated Dec 2023**. `day_key` also takes `EVENT` and `SCHOOL_BREAK`, which are not in the calendar |
+| `data/calendar_special_days.csv` | `(country, day_key)` † ✓ | Dates per country and season, plus `day_class` (MAJOR, EVE_MAJOR, EVE_MINOR, SOFT, INTER, OBS, COMM). **Starts 2024-01-01**, so the Dec 2023 history dates cannot be reached through the calendar. Use the history's own `day_key` for older seasons. INTERDAY has 3 dates per season on different weekdays (2024: 27/28/30 Dec, 2025: 27/29/30, 2026: 28/29/30) |
+| `data/cities.csv` | `city` † ✓ | `city_tier` |
+| `data/categories.csv` | `segment` ✓ | `archetype`: 24 segment families (e.g. CAFE, DINNER, RETAIL, PERSONAL, HEALTH). Use it for "segment family" rules |
+| `data/peer_benchmarks.csv` | `(country, city_tier, segment, day_key)` † ✓ | `closed_share_among_entered`, `share_entered_closed`, `share_entered_special_hours`, `median_open_special`, `median_close_special`. Biased towards owners who entered something |
+| `data/reviews.json` → `response.reviews[]` | `locationId` † ✓ | `content`, `publisherDate` (ms), rating; fi/sv/nb/en; some deliberately misleading |
+| `data/publisher_suggestions.json` → `response.suggestions[]` | `locationId` † ✓ | `fieldName`, `dateCreated` (`YYYY-MM-DD`), `suggestedContent` (JSON string); ~50 % noise |
+| `data/pilot_decision_log_2025.csv` | `entity_id`, `date`, `day_key` ✓ | 2025 suggestions, `decision`, `final_hours`, `decided_at` (FI only). Accepted and edited suggestions already appear in the holiday history as `CONNECT_SUGGESTION` |
+| `labels/dev_labels_2026.csv` | `(entity_id, date)` ✓ | `truth_hours`, `displayed_hours_at_snapshot`, `needs_action`, `expected_action`, `mismatch_type`, `expected_search_views`. **Analysis only** |
+| `labels/dev_labels_2025_backtest.csv` | same ✓ | Back-test answers. **Analysis only** |
+| `labels/dev_truth_history.csv` | `(entity_id, date)` ✓ | `truth_hours`, `displayed_hours_that_day` on every special day 2024 → Nov 2026 for dev businesses. **Analysis only** |
 
 Derived concept used everywhere:
 
@@ -106,12 +107,37 @@ shown(eid, d) = latest holiday entry for (eid, d) entered before snapshot,
 - About 40 % of needed changes have no history for that `day_key`.
 - Baseline: 54.49 dev / 53.23 back-test; exact precision 0.901, recall 0.59; 2,034 missed rows (0 points); 224 wrong-state guesses (−224 points), mostly the peer rule guessing closed for businesses that were open.
 
-## 5. Known hypotheses to test (not yet verified)
+**Baseline error profile** (from `analysis/error_report.py`; dev 2026, with the back-test in brackets):
+
+| Where | Rows needing action | Missed | Wrong state | Points still available |
+|---|---|---|---|---|
+| history = LAST_SEASON | 2,374 | 26 | 92 | 224 (251) |
+| history = OLDER_ONLY (entered two or more seasons ago, not last season) | 1,322 | **792 (548)** | 38 | **864 (602)** |
+| history = NONE | 1,700 | **1,219 (1,592)** | 94 | **1,366 (1,791)** |
+| basis = PEERS | 844 | 0 | **117 (143)** | 174 (217) |
+
+- Missed rows by mismatch: DIFFERENT_HOURS 1,004 · SHOWN_OPEN_ACTUALLY_CLOSED 983 · SHOWN_CLOSED_ACTUALLY_OPEN 49.
+- No row scored "near" (within ±30 min): every suggestion today is either exact or a copied/closed guess.
+
+## 5. Known hypotheses to test
 
 Test one at a time. Each needs evidence from `result/A_prediction_engine/analysis/` before and after.
 
+**Error-report verdicts (2026-11-07, baseline).** These are measured, not implemented. "Upper bound" means a quick estimate from labels, not a score.
+
+| # | Verdict | Evidence (dev 2026, back-test in brackets) |
+|---|---|---|
+| 2 | **Strongly supported, largest gain** | 792 (548) missed rows have only older history. Copying the newest older-season entry would be exact on 661 (452) and the wrong state on 56 (33): roughly +11 (+7) score points as an upper bound |
+| 5 | **Supported, large** | 1,159 of 1,216 (1,494 of 1,592) missed rows with no history for the `day_key` belong to businesses that entered *other* `day_key`s. Truth: 522 closed and 637 other hours (712 and 782) |
+| 3 | Supported | 612 (795) missed rows with no history are DIFFERENT_HOURS. The peer rule can only say `closed`, so it can never fix them |
+| 4 | Supported | PEERS gives 117 (143) wrong-state rows, 63 (69) of them on rows that were already right |
+| 7 | Small | 66 shopping-centre rows lose points; only 21 (20) of those stores have their own last-season entry |
+| 8 | Small | 804 pilot rows on dev businesses. Accepted and edited ones are already in the history; only 28 rejected + 26 edited remain |
+| 1 | **Rejected as a source of points** | The overwrite bug is real, but no business has *differing* INTERDAY entries last season (0 of 24; 0 of 27), so the candidate never changes. LAST_YEAR × INTERDAY has only 25 (33) points available. INTERDAY's 453 (407) missed rows have no history (253) or older history only (200): that is #2 and #5 |
+| 6 | **Rejected** | 0 unneeded FLAGs on dev 2026 (11 correct, 7 suggest-closed, 4 missed). Requiring a second signal can only lose correct flags |
+
 1. **INTERDAY mapping.** In `explain()`, `for p in prev:` overwrites the candidate, so every INTERDAY date this season may copy the *last* INTERDAY date with an entry last season. Try matching by position in the sequence or by weekday.
-2. **Two-year lookback.** History starts Dec 2023. Fall back to two seasons ago; raise confidence when both seasons agree.
+2. **Two-year lookback.** History starts Dec 2023. Fall back to two seasons ago; raise confidence when both seasons agree. **Map by the history's own `day_key`, not the calendar**: the calendar starts 2024-01-01, so for the 2025 back-test the calendar cannot reach the Dec 2023 entries, which carry most of its gain.
 3. **Peer special hours.** The peer rule only ever suggests `closed`. Use median open/close times when the "special hours" share is decisive.
 4. **Peer bias.** Use `dev_truth_history` (analysis only) to measure what non-entering businesses actually did, then retune thresholds per `day_key` and segment family. Target: fewer of the 224 wrong-state errors.
 5. **Owner's own pattern.** A business that closed on every public holiday it entered is likely closed on related holidays it did not enter.
@@ -119,8 +145,10 @@ Test one at a time. Each needs evidence from `result/A_prediction_engine/analysi
 7. **Shopping centre precedence.** Check whether centre hours should override the store's own last-year entry.
 8. **Pilot log final hours.** Owner-edited 2025 hours as a high-confidence source for 2026.
 9. ~~**Confidence column.**~~ **Resolved:** `evaluate.py` reads `confidence` but never uses it in the score. Keep it only for our own ranking and messages.
+10. **Timezone-free review cutoff (rule 19).** The baseline computes the review cutoff with `datetime(...).timestamp()`, which uses the machine's local timezone, so the CSV can differ between machines. Use a fixed timezone. Expected score effect ≈ 0; this is a correctness fix.
+11. **Back-test `closed` leak (rule 5).** `ent.get("closed")` is the 2026-11-05 state but is also used for the 2025 back-test. No measurable effect today (no FLAG rows in the 2025 labels), but keep it in mind for any FLAG rule.
 
-Note on #1: confirmed in code. In `examples/baseline.py` the `for p in prev:` loop has no `break`, so a later date in the list overwrites earlier matches. The effect on the score is not measured yet.
+Note on #1: confirmed in code. In `examples/baseline.py` the `for p in prev:` loop has no `break`, so a later date in the list overwrites earlier matches. Measured effect: none on this data (see the table above).
 
 ## 6. Workflow
 
@@ -129,7 +157,13 @@ Note on #1: confirmed in code. In `examples/baseline.py` the `for p in prev:` lo
 
    Back-test scoring needs the 2025 labels explicitly:
    `python evaluation/evaluate.py --predictions outputs/ours_2025.csv --labels labels/dev_labels_2025_backtest.csv`
-3. Build `result/A_prediction_engine/analysis/error_report.py`: join predictions with dev labels and group outcomes by `basis`, `day_key`, segment, country, has-history, `mismatch_type`. Report counts and net points per group.
+3. ✅ Done: `result/A_prediction_engine/analysis/error_report.py` joins predictions with dev labels and groups outcomes by expected action, `basis`, history, `day_key`, `mismatch_type`, country, archetype, segment and centre. It reports counts, net points and recoverable points per group, plus the missed and wrong-state rows and the top 10 groups. Its total is cross-checked against `evaluate.py`.
+
+   ```bash
+   python result/A_prediction_engine/analysis/error_report.py --season 2026 --predictions <csv> [--rows out.csv] [--json out.json]
+   python result/A_prediction_engine/analysis/error_report.py --season 2025 --predictions <csv>
+   ```
+   It calls `explain()` from the `model.py` in the same checkout, so run it from your own worktree.
 4. Pick the group with the largest recoverable points. Form a hypothesis, implement it, score both seasons, run the error report again.
 5. Log every attempt in `result/A_prediction_engine/EXPERIMENTS.md` (template below), kept or not. If the project uses Git, commit kept changes with the scores in the message.
 6. When finished, write `predictions_2026.csv` at the repo root from the full `targets_2026.csv`.
@@ -191,7 +225,7 @@ This section applies only to Part A hypothesis testing. Section 6 steps 2–3 (r
 - [ ] `explain()` still returns `(action, hours, basis, evidence)` with true, readable evidence
 - [ ] No new dependency without a permissive licence listed in the README
 - [ ] No secrets anywhere
-- [ ] Organisers' files unchanged. The project has no Git yet, so check the SHA-256 hashes in `MANIFEST.json` (or `git status` once Git is set up).
+- [ ] Organisers' files unchanged: `git status` is clean for them and their SHA-256 hashes match `MANIFEST.json`.
 - [ ] `EXPERIMENTS.md` updated, including reverted attempts
 - [ ] Output is deterministic (run twice, identical CSV)
 - [ ] Parallel agents only (section 6b): worked on `hyp/<short-name>`, edited only `model.py`, wrote to `outputs/hyp-<short-name>/` and `experiments/hyp-<short-name>.md`, did not merge
