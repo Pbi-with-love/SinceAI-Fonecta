@@ -1,0 +1,10 @@
+# Generated predictions (each agent writes to outputs/hyp-<name>/)
+outputs/
+# Local tool artefacts
+.playwright-mcp/
+.DS_Store
+__pycache__/
+*.pyc
+# Secrets: Yext key lives only in environment variables
+.env
+.env.*
