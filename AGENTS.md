@@ -123,11 +123,11 @@ shown(eid, d) = latest holiday entry for (eid, d) entered before snapshot,
 
 Test one at a time. Each needs evidence from `result/A_prediction_engine/analysis/` before and after.
 
-**Error-report verdicts (2026-11-07, baseline).** These are measured, not implemented. "Upper bound" means a quick estimate from labels, not a score.
+**Error-report verdicts (2026-11-07, baseline).** These are measured, not implemented. The point figures are rough estimates from labels, **not upper bounds**: #2 beat its estimate (back-test +7.56 vs ~+7) because the implementation also aligned hours, earned partial credit and improved rows the estimate did not cover.
 
 | # | Verdict | Evidence (dev 2026, back-test in brackets) |
 |---|---|---|
-| 2 | **Strongly supported, largest gain** | 792 (548) missed rows have only older history. Copying the newest older-season entry would be exact on 661 (452) and the wrong state on 56 (33): roughly +11 (+7) score points as an upper bound |
+| 2 | **Strongly supported, largest gain** | 792 (548) missed rows have only older history. Copying the newest older-season entry would be exact on 661 (452) and the wrong state on 56 (33): roughly +11 (+7) score points (rough estimate; measured after merge: +10.19 / +7.56) |
 | 5 | **Supported, large** | 1,159 of 1,216 (1,494 of 1,592) missed rows with no history for the `day_key` belong to businesses that entered *other* `day_key`s. Truth: 522 closed and 637 other hours (712 and 782) |
 | 3 | Supported | 612 (795) missed rows with no history are DIFFERENT_HOURS. The peer rule can only say `closed`, so it can never fix them |
 | 4 | Supported | PEERS gives 117 (143) wrong-state rows, 63 (69) of them on rows that were already right |
@@ -155,6 +155,7 @@ These are not hypotheses: they fix rule violations in the inherited baseline cod
 
 10. **Timezone-free review cutoff (rule 19).** The baseline computes the review cutoff with `datetime(...).timestamp()`, which uses the machine's local timezone, so the CSV can differ between machines. Use a fixed timezone. Expected score effect ≈ 0.
 11. **Back-test `closed` leak (rule 5).** `ent.get("closed")` is the 2026-11-05 state but is also used for the 2025 back-test. No measurable effect today (no FLAG rows in the 2025 labels), but it must not leak into any FLAG rule.
+12. **Undated peer benchmarks (rule 5, organisers' data).** `peer_benchmarks.csv` aggregates seasons 2023–2025 with no timestamps, so the 2025 back-test may see its own season through any peer rule (the baseline's, `hyp-peer-tuning`'s, and the peer gate in `hyp-owner-pattern`). The file cannot be split by season, so this cannot be fixed; weigh dev 2026 more than the back-test for peer-driven gains, and say so in the README.
 
 ## 6. Workflow
 

@@ -111,6 +111,8 @@ class Baseline:
                 if last is not None:
                     cand = self.regular(eid, d) if last == "REGULAR" else last
                     basis, ev = "LAST_YEAR", (p.isoformat(), last)
+        if cand is None:  # hypothesis #2: same day_key two seasons ago
+            cand, basis, ev = self._two_seasons_ago(eid, d, key)
         if cand is None:
             op = self._owner_pattern(eid, d, key)
             if op:
@@ -123,6 +125,60 @@ class Baseline:
         if cand and cand != shown:
             return "SUGGEST", cand, basis, ev
         return "NO_ACTION", "", basis, ev
+
+    _older_idx = None  # (entity_id, history day_key) -> dates with an entry before the snapshot; built on first use
+
+    def _two_seasons_ago(self, eid, d: date, key: str):
+        """Hypothesis #2. If last season has no entry for this day_key, use the business's own newest entry for it from
+        two or more seasons back: returns (cand, basis, (date, what was entered)) or (None, None, None).
+        basis: TWO_YEARS_AGO (two seasons back) or OLDER_SEASON (three or more).
+        Seasons are matched through the history's own day_key, not the calendar: the calendar starts 2024-01-01, so
+        it cannot reach the Dec 2023 entries that "two seasons back" means for the 2025 back-test. Only entries made
+        before the snapshot count. No candidate for an old "regular hours" entry (weak evidence), nor for old opening
+        hours from a weekday the business normally opened when d is now one of its regular days off."""
+        if self._older_idx is None:
+            snap, idx = self.snap.isoformat(), defaultdict(list)
+            for (e, ds), rows in self.hol.items():
+                if any(r["entered_at"] < snap for r in rows):
+                    idx[(e, rows[0]["day_key"])].append(date.fromisoformat(ds))
+            self._older_idx = idx
+        old = sorted(x for x in self._older_idx.get((eid, key), ()) if cycle(x) <= cycle(d) - 2)
+        if not old:
+            return None, None, None
+        p = old[-1]  # newest season two or more back; latest date in it
+        e = self.entry(eid, p, self.snap)
+        basis = "TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"
+        if e == "REGULAR":
+            return None, None, None  # "regular hours" two or more seasons ago: too weak to overrule the next blocks
+        if e == "closed":
+            return e, basis, (p.isoformat(), e)
+        reg_then, reg_now = self._regular_on(eid, p), self.regular(eid, d)
+        if reg_now == "closed" and reg_then not in (None, "closed"):
+            return None, None, None  # opened on a weekday it normally opened; d falls on a regular day off
+        cand = self._align_to_regular(e, reg_then, reg_now)
+        if cand != e:
+            return cand, basis, (p.isoformat(), f"{e} (opened as usual, closed at {e[-5:]})")
+        return cand, basis, (p.isoformat(), e)
+
+    def _regular_on(self, eid, p: date):
+        """Published regular hours in force on the (past) date p for its weekday, or None if none was published."""
+        then = [r for r in self.reg[eid] if r["effective_from"] == "before-2024" or r["effective_from"] <= p.isoformat()]
+        if not then:
+            return None
+        best = max(then, key=lambda r: "0000" if r["effective_from"] == "before-2024" else r["effective_from"])
+        return day_str(best["hours"][DAYS[p.weekday()]])
+
+    @staticmethod
+    def _align_to_regular(e, reg_then, reg_now):
+        """An old special day that opened as usual and closed early ("open as usual, close at 15:00") opens at the
+        regular opening of d and keeps the closing time as entered. (A day that kept only the regular closing is a
+        fixed-hours day such as 12:00-18:00 and is copied as is.)"""
+        if "," in e or reg_then in (None, "closed") or reg_now == "closed":
+            return e
+        o, c = e.split("-")
+        if o == reg_then[:5] and c != reg_then[-5:] and reg_now[:5] < c:
+            return f"{reg_now[:5]}-{c}"
+        return e
 
     def predict(self, eid, d: date, key: str):
         a, h, _, _ = self.explain(eid, d, key)
