@@ -221,12 +221,12 @@ The engine now catches far more wrong listings, at the cost of more wrong guesse
 
 | Dev 2026 | Baseline | Final | Change |
 |---|---|---|---|
-| Exact suggestions | 3,171 | 3,957 | **+786** |
+| Exact suggestions | 3,171 | 3,982 | **+811** |
 | Missed (needed a change, stayed quiet) | 2,038 | 1,099 | **−939** |
 | Wrong open/closed state | 224 | 383 | **+159** |
 | Exact precision | 0.901 | 0.861 | −0.040 |
 
-On the back-test, wrong state rose from 249 to 377. We accept this because **the product never publishes a suggestion on its own**: every `SUGGEST` goes to the owner with its evidence, to approve, edit or decline in one tap (Part B). A wrong suggestion costs the owner a few seconds and a "decline". A missed one sends a customer to a locked door, and the owner never hears about it. Standing permission (Part D) should only auto-apply the most reliable bases, such as last season and the shopping centre, and never a peer-only guess.
+On the back-test, exact suggestions rose from 3,267 to 3,945 and wrong state from 249 to 377. We accept this because **the product never publishes a suggestion on its own**: every `SUGGEST` goes to the owner with its evidence, to approve, edit or decline in one tap (Part B). A wrong suggestion costs the owner a few seconds and a "decline". A missed one sends a customer to a locked door, and the owner never hears about it. Standing permission (Part D) should only auto-apply the most reliable bases, such as last season and the shopping centre, and never a peer-only guess.
 
 ---
 
