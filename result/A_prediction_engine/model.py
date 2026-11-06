@@ -125,10 +125,13 @@ class Baseline:
     _older_idx = None  # (entity_id, history day_key) -> dates with an entry before the snapshot; built on first use
 
     def _two_seasons_ago(self, eid, d: date, key: str):
-        """(cand, "TWO_YEARS_AGO", (date, entry)) from the business's own entry for this day_key two seasons back,
-        or (None, None, None). Seasons are matched through the history's own day_key, not the calendar: the calendar
-        starts 2024-01-01, so it cannot reach the Dec 2023 entries that "two seasons back" means for the 2025
-        back-test. Only entries made before the snapshot count."""
+        """Hypothesis #2. If last season has no entry for this day_key, use the business's own newest entry for it from
+        two or more seasons back: returns (cand, basis, (date, what was entered)) or (None, None, None).
+        basis: TWO_YEARS_AGO (two seasons back) or OLDER_SEASON (three or more).
+        Seasons are matched through the history's own day_key, not the calendar: the calendar starts 2024-01-01, so
+        it cannot reach the Dec 2023 entries that "two seasons back" means for the 2025 back-test. Only entries made
+        before the snapshot count. No candidate for an old "regular hours" entry (weak evidence), nor for old opening
+        hours from a weekday the business normally opened when d is now one of its regular days off."""
         if self._older_idx is None:
             snap, idx = self.snap.isoformat(), defaultdict(list)
             for (e, ds), rows in self.hol.items():
@@ -140,15 +143,18 @@ class Baseline:
             return None, None, None
         p = old[-1]  # newest season two or more back; latest date in it
         e = self.entry(eid, p, self.snap)
-        basis, ev = ("TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"), (p.isoformat(), e)
+        basis = "TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"
         if e == "REGULAR":
             return None, None, None  # "regular hours" two or more seasons ago: too weak to overrule the next blocks
         if e == "closed":
-            return e, basis, ev
+            return e, basis, (p.isoformat(), e)
         reg_then, reg_now = self._regular_on(eid, p), self.regular(eid, d)
         if reg_now == "closed" and reg_then not in (None, "closed"):
             return None, None, None  # opened on a weekday it normally opened; d falls on a regular day off
-        return self._align_to_regular(e, reg_then, reg_now), basis, ev
+        cand = self._align_to_regular(e, reg_then, reg_now)
+        if cand != e:
+            return cand, basis, (p.isoformat(), f"{e} (opened as usual, closed at {e[-5:]})")
+        return cand, basis, (p.isoformat(), e)
 
     def _regular_on(self, eid, p: date):
         """Published regular hours in force on the (past) date p for its weekday, or None if none was published."""

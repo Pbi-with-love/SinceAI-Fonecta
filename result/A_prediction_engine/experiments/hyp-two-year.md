@@ -276,3 +276,15 @@ Score: 60.79 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5247, "missed": 1622, "exact": 3754, "harmful_wrong_state": 296, "same_state_off": 112, "spam_wrong_hours": 87}
 ```
+
+## #7 evidence text for aligned hours (no score change)
+Hypothesis: none (product rule 13). After #4 the suggested opening can differ from the old entry, so the evidence
+must say why. Also measured the "raise confidence when both seasons agree" part of the hypothesis.
+Change: when the opening was moved, evidence is `(old date, "<old hours> (opened as usual, closed at HH:MM)")`, e.g.
+`("2023-12-24", "08:00-14:00 (opened as usual, closed at 14:00)")` for a suggestion of 06:00-14:00. Docstring updated.
+Dev 2026: 64.68 → 64.68   Back-test 2025: 60.79 → 60.79 (both CSVs byte-identical to #6)
+Agreement (dev 2026 only; the back-test has a single older season): TWO_YEARS_AGO rows whose 2023 entry has the same
+value are 85% exact and 5% wrong-state (262 rows); rows with only a 2024 entry are 86% exact and 8% wrong-state (558
+rows); when the two seasons disagree on open/closed, the newer one is exact on 14 of 17. Agreement is not a useful
+filter. `confidence` is not scored, and `main()` writes a constant, so nothing was changed for it.
+Decision: KEEP (evidence only).
