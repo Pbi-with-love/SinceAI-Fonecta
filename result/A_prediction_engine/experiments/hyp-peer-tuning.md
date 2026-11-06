@@ -194,3 +194,96 @@ Score: 55.44 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5308, "missed": 1902, "exact": 3466, "harmful_wrong_state": 323, "same_state_off": 73, "spam_wrong_hours": 46}
 ```
+
+## #4 Peer special hours where special hours are decisive (hypothesis #3)
+Hypothesis: where most peers who entered something entered *special* hours, a business that entered nothing keeps
+its usual opening time and closes when its peers close, so `<shown open>-<median_close_special>` earns points.
+Evidence before: unconditional peer medians lose points on every day_key in both seasons (see the analysis section).
+A grid over `share_entered_special_hours` (0.2–0.4) × special share among enterers (0.5–0.95) × candidate
+(median open–close, or own opening time + median close) on the cached peer-block rows is negative almost everywhere;
+the only positive corner is special ≥ 0.3 and special share among enterers ≥ 0.85, with own opening + median close.
+Change (tested, then reverted): after the closed rule, if `share_entered_special_hours ≥ 0.3` and it is ≥ 85 % of the
+peers who entered anything, suggest `<shown opening>-<median_close_special>` with basis `PEER_SPECIAL_HOURS`
+(single-interval shown hours only).
+
+| special ≥ | special / entered ≥ | dev 2026 | back-test 2025 |
+|---|---|---|---|
+| off (#3) | – | 56.35 | 55.44 |
+| 0.25 | 0.85 | 56.37 | 55.52 |
+| **0.30** | **0.85** | **56.44** | **55.59** |
+| 0.35 | 0.85 | 56.39 | 55.54 |
+| 0.30 | 0.75 | 56.34 | 55.50 |
+| 0.30 | 0.95 | 56.42 | 55.57 |
+
+Dev 2026: 56.35 → 56.44   Back-test 2025: 55.44 → 55.59
+Wrong-state: 276 → 276 (323 → 325)   Missed: 1834 → 1804 (1902 → 1865)
+Exact precision 0.893 → 0.884 (0.887 → 0.878)
+Error report, PEER_SPECIAL_HOURS basis: 49 rows (2026): 10 exact, 1 near, 19 same-state-off, 19 needless, +4.9 points;
+57 rows (2025): 16 exact, 1 near, 18 off, 20 needless, 2 wrong-state, +8.2 points.
+Independent check (2024 season, `dev_truth_history`, businesses that entered nothing): the same slice nets +1.4 points
+on 120 suggestions (21 exact, 1 near, 44 off, 50 needless, 4 wrong-state); median open–close nets −1.8.
+Decision: REVERT. Rule 7 passes on paper (+0.09 / +0.15), but 72–78 % of these messages either were not needed or
+propose hours that are wrong, the gain comes mostly from the +0.2 "same state" credit, and the independent 2024 season
+shows no gain. Rules 8 and 14 (stay quiet when unsure) decide it. Peer benchmarks alone cannot say *which* business
+keeps special hours: that needs a per-business signal (its own past special hours, #2 / #5).
+
+```
+Score: 56.44 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     3771
+  precision_exact                      0.884
+  recall_exact                         0.62
+  harmful_suggestions                  276
+  search_views_protected_pct           60.6
+  closed_door_views_prevented_pct      74.7
+  businesses_contacted                 747
+  avg_dates_per_contacted_business     5.05
+  ignored_prediction_rows_not_in_labels 10513
+  breakdown: {"correct_silence": 5507, "missed": 1804, "exact": 3334, "harmful_wrong_state": 276, "same_state_off": 67, "spam_wrong_hours": 72, "redundant_confirm": 17, "flag_correct": 11, "near": 1, "missed_closed_business": 7, "suggest_to_closed_business": 4}
+
+Score: 55.59 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     3965
+  precision_exact                      0.878
+  recall_exact                         0.616
+  harmful_suggestions                  325
+  search_views_protected_pct           58.9
+  closed_door_views_prevented_pct      73.1
+  businesses_contacted                 743
+  avg_dates_per_contacted_business     5.34
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5288, "missed": 1865, "exact": 3482, "harmful_wrong_state": 325, "same_state_off": 91, "spam_wrong_hours": 66, "near": 1}
+```
+
+## Summary (final state of the branch = #1 + #2 + #3)
+
+| | dev 2026 | back-test 2025 |
+|---|---|---|
+| Reference (`main` at `8bdc599`) | 54.49 | 53.23 |
+| This branch | **56.35** | **55.44** |
+| Exact precision | 0.901 → 0.893 | 0.899 → 0.887 |
+| Exact recall | 0.590 → 0.618 | 0.578 → 0.613 |
+| Wrong-state suggestions | 224 → 276 | 249 → 323 |
+
+Kept: #1 day-class gate (fewer wrong-state), #2 majority threshold 0.5 (more exact hits, more wrong-state), #3 no peer
+closures for 24 h businesses (fewer wrong-state). Reverted: #4 peer special hours (hypothesis #3: no robust gain).
+Hypothesis #4 (peer bias) is supported: the share of *all* peers that entered "closed" predicts a non-entering
+business's closure better than the share among enterers. Hypothesis #3 (peer special hours) is rejected: peer
+benchmarks cannot tell which business keeps special hours.
+
+Expected effect after the merges: the net gain over the reference is +100.0 points (2026) / +125.0 (2025): +55.0 / +89.0
+on rows with no history for the day_key and +45.0 / +36.0 on rows with only older history. The two-year lookback will
+take most of the second group, and the owner-pattern block (which runs before peers) will take part of the first,
+so expect roughly +1.0 / +1.6 score points or less from this branch on top of them. The re-score after `git merge main`
+decides.
+
+How the rules work for a business we have never seen: they read only its peer cell (country, city tier, segment,
+day_key) in `peer_benchmarks.csv`, the public calendar's day class for its country and date, and its own shown hours
+at the snapshot. No entity IDs, no labels.
+
+Leakage note (inherited, not introduced here): `peer_benchmarks.csv` has no timestamps and covers "seasons 2023–2025",
+so for the 2025 back-test it may include the very season being predicted. The baseline already used it the same way.
+The thresholds chosen here were also checked on the 2024 season of `dev_truth_history` (analysis only), which
+supports the same break-even (`share_entered_closed` ≈ 0.15), the day-class gate and the 24 h rule.
