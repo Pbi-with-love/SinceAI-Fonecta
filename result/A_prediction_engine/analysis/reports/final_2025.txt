@@ -1,0 +1,185 @@
+Error report · season 2025 · outputs/ours_2025.csv vs labels/dev_labels_2025_backtest.csv
+  score 62.73  (evaluate.py: 62.73)  rows 11118  needing action 5654
+  CSV matches model.explain() on every row.
+
+== Outcomes (rows, points)
+  correct_silence                5228       0.0
+  exact                          3945    3945.0
+  missed                         1369       0.0
+  wrong_state                     377    -377.0
+  same_state_off                  112      22.4
+  spam_wrong_hours                 87     -43.5
+  recoverable points total               2107.1
+
+Columns: need = truth is SUGGEST/FLAG · off = same state, >30 min off · noise = message that was not needed · other = FLAG outcomes · pts = points earned · recov = points still available · rec/row = recov/rows
+
+== by expected  (2 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  SUGGEST                                     5654    5654    3945       0     112     228    1369       0       0  3739.4  1914.6     0.34
+  NO_ACTION                                   5464       0       0       0       0     149       0      87       0  -192.5   192.5     0.04
+
+== by basis  (10 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  NONE                                        6332    1358       0       0       0       0    1358       0       0     0.0  1358.0     0.21
+  PEERS                                        688     633     544       0       0     144       0       0       0   400.0   233.0     0.34
+  LAST_YEAR                                   2086    2030    1917       0      62      81       0      26       0  1835.4   194.6     0.09
+  TWO_YEARS_AGO                                893     818     738       0      39      75       0      41       0   650.3   167.7     0.19
+  OWNER_PATTERN                                437     410     385       0       0      52       0       0       0   333.0    77.0     0.18
+  SHOPPING_CENTRE                              417     394     361       0      11      25       0      20       0   328.2    65.8     0.16
+  TWO_YEARS_AGO=SHOWN                           94       8       0       0       0       0       8       0       0     0.0     8.0     0.09
+  LAST_YEAR=SHOWN                              139       3       0       0       0       0       3       0       0     0.0     3.0     0.02
+  OWNER_PATTERN=SHOWN                           20       0       0       0       0       0       0       0       0     0.0     0.0     0.00
+  SHOPPING_CENTRE=SHOWN                         12       0       0       0       0       0       0       0       0     0.0     0.0     0.00
+
+== by history  (4 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  NONE                                        7499    2466     996       0       3     203    1343      20       0   783.6  1682.4     0.22
+  LAST_SEASON                                 2482    2294    2144       0      76      94      12      25       0  2052.7   241.3     0.10
+  OLDER_ONLY                                  1095     894     805       0      33      80      14      41       0   711.1   182.9     0.17
+  ENTERED_FOR_DATE                              42       0       0       0       0       0       0       1       0    -0.5     0.5     0.01
+
+== by day_key  (15 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  INTERDAY                                    2406     682     394       0       3      46     276      22       0   337.6   344.4     0.14
+  NYE                                          802     540     233       0      18      14     277      10       0   217.6   322.4     0.40
+  EPIPHANY_EVE                                 691     354     115       0      30      13     202      20       0    98.0   256.0     0.37
+  XMAS_EVE                                     802     735     575       0      11      63      98       1       0   513.7   221.3     0.28
+  BOXING_DAY                                   802     610     487       0       4      68      86       1       0   419.3   190.7     0.24
+  EPIPHANY                                     691     526     413       0       8      49      81       2       0   364.6   161.4     0.23
+  DEC23                                        802     227      99       0      19       1     109      17       0    93.3   133.7     0.17
+  NEW_YEARS_DAY                                802     739     663       0       1      44      36       0       0   619.2   119.8     0.15
+  INDEPENDENCE_DAY                             479     260     189       0       3      40      52       3       0   148.1   111.9     0.23
+  XMAS_DAY                                     802     753     679       0       7      39      30       0       0   641.4   111.6     0.14
+  BLACK_FRIDAY                                 802     107      61       0       1       0      45       9       0    56.7    50.3     0.06
+  FATHERS_DAY                                  802      47      13       0       0       0      34       0       0    13.0    34.0     0.04
+  EVENT                                        173      36       8       0       7       0      21       0       0     9.4    26.6     0.15
+  SCHOOL_BREAK                                  50      30      14       0       0       0      16       2       0    13.0    17.0     0.34
+  LUCIA                                        212       8       2       0       0       0       6       0       0     2.0     6.0     0.03
+
+== by mismatch  (4 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  DIFFERENT_HOURS                             1982    1982     962       0     112     154     754       0       0   830.4  1151.6     0.58
+  SHOWN_OPEN_ACTUALLY_CLOSED                  3626    3626    2969       0       0      74     583       0       0  2895.0   731.0     0.20
+  NONE                                        5464       0       0       0       0     149       0      87       0  -192.5   192.5     0.04
+  SHOWN_CLOSED_ACTUALLY_OPEN                    46      46      14       0       0       0      32       0       0    14.0    32.0     0.70
+
+== by country  (3 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  FI                                          6838    3561    2463       0      77     260     864      45       0  2195.9  1365.1     0.20
+  SE                                          3005    1446    1043       0      20     102     322      33       0   928.5   517.5     0.17
+  NO                                          1275     647     439       0      15      15     183       9       0   422.5   224.5     0.18
+
+== by archetype  (23 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  RETAIL                                      1298     738     489       0      22      50     187      16       0   435.4   302.6     0.23
+  PERSONAL                                    1568     999     768       0      21      40     191      13       0   725.7   273.3     0.17
+  DINNER                                      1139     552     340       0       4      55     174       6       0   282.8   269.2     0.24
+  CAFE                                         875     463     323       0       7      39     110      15       0   277.9   185.1     0.21
+  BAR                                          580     206     103       0       9      30      79       0       0    74.8   131.2     0.23
+  FASTFOOD                                     587     218     138       0      10      36      43       8       0   100.0   118.0     0.20
+  AUTO                                         671     378     282       0       2      18      86       2       0   263.4   114.6     0.17
+  FAMILY                                       289     166      83       0       4      12      69       3       0    70.3    95.7     0.33
+  BAKERY                                       332     184     119       0       4      22      46       0       0    97.8    86.2     0.26
+  HEALTH                                       732     432     374       0       2      17      52       6       0   354.4    77.6     0.11
+  GYM                                          290     108      41       0       5       7      55       4       0    33.0    75.0     0.26
+  OFFICE                                       640     399     337       0       2      11      56       1       0   325.9    73.1     0.11
+  FLORIST                                      229     145      90       0       4       5      48       1       0    85.3    59.7     0.26
+  VET                                          268     113      68       0       3       8      34       1       0    60.1    52.9     0.20
+  LUNCH                                        397     196     157       0       0      10      37       0       0   147.0    49.0     0.12
+  SKI                                           96      40       7       0       0       0      33       1       0     6.5    33.5     0.35
+  PHARMACY                                     179      94      73       0       8       7       6       6       0    64.6    29.4     0.16
+  SEASONAL                                     112      28       0       0       0       0      28       0       0     0.0    28.0     0.25
+  GROCERY                                      221      96      77       0       4       2      15       2       0    74.8    21.2     0.10
+  FUEL                                         182      30      14       0       0       1      15       1       0    12.5    17.5     0.10
+  CULTURE                                       92      42      37       0       0       7       4       1       0    29.5    12.5     0.14
+  CINEMA                                        98      27      25       0       1       0       1       0       0    25.2     1.8     0.02
+  H24                                          243       0       0       0       0       0       0       0       0     0.0     0.0     0.00
+
+== by segment  (33 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  restaurant                                  1139     552     340       0       4      55     174       6       0   282.8   269.2     0.24
+  cafe                                         875     463     323       0       7      39     110      15       0   277.9   185.1     0.21
+  hair_salon                                   746     480     351       0      13      14     110       3       0   338.1   141.9     0.19
+  clothing_store                               558     317     196       0       8      20      96       4       0   175.6   141.4     0.25
+  bar_pub                                      580     206     103       0       9      30      79       0       0    74.8   131.2     0.23
+  pizzeria                                     587     218     138       0      10      36      43       8       0   100.0   118.0     0.20
+  car_repair                                   495     280     205       0       1      11      70       2       0   193.2    86.8     0.18
+  bakery                                       332     184     119       0       4      22      46       0       0    97.8    86.2     0.26
+  gym                                          290     108      41       0       5       7      55       4       0    33.0    75.0     0.26
+  beauty_salon                                 481     305     249       0       3      15      44       5       0   232.1    72.9     0.15
+  optician                                     276     154      97       0       5       7      46       3       0    89.5    64.5     0.23
+  florist                                      229     145      90       0       4       5      48       1       0    85.3    59.7     0.26
+  massage                                      341     214     168       0       5      11      37       5       0   155.5    58.5     0.17
+  indoor_playground                            164      89      40       0       2       7      41       1       0    32.9    56.1     0.34
+  dental_clinic                                503     300     259       0       2      11      36       5       0   245.9    54.1     0.11
+  hardware_store                               254     145     107       0       3      13      25       5       0    92.1    52.9     0.21
+  veterinary                                   268     113      68       0       3       8      34       1       0    60.1    52.9     0.20
+  lunch_restaurant                             397     196     157       0       0      10      37       0       0   147.0    49.0     0.12
+  bowling                                      125      77      43       0       2       5      28       2       0    37.4    39.6     0.32
+  accounting_office                            363     223     191       0       1       5      31       1       0   185.7    37.3     0.10
+  real_estate_agency                           277     176     146       0       1       6      25       0       0   140.2    35.8     0.13
+  ski_rental                                    96      40       7       0       0       0      33       1       0     6.5    33.5     0.35
+  pharmacy                                     179      94      73       0       8       7       6       6       0    64.6    29.4     0.16
+  bookstore                                    126      81      60       0       5       8      11       2       0    52.0    29.0     0.23
+  seasonal_terrace                             112      28       0       0       0       0      28       0       0     0.0    28.0     0.25
+  tire_shop                                    176      98      77       0       1       7      16       0       0    70.2    27.8     0.16
+  physiotherapy                                229     132     115       0       0       6      16       1       0   108.5    23.5     0.10
+  grocery                                      221      96      77       0       4       2      15       2       0    74.8    21.2     0.10
+  fuel_station                                 182      30      14       0       0       1      15       1       0    12.5    17.5     0.10
+  pet_store                                     84      41      29       0       1       2       9       2       0    26.2    14.8     0.18
+  museum                                        92      42      37       0       0       7       4       1       0    29.5    12.5     0.14
+  cinema                                        98      27      25       0       1       0       1       0       0    25.2     1.8     0.02
+  hotel                                        243       0       0       0       0       0       0       0       0     0.0     0.0     0.00
+
+== by centre  (2 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  STANDALONE                                 10028    5032    3432       0      78     339    1329      60       0  3078.6  1953.4     0.19
+  IN_CENTRE                                   1090     622     513       0      34      38      40      27       0   468.3   153.7     0.14
+
+== MISSED (needed action, we stayed quiet): 1369 rows
+  expected  SUGGEST 1369 (100%)
+  basis     NONE 1358 (99%), TWO_YEARS_AGO=SHOWN 8 (1%), LAST_YEAR=SHOWN 3 (0%)
+  history   NONE 1343 (98%), OLDER_ONLY 14 (1%), LAST_SEASON 12 (1%)
+  day_key   NYE 277 (20%), INTERDAY 276 (20%), EPIPHANY_EVE 202 (15%), DEC23 109 (8%), XMAS_EVE 98 (7%), BOXING_DAY 86 (6%), … 9 more
+  mismatch  DIFFERENT_HOURS 754 (55%), SHOWN_OPEN_ACTUALLY_CLOSED 583 (43%), SHOWN_CLOSED_ACTUALLY_OPEN 32 (2%)
+  country   FI 864 (63%), SE 322 (24%), NO 183 (13%)
+  archetype PERSONAL 191 (14%), RETAIL 187 (14%), DINNER 174 (13%), CAFE 110 (8%), AUTO 86 (6%), BAR 79 (6%), … 16 more
+  segment   restaurant 174 (13%), hair_salon 110 (8%), cafe 110 (8%), clothing_store 96 (7%), bar_pub 79 (6%), car_repair 70 (5%), … 26 more
+  centre    STANDALONE 1329 (97%), IN_CENTRE 40 (3%)
+
+== WRONG STATE (open/closed flipped, -1 each): 377 rows
+  expected  SUGGEST 228 (60%), NO_ACTION 149 (40%)
+  basis     PEERS 144 (38%), LAST_YEAR 81 (21%), TWO_YEARS_AGO 75 (20%), OWNER_PATTERN 52 (14%), SHOPPING_CENTRE 25 (7%)
+  history   NONE 203 (54%), LAST_SEASON 94 (25%), OLDER_ONLY 80 (21%)
+  day_key   BOXING_DAY 68 (18%), XMAS_EVE 63 (17%), EPIPHANY 49 (13%), INTERDAY 46 (12%), NEW_YEARS_DAY 44 (12%), INDEPENDENCE_DAY 40 (11%), … 4 more
+  mismatch  DIFFERENT_HOURS 154 (41%), NONE 149 (40%), SHOWN_OPEN_ACTUALLY_CLOSED 74 (20%)
+  country   FI 260 (69%), SE 102 (27%), NO 15 (4%)
+  archetype DINNER 55 (15%), RETAIL 50 (13%), PERSONAL 40 (11%), CAFE 39 (10%), FASTFOOD 36 (10%), BAR 30 (8%), … 13 more
+  segment   restaurant 55 (15%), cafe 39 (10%), pizzeria 36 (10%), bar_pub 30 (8%), bakery 22 (6%), clothing_store 20 (5%), … 23 more
+  centre    STANDALONE 339 (90%), IN_CENTRE 38 (10%)
+
+== TOP 10 single groups  (10 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  centre=STANDALONE                          10028    5032    3432       0      78     339    1329      60       0  3078.6  1953.4     0.19
+  expected=SUGGEST                            5654    5654    3945       0     112     228    1369       0       0  3739.4  1914.6     0.34
+  history=NONE                                7499    2466     996       0       3     203    1343      20       0   783.6  1682.4     0.22
+  country=FI                                  6838    3561    2463       0      77     260     864      45       0  2195.9  1365.1     0.20
+  basis=NONE                                  6332    1358       0       0       0       0    1358       0       0     0.0  1358.0     0.21
+  mismatch=DIFFERENT_HOURS                    1982    1982     962       0     112     154     754       0       0   830.4  1151.6     0.58
+  mismatch=SHOWN_OPEN_ACTUALLY_CLOSED         3626    3626    2969       0       0      74     583       0       0  2895.0   731.0     0.20
+  country=SE                                  3005    1446    1043       0      20     102     322      33       0   928.5   517.5     0.17
+  day_key=INTERDAY                            2406     682     394       0       3      46     276      22       0   337.6   344.4     0.14
+  day_key=NYE                                  802     540     233       0      18      14     277      10       0   217.6   322.4     0.40
+
+== TOP 10 two-way groups  (10 groups, by recoverable points)
+  group                                       rows    need   exact    near     off   wrong  missed   noise   other     pts   recov  rec/row
+  basis=NONE & history=NONE                   6256    1343       0       0       0       0    1343       0       0     0.0  1343.0     0.21
+  history=NONE & country=FI                   4544    1542     614       0       2     141     841      12       0   467.4  1074.6     0.24
+  history=NONE & mismatch=DIFFERENT_HOURS      913     913      61       0       3     116     733       0       0   -54.4   967.4     1.06
+  basis=NONE & country=FI                     3804     854       0       0       0       0     854       0       0     0.0   854.0     0.22
+  mismatch=DIFFERENT_HOURS & country=FI       1339    1339     673       0      77     105     484       0       0   583.4   755.6     0.56
+  basis=NONE & mismatch=DIFFERENT_HOURS        744     744       0       0       0       0     744       0       0     0.0   744.0     1.00
+  history=NONE & mismatch=SHOWN_OPEN_ACTUA    1524    1524     935       0       0       8     581       0       0   927.0   597.0     0.39
+  basis=NONE & mismatch=SHOWN_OPEN_ACTUALL     582     582       0       0       0       0     582       0       0     0.0   582.0     1.00
+  mismatch=SHOWN_OPEN_ACTUALLY_CLOSED & co    2193    2193    1780       0       0      52     361       0       0  1728.0   465.0     0.21
+  history=NONE & country=SE                   2059     617     261       0       1      52     322       5       0   206.7   410.3     0.20
