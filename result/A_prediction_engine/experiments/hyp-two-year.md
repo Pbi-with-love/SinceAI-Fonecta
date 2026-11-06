@@ -101,3 +101,50 @@ Score: 60.12 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5232, "missed": 1631, "exact": 3727, "harmful_wrong_state": 310, "same_state_off": 130, "spam_wrong_hours": 88}
 ```
+
+## #3 align the old special hours to today's regular hours
+Hypothesis: the generator models habits relative to regular hours ("open as usual, close at 15:00"). An old entry
+that shares one end with that day's regular hours at the time should keep that end tied to the regular hours: the
+copied hours are off when the old date fell on another weekday (e.g. NYE 2023 was a Sunday, 12:00-18:00 regular,
+entered 12:00-17:00; this year's Wednesday regular is 10:00-20:00 and the truth is 10:00-17:00).
+Change: `_align_to_regular()`: regular hours in force on the old date (published version with `effective_from` on
+or before it) for the old weekday vs `regular(eid, d)`. Same opening as then → today's regular opening + old
+closing; same closing as then → old opening + today's regular closing. Single-interval entries only; closed days and
+REGULAR entries unchanged. Evidence still shows the old entry as entered.
+Dev 2026: 64.15 → 64.34   Back-test 2025: 60.12 → 60.21
+Wrong-state: 346 → 346 (2026), 310 → 310 (2025)   Missed: 1245 → 1245 (2026), 1631 → 1631 (2025)
+Exact: 3845 → 3858 (2026), 3727 → 3733 (2025); same_state_off 114 → 101, 130 → 124
+Error report: TWO_YEARS_AGO exact 727 → 741 (2026), 723 → 729 (2025).
+Label check (scratch): opening-side shifts fixed 26 / broke 3 rows (2026) and 23 / 5 (2025); closing-side shifts
+fixed 0 / broke 10 (2026) and 0 / 12 (2025), all "fixed 12:00-18:00"-style days such as EPIPHANY on a Saturday.
+Decision: KEEP (rule 7: both seasons up, sum +0.28). Refined in #4.
+
+```
+Score: 64.34 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     4473
+  precision_exact                      0.863
+  recall_exact                         0.718
+  harmful_suggestions                  346
+  search_views_protected_pct           71.0
+  closed_door_views_prevented_pct      80.8
+  businesses_contacted                 750
+  avg_dates_per_contacted_business     5.96
+  ignored_prediction_rows_not_in_labels 12228
+  breakdown: {"correct_silence": 5367, "missed": 1245, "exact": 3858, "harmful_wrong_state": 346, "same_state_off": 101, "spam_wrong_hours": 140, "redundant_confirm": 21, "flag_correct": 11, "missed_closed_business": 4, "suggest_to_closed_business": 7}
+
+Score: 60.21 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     4254
+  precision_exact                      0.878
+  recall_exact                         0.66
+  harmful_suggestions                  310
+  search_views_protected_pct           64.2
+  closed_door_views_prevented_pct      75.6
+  businesses_contacted                 746
+  avg_dates_per_contacted_business     5.7
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5233, "missed": 1631, "exact": 3733, "harmful_wrong_state": 310, "same_state_off": 124, "spam_wrong_hours": 87}
+```

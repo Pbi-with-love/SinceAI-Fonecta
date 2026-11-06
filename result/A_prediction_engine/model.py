@@ -141,7 +141,27 @@ class Baseline:
         p = old[-1]  # newest season two or more back; latest date in it
         e = self.entry(eid, p, self.snap)
         basis = "TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"
-        return (self.regular(eid, d) if e == "REGULAR" else e), basis, (p.isoformat(), e)
+        if e == "REGULAR":
+            return self.regular(eid, d), basis, (p.isoformat(), e)
+        return self._align_to_regular(eid, e, p, d), basis, (p.isoformat(), e)
+
+    def _align_to_regular(self, eid, e, p: date, d: date):
+        """An old special day that kept one end of that day's regular hours ("open as usual, close at 15:00") keeps
+        that end tied to the regular hours: move it to the regular hours of d, keep the special end as entered."""
+        then = [r for r in self.reg[eid] if r["effective_from"] == "before-2024" or r["effective_from"] <= p.isoformat()]
+        if e == "closed" or "," in e or not then:
+            return e
+        best = max(then, key=lambda r: "0000" if r["effective_from"] == "before-2024" else r["effective_from"])
+        reg_then, reg_now = day_str(best["hours"][DAYS[p.weekday()]]), self.regular(eid, d)
+        if reg_then == "closed" or reg_now == "closed":
+            return e
+        (o, c), (ro, rc), (no, nc) = e.split("-"), (reg_then.split(",")[0][:5], reg_then[-5:]), \
+            (reg_now.split(",")[0][:5], reg_now[-5:])
+        if o == ro and c != rc and no < c:
+            return f"{no}-{c}"
+        if c == rc and o != ro and o < nc:
+            return f"{o}-{nc}"
+        return e
 
     def predict(self, eid, d: date, key: str):
         a, h, _, _ = self.explain(eid, d, key)
