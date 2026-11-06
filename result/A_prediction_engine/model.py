@@ -125,7 +125,7 @@ class Baseline:
     # PEER_CLOSED_DAY_CLASSES: calendar day classes on which peers' closures carry over to a business that entered
     # nothing: public holidays (MAJOR, SOFT) and the major eves (Christmas Eve, Midsummer Eve). Minor eves, days
     # between holidays, commercial days and observances are normal working days for most businesses.
-    PEER_MIN_CLOSED_AMONG_ENTERED = 0.7
+    PEER_MIN_CLOSED_AMONG_ENTERED = 0.5
     PEER_MIN_SHARE_ENTERED_CLOSED = 0.15
     PEER_CLOSED_DAY_CLASSES = ("MAJOR", "EVE_MAJOR", "SOFT")
 

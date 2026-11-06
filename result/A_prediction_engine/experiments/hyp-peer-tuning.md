@@ -85,3 +85,67 @@ Score: 53.19 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5331, "missed": 2196, "exact": 3244, "harmful_wrong_state": 228, "same_state_off": 73, "spam_wrong_hours": 46}
 ```
+
+## #2 Peer closed when a majority of enterers closed (0.7 → 0.5)
+Hypothesis: with `share_entered_closed ≥ 0.15` and the day-class gate of #1, `closed_share_among_entered ≥ 0.7` is
+stricter than the data supports; cells at 0.5–0.7 were closed 62–65 % of the time, so suggesting `closed` there earns
+more exact hits than it costs in wrong-state errors.
+Change: `PEER_MIN_CLOSED_AMONG_ENTERED` 0.7 → 0.5. `PEER_MIN_SHARE_ENTERED_CLOSED` stays 0.15.
+
+Threshold grid with the real `model.py` (on top of #1), dev 2026 / back-test 2025, wrong-state in brackets:
+
+| closed_among_entered ≥ | share_entered_closed ≥ | dev 2026 | back-test 2025 |
+|---|---|---|---|
+| 0.7 (#1) | 0.15 | 54.59 (196) | 53.19 (228) |
+| 0.6 | 0.15 | 55.36 (251) | 54.45 (292) |
+| **0.5** | **0.15** | **56.11 (289)** | **55.18 (338)** |
+| 0.4 | 0.15 | 56.14 (318) | 55.32 (366) |
+| 0.5 | 0.125 | 55.64 (354) | 54.79 (407) |
+| 0.5 | 0.175 | 56.25 (245) | 55.10 (289) |
+| 0.5 | 0.2 | 55.59 (222) | 54.27 (258) |
+| 0.6 | 0.175 | 55.61 (221) | 54.49 (260) |
+
+Choice: 0.5 / 0.15. 0.4 adds +0.03 / +0.14 but the 0.4–0.5 cells are a coin flip (closed 50–56 %), so rule 14
+says stay quiet there. Moving the 0.15 floor to 0.175 helps dev (+0.14) and hurts the back-test (−0.08), so rule 8
+keeps the simpler, unchanged value; 0.15 is also the break-even in the independent 2024 calibration above.
+Dev 2026: 54.59 → 56.11   Back-test 2025: 53.19 → 55.18   (vs reference 54.49 / 53.23: +1.62 / +1.95)
+Wrong-state: 196 → 289 (228 → 338)   Missed: 2063 → 1834 (2196 → 1902)   Exact: 3149 → 3324 (3244 → 3466)
+Exact precision 0.909 → 0.890 (0.903 → 0.884); recall 0.586 → 0.618 (0.574 → 0.613)
+Error report, PEERS basis: 859 → 1,128 rows, points 674.8 → 756.7 (2026); 1,088 → 1,420 rows, 844.0 → 956.0 (2025).
+By history: no history for the day_key +33.0 / +72.0 points, only older history +48.9 / +40.0. The second group will
+mostly go to the two-year lookback after its merge, so expect roughly +0.6 / +1.3 score from this change after it.
+Trade-off: this change raises wrong-state suggestions (−1 each) because each extra one is outweighed by ~2 exact
+hits; it does not meet the "fewer wrong-state" target by itself (#1 does).
+Generalises: two shares from `peer_benchmarks.csv` for the business's own (country, city tier, segment, day_key)
+cell; any business with a peer cell gets the same rule.
+Decision: KEEP — sum +3.51, both seasons up.
+
+```
+Score: 56.11 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     3735
+  precision_exact                      0.89
+  recall_exact                         0.618
+  harmful_suggestions                  289
+  search_views_protected_pct           60.2
+  closed_door_views_prevented_pct      74.7
+  businesses_contacted                 752
+  avg_dates_per_contacted_business     4.97
+  ignored_prediction_rows_not_in_labels 10411
+  breakdown: {"correct_silence": 5513, "missed": 1834, "exact": 3324, "harmful_wrong_state": 289, "same_state_off": 48, "spam_wrong_hours": 53, "redundant_confirm": 17, "flag_correct": 11, "missed_closed_business": 7, "suggest_to_closed_business": 4}
+
+Score: 55.18 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     3923
+  precision_exact                      0.884
+  recall_exact                         0.613
+  harmful_suggestions                  338
+  search_views_protected_pct           58.2
+  closed_door_views_prevented_pct      73.1
+  businesses_contacted                 750
+  avg_dates_per_contacted_business     5.23
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5293, "missed": 1902, "exact": 3466, "harmful_wrong_state": 338, "same_state_off": 73, "spam_wrong_hours": 46}
+```
