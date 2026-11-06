@@ -139,35 +139,43 @@ class Baseline:
     OWNER_PEER_MIN = 0.3         # peer closed_share_among_entered for this day_key (flat 0.2-0.35, see log)
 
     def _owner_index(self):
-        """entity -> {day_key: (date, value)} of its own latest holiday entry per day_key entered before the snapshot."""
+        """entity -> {day_key: [(date, value), …]} of its own holiday entries entered before the snapshot (latest
+        entry per date wins), sorted by date."""
         if getattr(self, "_own", None) is None:
             snap = self.snap.isoformat()
             self._own_class = {(r["country"], r["day_key"]): r["day_class"] for r in self.cal}
-            own = defaultdict(dict)
+            own = defaultdict(lambda: defaultdict(list))
             for (eid, ds), rows in sorted(self.hol.items()):
                 rows = [r for r in rows if r["entered_at"] < snap]
                 if not rows:
                     continue
                 r = max(rows, key=lambda r: r["entered_at"])
                 h = r["holidayHours"]
-                val = "REGULAR" if h.get("isRegularHours") else day_str(h)
-                prev = own[eid].get(r["day_key"])
-                if prev is None or ds > prev[0]:
-                    own[eid][r["day_key"]] = (ds, val)
+                own[eid][r["day_key"]].append((ds, "REGULAR" if h.get("isRegularHours") else day_str(h)))
             self._own = own
         return self._own
 
     def _owner_pattern(self, eid, d: date, key: str):
-        """('closed', evidence) when the owner's own entries on other holidays say closed, else None."""
+        """(hours, evidence) from the owner's own entries for this season or other holidays, else None."""
         own = self._owner_index()
         ent = self.ents[eid]
         cc = ent["meta"]["countryCode"]
+        if self._own_class.get((cc, key)) is None or self.entry(eid, d, self.snap) is not None:
+            return None  # not a calendar day_key (EVENT, SCHOOL_BREAK), or the owner already entered this date
+        mine = own.get(eid, {})
+        if key in mine:
+            # Same day_key on other dates: only same-season siblings (e.g. INTERDAY 28 Dec entered, 29 Dec not).
+            # Earlier seasons belong to the last-year / two-year rules.
+            sib = mine[key]
+            if any(cycle(date.fromisoformat(ds)) != cycle(d) for ds, _ in sib) or len({v for _, v in sib}) != 1:
+                return None
+            v = sib[0][1]
+            return (self.regular(eid, d) if v == "REGULAR" else v), \
+                f"already entered {'regular hours' if v == 'REGULAR' else v} for {key} " + \
+                ", ".join(ds for ds, _ in sib) + " this season"
         if self._own_class.get((cc, key)) not in self.OWNER_CLASSES:
             return None
-        mine = own.get(eid, {})
-        if key in mine or self.entry(eid, d, self.snap) is not None:
-            return None  # the owner entered this day_key (or this date) before: last-year / two-year rules decide
-        rel = sorted((ds, k, v) for k, (ds, v) in mine.items() if self._own_class.get((cc, k)) in self.OWNER_CLASSES)
+        rel = sorted((s[-1][0], k, s[-1][1]) for k, s in mine.items() if self._own_class.get((cc, k)) in self.OWNER_CLASSES)
         if len(rel) < self.OWNER_MIN_HOLIDAYS or any(v != "closed" for _, _, v in rel):
             return None
         b = self.bench.get((cc, self.tiers[ent["address"]["city"]], ent["c_segment"], key))

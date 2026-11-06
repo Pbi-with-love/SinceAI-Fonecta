@@ -123,3 +123,71 @@ Merge notes:
 - No overlap with `hyp-two-year`: the rule returns nothing when the business entered this day_key in any season.
 - It runs before the peer block and takes over rows where peers would also say `closed` (same answer). If `hyp-peer-tuning`
   makes peers *stay quiet* on some of those rows, this block still suggests `closed` there; re-score after that merge.
+
+## #2 Allow one non-closed holiday (closed share ≥ 0.75 instead of all) (REVERT)
+Hypothesis: owners with 3 of 4 holidays closed behave like all-closed owners; requiring all closed loses recall.
+Change: `_owner_pattern()` fires when ≥ 2 day_keys are closed and they are ≥ `OWNER_CLOSED_SHARE` of the related entries.
+Sweep (N = 2): share 1.0 → 55.20 / 54.03 · 0.75 → 55.10 / 54.43 · 0.6 → 55.03 / 54.06 · (0.75, peer ≥ 0.4) → 55.11 / 54.36.
+Dev 2026: 55.20 → 55.10   Back-test 2025: 54.03 → 54.43
+Wrong-state: 238 → 284 (dev), 280 → 328 (back-test)   Missed: 1,975 → 1,915 (dev), 2,074 → 1,979 (back-test)
+Decision: **REVERT**. Rule 7 alone would pass (sum +0.30, dev −0.10), but the parameter helps only one season and costs
++46 / +48 wrong-state rows. Rule 8 says to prefer the conservative value (all closed), and rule 14 points the same way.
+Evaluator output (dev 2026, then back-test 2025):
+```
+Score: 55.1 / 100   (dev_labels_2026.csv)
+  suggestions_made 3673 · precision_exact 0.889 · recall_exact 0.607 · harmful_suggestions 284
+  breakdown: {"correct_silence": 5497, "missed": 1915, "exact": 3264, "harmful_wrong_state": 284, "same_state_off": 48, "spam_wrong_hours": 53, "redundant_confirm": 17, "flag_correct": 11, "missed_closed_business": 4, "suggest_to_closed_business": 7}
+Score: 54.43 / 100   (dev_labels_2025_backtest.csv)
+  suggestions_made 3861 · precision_exact 0.884 · recall_exact 0.604 · harmful_suggestions 328
+  breakdown: {"correct_silence": 5278, "missed": 1979, "exact": 3414, "harmful_wrong_state": 328, "same_state_off": 73, "spam_wrong_hours": 46}
+```
+
+## Simulated only, not implemented (exact replica of the scorer on label rows; it matched the real model to 0.01 on #1 and #2)
+- **Owners with a single related holiday entered, all closed** (N = 1), peer gate 0.4 / 0.5 / 0.6 / 0.7 / 0.8: dev −0.07 /
+  −0.06 / −0.02 / 0.00 / 0.00, back-test +0.12 / +0.11 / +0.09 / −0.04 / −0.02. Never positive on both seasons.
+- **SCHOOL_BREAK same-season siblings** (autumn-break entry → Christmas-break dates): dev 11 exact but 6 wrong state
+  (autumn closures did not carry over); the back-test has no such rows, so rule 8 cannot justify it. Not attempted.
+
+## #3 Same-season sibling dates of the same day_key (KEEP)
+Hypothesis: if the owner already entered one INTERDAY date this season (e.g. 28 Dec closed) but not the others, the other
+dates of the same between-holidays period follow the same entry.
+Change: in `_owner_pattern()`, when the business has entries for this calendar day_key **only in this season** (none in
+earlier seasons, which belong to last year / two years ago) and they all have the same value, copy it. Calendar day_keys
+only (EVENT and SCHOOL_BREAK are excluded); today only INTERDAY has several dates per season. The `_owner_index()` now
+keeps every entry per day_key (rule #1 still uses the latest per day_key, unchanged). Evidence: `already entered closed for
+INTERDAY 2026-12-28 this season`. No parameter.
+Dev 2026: 55.20 → **55.24**   Back-test 2025: 54.03 → **54.13**
+Wrong-state: 238 → 238 (dev), 280 → 280 (back-test)   Missed: 1,975 → 1,973 (dev), 2,074 → 2,068 (back-test)
+Rows: 2 (dev) and 6 (back-test), all exact. It fires on 0 test rows of 2026 (all OWNER_PATTERN suggestions on
+`targets_2026.csv`: dev 227 + 2, test 670 + 0, demo 5 + 0), so its effect on the organisers' score is nil today.
+Decision: **KEEP**. Rule 7 passes (sum +0.14, both up), no new wrong state, no tuned parameter.
+Evaluator output (dev 2026, then back-test 2025):
+```
+Score: 55.24 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     3587
+  precision_exact                      0.899
+  recall_exact                         0.6
+  harmful_suggestions                  238
+  search_views_protected_pct           58.0
+  closed_door_views_prevented_pct      70.8
+  businesses_contacted                 737
+  avg_dates_per_contacted_business     4.87
+  ignored_prediction_rows_not_in_labels 10025
+  breakdown: {"correct_silence": 5525, "missed": 1973, "exact": 3225, "harmful_wrong_state": 238, "same_state_off": 48, "spam_wrong_hours": 53, "redundant_confirm": 16, "flag_correct": 11, "missed_closed_business": 4, "suggest_to_closed_business": 7}
+Score: 54.13 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     3748
+  precision_exact                      0.894
+  recall_exact                         0.592
+  harmful_suggestions                  280
+  search_views_protected_pct           56.6
+  closed_door_views_prevented_pct      70.3
+  businesses_contacted                 735
+  avg_dates_per_contacted_business     5.1
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5302, "missed": 2068, "exact": 3349, "harmful_wrong_state": 280, "same_state_off": 73, "spam_wrong_hours": 46}
+```
+Error report: matches `evaluate.py` (55.24 / 54.13) and `explain()` on every row. Output deterministic (two runs, `cmp`).
