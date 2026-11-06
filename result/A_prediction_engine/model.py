@@ -118,10 +118,7 @@ class Baseline:
             if op:
                 cand, basis, ev = op[0], "OWNER_PATTERN", op[1]
         if cand is None:
-            b = self.bench.get((ent["meta"]["countryCode"], self.tiers[ent["address"]["city"]], ent["c_segment"], key))
-            if b and b["closed_share_among_entered"] and float(b["closed_share_among_entered"]) >= 0.7 and \
-                    float(b["share_entered_closed"]) >= 0.15 and shown != "closed":
-                cand, basis, ev = "closed", "PEERS", float(b["closed_share_among_entered"])
+            cand, basis, ev = self._peer_candidate(ent, d, key, shown)
         if cand and cand != shown:
             return "SUGGEST", cand, basis, ev
         return "NO_ACTION", "", basis, ev
@@ -179,6 +176,42 @@ class Baseline:
         if o == reg_then[:5] and c != reg_then[-5:] and reg_now[:5] < c:
             return f"{reg_now[:5]}-{c}"
         return e
+
+    # Peer block (hyp-peer-tuning, AGENTS.md section 5 #3 + #4). Only reached when nothing above gave a candidate.
+    # peer_benchmarks.csv describes what similar businesses (country, city tier, segment) *entered* for a day_key.
+    # PEER_MIN_CLOSED_AMONG_ENTERED: most peers who entered something entered "closed".
+    # PEER_MIN_SHARE_ENTERED_CLOSED: enough of *all* peers entered "closed" (peers who entered nothing mostly
+    # stay open, so the share among enterers alone overstates closures).
+    # PEER_CLOSED_DAY_CLASSES: calendar day classes on which peers' closures carry over to a business that entered
+    # nothing: public holidays (MAJOR, SOFT) and the major eves (Christmas Eve, Midsummer Eve). Minor eves, days
+    # between holidays, commercial days and observances are normal working days for most businesses.
+    PEER_MIN_CLOSED_AMONG_ENTERED = 0.5
+    PEER_MIN_SHARE_ENTERED_CLOSED = 0.15
+    PEER_CLOSED_DAY_CLASSES = ("MAJOR", "EVE_MAJOR", "SOFT")
+
+    def _day_class(self, cc, d):
+        if not hasattr(self, "_day_classes"):
+            self._day_classes = {(r["country"], r["date"]): r["day_class"] for r in self.cal}
+        return self._day_classes.get((cc, d.isoformat()))
+
+    def _peer_candidate(self, ent, d, key, shown):
+        """(candidate hours, basis, evidence) from peer benchmarks, or (None, None, None)."""
+        cc, tier, seg = ent["meta"]["countryCode"], self.tiers[ent["address"]["city"]], ent["c_segment"]
+        b = self.bench.get((cc, tier, seg, key))
+        if not b or not b["closed_share_among_entered"]:
+            return None, None, None
+        if self._day_class(cc, d) not in self.PEER_CLOSED_DAY_CLASSES:
+            return None, None, None
+        if shown == "00:00-23:59":  # round-the-clock businesses (24/7 gyms, emergency vets) do not follow peer closures
+            return None, None, None
+        closed_among_entered = float(b["closed_share_among_entered"])
+        entered_closed = float(b["share_entered_closed"])
+        if shown != "closed" and closed_among_entered >= self.PEER_MIN_CLOSED_AMONG_ENTERED and \
+                entered_closed >= self.PEER_MIN_SHARE_ENTERED_CLOSED:
+            return "closed", "PEERS", (f"{closed_among_entered:.0%} of similar businesses ({seg}, {tier}, {cc}) "
+                                       f"that entered {key} hours were closed; {entered_closed:.0%} of all of them "
+                                       f"entered closed")
+        return None, None, None
 
     def predict(self, eid, d: date, key: str):
         a, h, _, _ = self.explain(eid, d, key)
