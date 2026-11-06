@@ -30,3 +30,12 @@ Checks on merged main: both seasons byte-identical on two runs; snapshot audit P
 Why the back-test beat the Phase-2 estimate (+7.56 vs ~+7.4): on the 548 rows the estimate covered, +7.82 (16 more exact than a plain copy thanks to the opening alignment, 30 same-state-off at +0.2, 18 left quiet); on all other rows −0.26 (70 newly messaged rows that were already right −50.5 pts, PEERS → TWO_YEARS_AGO +25.4, unreachable last-season EVENT/SCHOOL_BREAK rows +9.4).
 Rule 8 note: OLDER_SEASON is worth +3.23 on dev and cannot be measured on the back-test (nothing before the 2023 season). Kept as merged: same logic as TWO_YEARS_AGO, no tuned parameter. Without it: 61.45 / 60.79.
 Decision: KEEP — rule 7 passes (sum 107.72 → 125.47, neither season drops).
+
+## #2 hyp/owner-pattern merged (#5 owner's own pattern) — KEEP (automatic under the human's freeze rules, 2026-11-07)
+Hypothesis: a business that was closed on every other major holiday it entered is closed on a major holiday it never entered; same-season sibling dates (INTERDAY) copy each other.
+Change: new OWNER_PATTERN block between TWO_YEARS_AGO and PEERS (day_class MAJOR/SOFT/EVE_MAJOR, ≥2 other holidays all closed, peer closed_share_among_entered ≥ 0.3). Full log: `experiments/hyp-owner-pattern.md`. Merge commit a883455 (synced with main b05c573 first, no conflicts).
+Dev 2026: 64.68 → 65.42   Back-test 2025: 60.79 → 61.69
+Wrong-state: 339 → 353 (296 → 327)   Missed: 1,246 → 1,185 (1,622 → 1,523)   Precision 0.866 → 0.865 (0.884 → 0.879)   Recall 0.720 → 0.730 (0.664 → 0.678)
+Checks on merged main: byte-identical on two runs, both seasons; snapshot audit PASS on both seasons, including all 58,158 entries of the owner-pattern index; no labels/ or entity IDs.
+Caveat (fix #12): the peer gate uses the undated peer_benchmarks, so the back-test gain may be inflated; the dev gain is clean.
+Decision: KEEP — rule 7 passes (sum 125.47 → 127.11, neither season drops).
