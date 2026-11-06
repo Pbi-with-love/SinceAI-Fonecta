@@ -156,7 +156,17 @@ Team plan:
 
 This section applies only to Part A hypothesis testing. Section 6 steps 2–3 (reproduce the baseline, build `result/A_prediction_engine/analysis/error_report.py`) are done by **one agent, sequentially**, before any parallel work starts.
 
-**Prerequisite:** parallel work needs Git. The project has no Git yet. The human sets it up and commits the reproduced baseline and the error report to `main` before the first parallel agent starts.
+**Setup (done, not started):**
+
+| Orca worktree | Branch | Path | Hypothesis |
+|---|---|---|---|
+| `hyp-interday` | `hyp/interday` | `~/orca/workspaces/SinceAI-2026/hyp-interday` | #1 INTERDAY mapping |
+| `hyp-peer-tuning` | `hyp/peer-tuning` | `~/orca/workspaces/SinceAI-2026/hyp-peer-tuning` | #3 + #4 peer rule |
+| `hyp-two-year` | `hyp/two-year` | `~/orca/workspaces/SinceAI-2026/hyp-two-year` | #2 two-year lookback |
+
+- Remote: `git@github.com:Pbi-with-love/SinceAI-Fonecta.git`, branch `main`.
+- **Enforced by a Git hook** (`.git/hooks/pre-commit`, shared by all worktrees). On `hyp/<name>`, a commit is rejected if it contains any file other than `result/A_prediction_engine/model.py` and `result/A_prediction_engine/experiments/hyp-<name>.md`. Do not bypass it (`--no-verify` is forbidden). If it blocks you, stop and ask the human.
+- **Before an agent starts on a branch**, the branch must contain the error report. Once `error_report.py` is committed to `main`, run this in each worktree: `git merge --ff-only main`. If the fast-forward fails, stop and ask the human.
 
 1. One agent = one hypothesis from section 5, on its own Git branch `hyp/<short-name>` (or a Git worktree, e.g. an Orca worktree). Never work on `main`.
 2. Branch from the latest `main` that already has the reproduced baseline and the error report.
