@@ -133,7 +133,7 @@ Test one at a time. Each needs evidence from `result/A_prediction_engine/analysi
 | 4 | Supported | PEERS gives 117 (143) wrong-state rows, 63 (69) of them on rows that were already right |
 | 7 | Small | 66 shopping-centre rows lose points; only 21 (20) of those stores have their own last-season entry |
 | 8 | Small | 804 pilot rows on dev businesses. Accepted and edited ones are already in the history; only 28 rejected + 26 edited remain |
-| 1 | **Rejected as a source of points** | The overwrite bug is real, but no business has *differing* INTERDAY entries last season (0 of 24; 0 of 27), so the candidate never changes. LAST_YEAR × INTERDAY has only 25 (33) points available. INTERDAY's 453 (407) missed rows have no history (253) or older history only (200): that is #2 and #5 |
+| 1 | **Rejected as a source of points** (worktree removed) | The overwrite bug is real, but no business has *differing* INTERDAY entries last season (0 of 24; 0 of 27), so the candidate never changes. LAST_YEAR × INTERDAY has only 25 (33) points available. INTERDAY's 453 (407) missed rows have no history (253) or older history only (200): that is #2 and #5 |
 | 6 | **Rejected** | 0 unneeded FLAGs on dev 2026 (11 correct, 7 suggest-closed, 4 missed). Requiring a second signal can only lose correct flags |
 
 1. **INTERDAY mapping.** In `explain()`, `for p in prev:` overwrites the candidate, so every INTERDAY date this season may copy the *last* INTERDAY date with an entry last season. Try matching by position in the sequence or by weekday.
@@ -145,10 +145,16 @@ Test one at a time. Each needs evidence from `result/A_prediction_engine/analysi
 7. **Shopping centre precedence.** Check whether centre hours should override the store's own last-year entry.
 8. **Pilot log final hours.** Owner-edited 2025 hours as a high-confidence source for 2026.
 9. ~~**Confidence column.**~~ **Resolved:** `evaluate.py` reads `confidence` but never uses it in the score. Keep it only for our own ranking and messages.
-10. **Timezone-free review cutoff (rule 19).** The baseline computes the review cutoff with `datetime(...).timestamp()`, which uses the machine's local timezone, so the CSV can differ between machines. Use a fixed timezone. Expected score effect ≈ 0; this is a correctness fix.
-11. **Back-test `closed` leak (rule 5).** `ent.get("closed")` is the 2026-11-05 state but is also used for the 2025 back-test. No measurable effect today (no FLAG rows in the 2025 labels), but keep it in mind for any FLAG rule.
-
 Note on #1: confirmed in code. In `examples/baseline.py` the `for p in prev:` loop has no `break`, so a later date in the list overwrites earlier matches. Measured effect: none on this data (see the table above).
+
+Assignment (2026-11-07): #2 → `hyp-two-year`, #5 → `hyp-owner-pattern`, #3 + #4 → `hyp-peer-tuning`. #1 and #6 are rejected. #7 and #8 are small and not assigned.
+
+## 5b. Correctness fixes (on `main`, after the three merges)
+
+These are not hypotheses: they fix rule violations in the inherited baseline code. Do them **on `main`, after all three hypothesis branches are merged**, as separate experiments, scored on both seasons. No agent touches them before then.
+
+10. **Timezone-free review cutoff (rule 19).** The baseline computes the review cutoff with `datetime(...).timestamp()`, which uses the machine's local timezone, so the CSV can differ between machines. Use a fixed timezone. Expected score effect ≈ 0.
+11. **Back-test `closed` leak (rule 5).** `ent.get("closed")` is the 2026-11-05 state but is also used for the 2025 back-test. No measurable effect today (no FLAG rows in the 2025 labels), but it must not leak into any FLAG rule.
 
 ## 6. Workflow
 
@@ -192,17 +198,31 @@ Team plan:
 
 This section applies only to Part A hypothesis testing. Section 6 steps 2–3 (reproduce the baseline, build `result/A_prediction_engine/analysis/error_report.py`) are done by **one agent, sequentially**, before any parallel work starts.
 
-**Setup (done, not started):**
+**Setup (2026-11-07):**
 
-| Orca worktree | Branch | Path | Hypothesis |
-|---|---|---|---|
-| `hyp-interday` | `hyp/interday` | `~/orca/workspaces/SinceAI-2026/hyp-interday` | #1 INTERDAY mapping |
-| `hyp-peer-tuning` | `hyp/peer-tuning` | `~/orca/workspaces/SinceAI-2026/hyp-peer-tuning` | #3 + #4 peer rule |
-| `hyp-two-year` | `hyp/two-year` | `~/orca/workspaces/SinceAI-2026/hyp-two-year` | #2 two-year lookback |
+| Orca worktree | Branch | Path | Hypothesis | Basis | Place in the cascade |
+|---|---|---|---|---|---|
+| `hyp-two-year` | `hyp/two-year` | `~/orca/workspaces/SinceAI-2026/hyp-two-year` | #2 two-year lookback | `TWO_YEARS_AGO` | New block right after last year |
+| `hyp-owner-pattern` | `hyp/owner-pattern` | `~/orca/workspaces/SinceAI-2026/hyp-owner-pattern` | #5 owner's own pattern | `OWNER_PATTERN` | New block right before peers |
+| `hyp-peer-tuning` | `hyp/peer-tuning` | `~/orca/workspaces/SinceAI-2026/hyp-peer-tuning` | #3 + #4 peer rule | `PEERS` (+ new names) | The existing peer block |
 
-- Remote: `git@github.com:Pbi-with-love/SinceAI-Fonecta.git`, branch `main`.
-- **Enforced by a Git hook** (`.git/hooks/pre-commit`, shared by all worktrees). On `hyp/<name>`, a commit is rejected if it contains any file other than `result/A_prediction_engine/model.py` and `result/A_prediction_engine/experiments/hyp-<name>.md`. Do not bypass it (`--no-verify` is forbidden). If it blocks you, stop and ask the human.
-- **Before an agent starts on a branch**, the branch must contain the error report. Once `error_report.py` is committed to `main`, run this in each worktree: `git merge --ff-only main`. If the fast-forward fails, stop and ask the human.
+Final cascade after all merges: closed signals → shopping centre → last year → **two years ago** → **owner pattern** → **peers**. (`hyp-interday` for #1 was removed: the data rejected #1, see section 5.)
+
+- Remote: `git@github.com:Pbi-with-love/SinceAI-Fonecta.git`, branch `main`. Hypothesis branches are local; agents never push.
+- **Enforced by a Git hook** (`.git/hooks/pre-commit`, shared by all worktrees). On `hyp/<name>`, a commit is rejected if it contains any file other than `result/A_prediction_engine/model.py` and `result/A_prediction_engine/experiments/hyp-<name>.md`. A merge commit (while `MERGE_HEAD` exists) is exempt, for syncing with `main`. Do not bypass it (`--no-verify` is forbidden). If it blocks you, stop and ask the human.
+- All three branches start from `main` with the error report (`257f381` or later).
+
+**Merge procedure (the human decides; the coordinator on `main` prepares):**
+
+Order: **two-year → owner-pattern → peer-tuning**. For each branch:
+
+1. **Prepare.** On `main`: `git merge --no-ff hyp/<name>`. Two-year and owner-pattern both insert a block between last year and peers, so expect a conflict there: keep both blocks, in cascade order.
+2. **Score both seasons** on the merged `main`, and run the error report.
+3. **Stop and report** to the human: scores before and after, rule 7 check, conflicts and how they were resolved.
+4. **Push only when the human answers "giữ" (keep).** On any other answer, undo the local merge (`git reset --hard <main before the merge>`; nothing was pushed) and log it as reverted.
+5. **Sync the remaining branches.** In each remaining worktree: `git merge main` (a merge commit, exempt from the hook), then re-score both seasons and run the error report. A branch is merged only after this re-score still passes rule 7 against the new `main`.
+
+Agents never run steps 1–5 themselves.
 
 1. One agent = one hypothesis from section 5, on its own Git branch `hyp/<short-name>` (or a Git worktree, e.g. an Orca worktree). Never work on `main`.
 2. Branch from the latest `main` that already has the reproduced baseline and the error report.

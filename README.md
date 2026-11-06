@@ -24,6 +24,7 @@ Local businesses forget to enter holiday and special-day opening hours, so Googl
 ├── AGENTS.md              ← rules and context for AI coding agents
 ├── CLAUDE.md              ← imports AGENTS.md for Claude Code
 ├── DATASET_ANALYSIS.md    ← what each dataset file is and what it is for
+├── PROMPT_SOLUTION.md     ← prompts for the coordinator and the hypothesis agents (Part A)
 ├── result/                ← our solution, one folder per part (work order A → E)
 │   ├── A_prediction_engine/
 │   │   ├── model.py           ← our engine, from examples/baseline.py
