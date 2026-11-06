@@ -191,3 +191,32 @@ Score: 54.13 / 100   (dev_labels_2025_backtest.csv)
   breakdown: {"correct_silence": 5302, "missed": 2068, "exact": 3349, "harmful_wrong_state": 280, "same_state_off": 73, "spam_wrong_hours": 46}
 ```
 Error report: matches `evaluate.py` (55.24 / 54.13) and `explain()` on every row. Output deterministic (two runs, `cmp`).
+
+## Simulated after #3, not implemented
+- **#1 extended to other day classes, with the peer gate** (N 2/3, gate 0.3/0.5/0.7):
+  - EVE_MINOR target, EVE_MINOR evidence: at most +0.02 (dev) / +0.04 (back-test), with about 50 % of firings wrong
+    state.
+  - EVE_MINOR target, any-holiday evidence: −0.35 to +0.07.
+  - INTER target: −0.64 to 0.00 on every variant.
+  - OBS target: no firings.
+  - Stopped here: rule 14 (a coin flip is not worth −1 per miss).
+
+## Final (HEAD `e1cffd2`)
+| | Dev 2026 | Back-test 2025 |
+|---|---|---|
+| Reference (`main` 8bdc599) | 54.49 | 53.23 |
+| This branch | **55.24** (+0.75) | **54.13** (+0.90) |
+| Exact precision | 0.901 → 0.899 | 0.899 → 0.894 |
+| Exact recall | 0.590 → 0.600 | 0.578 → 0.592 |
+| Wrong state | 224 → 238 | 249 → 280 |
+| Missed | 2,034 → 1,973 | 2,167 → 2,068 |
+
+Kept #1 (all-closed owner + peer gate) and #3 (same-season siblings); reverted #2 (closed share 0.75, rule 8).
+The 637 / 782 "other hours" target rows are not recoverable from the owner's own entries (see Analysis).
+
+**Leakage note (back-test only).** `peer_benchmarks.csv` aggregates seasons 2023–2025 and has no dates, so it cannot be
+filtered by the 2025-11-06 snapshot. The 2025 season includes the Christmas 2025 dates being back-tested. #1 reads the
+cell's `closed_share_among_entered` as a gate (≥ 0.3). The baseline peer rule already has the same exposure.
+- The dev 2026 gain (+0.71 from #1) is clean: the benchmark ends before the 2026 snapshot.
+- The gate's effect is flat across 0.2–0.35, so a small shift in the cell values would not change the decision.
+- Every other input of the new code is filtered by `entered_at < snapshot` or is the public calendar.
