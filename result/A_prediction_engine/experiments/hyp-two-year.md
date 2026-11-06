@@ -288,3 +288,19 @@ value are 85% exact and 5% wrong-state (262 rows); rows with only a 2024 entry a
 rows); when the two seasons disagree on open/closed, the newer one is exact on 14 of 17. Agreement is not a useful
 filter. `confidence` is not scored, and `main()` writes a constant, so nothing was changed for it.
 Decision: KEEP (evidence only).
+
+## Summary for the merge
+Final (commit after #7): **dev 2026 64.68 (+10.19 vs 54.49) · back-test 2025 60.79 (+7.56 vs 53.23)**.
+Wrong-state 224 → 339 (2026), 249 → 296 (2025); missed 2034 → 1242, 2167 → 1622; exact 3171 → 3871, 3267 → 3754.
+
+- Code: `_two_seasons_ago()`, `_regular_on()`, `_align_to_regular()` plus a 2-line block right after the last-year
+  block in `explain()`. Nothing else in `model.py` changed (no edits to `load()`, `entry()`, `regular()`,
+  `displayed()`, the FLAG, shopping-centre, last-year or peer blocks, or `main()`).
+- Merge conflict to expect: `hyp-owner-pattern` also inserts a block between last year and peers. Keep both, mine
+  first: … last year → two years ago → owner pattern → peers.
+- #6 sends old REGULAR entries (and #5 sends old openings that now fall on a regular day off) to the next block. Today
+  that is the peer block; after the merge it is the owner-pattern block. Re-score that.
+- Rule 8 decision for the human: the `OLDER_SEASON` fallback (#2) is measurable only on dev. To drop it, change
+  `cycle(x) <= cycle(d) - 2` to `cycle(x) == cycle(d) - 2` in `_two_seasons_ago()` (a `git revert` of #2 would
+  conflict with later commits). Measured on the final code: **dev 61.45 · back-test 60.79** (vs 64.68 · 60.79):
+  precision 0.886, recall 0.671, harmful 268 on dev.
