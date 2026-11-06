@@ -114,6 +114,10 @@ class Baseline:
         if cand is None:  # hypothesis #2: same day_key two seasons ago
             cand, basis, ev = self._two_seasons_ago(eid, d, key)
         if cand is None:
+            op = self._owner_pattern(eid, d, key)
+            if op:
+                cand, basis, ev = op[0], "OWNER_PATTERN", op[1]
+        if cand is None:
             b = self.bench.get((ent["meta"]["countryCode"], self.tiers[ent["address"]["city"]], ent["c_segment"], key))
             if b and b["closed_share_among_entered"] and float(b["closed_share_among_entered"]) >= 0.7 and \
                     float(b["share_entered_closed"]) >= 0.15 and shown != "closed":
@@ -179,6 +183,64 @@ class Baseline:
     def predict(self, eid, d: date, key: str):
         a, h, _, _ = self.explain(eid, d, key)
         return a, h
+
+    # ---- Owner's own pattern (hypothesis #5, basis OWNER_PATTERN) -------------------------------------------------
+    # A business that never entered this day_key, but was closed on every *other* holiday it entered, is likely closed on
+    # this one too. "Holiday" = public holidays and major eves (day_class MAJOR, SOFT, EVE_MAJOR), both for the target and
+    # for the entries used as evidence. Fires only when the peer cell shows that closing on this day is common for the
+    # business type (OWNER_PEER_MIN): below 0.3, such owners were mostly open (dev labels: 2 of 13 closed in 2026, 0 of 20
+    # in the 2025 back-test).
+    OWNER_CLASSES = ("MAJOR", "SOFT", "EVE_MAJOR")
+    OWNER_MIN_HOLIDAYS = 2       # distinct other day_keys entered, all closed (latest entry per day_key)
+    OWNER_PEER_MIN = 0.3         # peer closed_share_among_entered for this day_key (flat 0.2-0.35, see log)
+
+    def _owner_index(self):
+        """entity -> {day_key: [(date, value), …]} of its own holiday entries entered before the snapshot (latest
+        entry per date wins), sorted by date."""
+        if getattr(self, "_own", None) is None:
+            snap = self.snap.isoformat()
+            self._own_class = {(r["country"], r["day_key"]): r["day_class"] for r in self.cal}
+            own = defaultdict(lambda: defaultdict(list))
+            for (eid, ds), rows in sorted(self.hol.items()):
+                rows = [r for r in rows if r["entered_at"] < snap]
+                if not rows:
+                    continue
+                r = max(rows, key=lambda r: r["entered_at"])
+                h = r["holidayHours"]
+                own[eid][r["day_key"]].append((ds, "REGULAR" if h.get("isRegularHours") else day_str(h)))
+            self._own = own
+        return self._own
+
+    def _owner_pattern(self, eid, d: date, key: str):
+        """(hours, evidence) from the owner's own entries for this season or other holidays, else None."""
+        own = self._owner_index()
+        ent = self.ents[eid]
+        cc = ent["meta"]["countryCode"]
+        if self._own_class.get((cc, key)) is None or self.entry(eid, d, self.snap) is not None:
+            return None  # not a calendar day_key (EVENT, SCHOOL_BREAK), or the owner already entered this date
+        mine = own.get(eid, {})
+        if key in mine:
+            # Same day_key on other dates: only same-season siblings (e.g. INTERDAY 28 Dec entered, 29 Dec not).
+            # Earlier seasons belong to the last-year / two-year rules.
+            sib = mine[key]
+            if any(cycle(date.fromisoformat(ds)) != cycle(d) for ds, _ in sib) or len({v for _, v in sib}) != 1:
+                return None
+            v = sib[0][1]
+            return (self.regular(eid, d) if v == "REGULAR" else v), \
+                f"already entered {'regular hours' if v == 'REGULAR' else v} for {key} " + \
+                ", ".join(ds for ds, _ in sib) + " this season"
+        if self._own_class.get((cc, key)) not in self.OWNER_CLASSES:
+            return None
+        rel = sorted((s[-1][0], k, s[-1][1]) for k, s in mine.items() if self._own_class.get((cc, k)) in self.OWNER_CLASSES)
+        if len(rel) < self.OWNER_MIN_HOLIDAYS or any(v != "closed" for _, _, v in rel):
+            return None
+        b = self.bench.get((cc, self.tiers[ent["address"]["city"]], ent["c_segment"], key))
+        if not b or not b["closed_share_among_entered"] or float(b["closed_share_among_entered"]) < self.OWNER_PEER_MIN:
+            return None
+        share = float(b["closed_share_among_entered"])
+        days = ", ".join(f"{k} {ds}" for ds, k, _ in rel)
+        return "closed", (f"closed on all {len(rel)} holidays it entered ({days}); "
+                          f"{share:.0%} of peers who entered hours for {key} were closed")
 
 
 def main():
