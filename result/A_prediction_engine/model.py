@@ -142,6 +142,8 @@ class Baseline:
             return None, None, None
         if self._day_class(cc, d) not in self.PEER_CLOSED_DAY_CLASSES:
             return None, None, None
+        if shown == "00:00-23:59":  # round-the-clock businesses (24/7 gyms, emergency vets) do not follow peer closures
+            return None, None, None
         closed_among_entered = float(b["closed_share_among_entered"])
         entered_closed = float(b["share_entered_closed"])
         if shown != "closed" and closed_among_entered >= self.PEER_MIN_CLOSED_AMONG_ENTERED and \

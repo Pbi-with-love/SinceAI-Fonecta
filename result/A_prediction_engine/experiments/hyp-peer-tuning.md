@@ -149,3 +149,48 @@ Score: 55.18 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5293, "missed": 1902, "exact": 3466, "harmful_wrong_state": 338, "same_state_off": 73, "spam_wrong_hours": 46}
 ```
+
+## #3 No peer "closed" for round-the-clock businesses
+Hypothesis: a business whose shown hours are 24 h (`00:00-23:59`: 24/7 gyms, emergency vets) does not follow its
+peers' holiday closures, so every peer `closed` suggestion to it is a wrong-state error.
+Evidence before: per archetype, only GYM lost points in all three seasons (2024 −10, 2025 −9, 2026 −8). The cause is not
+the archetype but the 24 h listing: peer `closed` on a business shown `00:00-23:59` was wrong 15 of 15 (2025) and
+13 of 13 (2026). In `dev_truth_history`, businesses shown 24 h that entered nothing for the day were closed on
+0 of 2,469 special days (2023–2026).
+Change: `_peer_candidate()` returns nothing when the shown hours are `00:00-23:59`.
+Dev 2026: 56.11 → 56.35   Back-test 2025: 55.18 → 55.44   (vs reference 54.49 / 53.23: +1.86 / +2.21)
+Wrong-state: 289 → 276 (338 → 323)   Missed: 1834 → 1834 (1902 → 1902)   Exact: 3324 → 3324 (3466 → 3466)
+Exact precision 0.890 → 0.893 (0.884 → 0.887); recall unchanged 0.618 (0.613)
+Error report, PEERS basis: wrong 182 → 169, points 756.7 → 769.7 (2026); wrong 232 → 217, 956.0 → 971.0 (2025).
+Generalises: it reads only the business's own published hours, so it covers any 24 h business of any type.
+Decision: KEEP — both seasons up, no exact hit lost.
+
+```
+Score: 56.35 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     3722
+  precision_exact                      0.893
+  recall_exact                         0.618
+  harmful_suggestions                  276
+  search_views_protected_pct           60.2
+  closed_door_views_prevented_pct      74.7
+  businesses_contacted                 744
+  avg_dates_per_contacted_business     5.0
+  ignored_prediction_rows_not_in_labels 10362
+  breakdown: {"correct_silence": 5526, "missed": 1834, "exact": 3324, "harmful_wrong_state": 276, "same_state_off": 48, "spam_wrong_hours": 53, "redundant_confirm": 17, "flag_correct": 11, "missed_closed_business": 7, "suggest_to_closed_business": 4}
+
+Score: 55.44 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     3908
+  precision_exact                      0.887
+  recall_exact                         0.613
+  harmful_suggestions                  323
+  search_views_protected_pct           58.2
+  closed_door_views_prevented_pct      73.1
+  businesses_contacted                 741
+  avg_dates_per_contacted_business     5.27
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5308, "missed": 1902, "exact": 3466, "harmful_wrong_state": 323, "same_state_off": 73, "spam_wrong_hours": 46}
+```
