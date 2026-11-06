@@ -111,6 +111,8 @@ class Baseline:
                 if last is not None:
                     cand = self.regular(eid, d) if last == "REGULAR" else last
                     basis, ev = "LAST_YEAR", (p.isoformat(), last)
+        if cand is None:  # hypothesis #2: same day_key two seasons ago
+            cand, basis, ev = self._two_seasons_ago(eid, d, key)
         if cand is None:
             b = self.bench.get((ent["meta"]["countryCode"], self.tiers[ent["address"]["city"]], ent["c_segment"], key))
             if b and b["closed_share_among_entered"] and float(b["closed_share_among_entered"]) >= 0.7 and \
@@ -119,6 +121,26 @@ class Baseline:
         if cand and cand != shown:
             return "SUGGEST", cand, basis, ev
         return "NO_ACTION", "", basis, ev
+
+    _older_idx = None  # (entity_id, history day_key) -> dates with an entry before the snapshot; built on first use
+
+    def _two_seasons_ago(self, eid, d: date, key: str):
+        """(cand, "TWO_YEARS_AGO", (date, entry)) from the business's own entry for this day_key two seasons back,
+        or (None, None, None). Seasons are matched through the history's own day_key, not the calendar: the calendar
+        starts 2024-01-01, so it cannot reach the Dec 2023 entries that "two seasons back" means for the 2025
+        back-test. Only entries made before the snapshot count."""
+        if self._older_idx is None:
+            snap, idx = self.snap.isoformat(), defaultdict(list)
+            for (e, ds), rows in self.hol.items():
+                if any(r["entered_at"] < snap for r in rows):
+                    idx[(e, rows[0]["day_key"])].append(date.fromisoformat(ds))
+            self._older_idx = idx
+        old = sorted(x for x in self._older_idx.get((eid, key), ()) if cycle(x) == cycle(d) - 2)
+        if not old:
+            return None, None, None
+        p = old[-1]
+        e = self.entry(eid, p, self.snap)
+        return (self.regular(eid, d) if e == "REGULAR" else e), "TWO_YEARS_AGO", (p.isoformat(), e)
 
     def predict(self, eid, d: date, key: str):
         a, h, _, _ = self.explain(eid, d, key)
