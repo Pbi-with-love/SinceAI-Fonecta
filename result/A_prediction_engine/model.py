@@ -135,12 +135,13 @@ class Baseline:
                 if any(r["entered_at"] < snap for r in rows):
                     idx[(e, rows[0]["day_key"])].append(date.fromisoformat(ds))
             self._older_idx = idx
-        old = sorted(x for x in self._older_idx.get((eid, key), ()) if cycle(x) == cycle(d) - 2)
+        old = sorted(x for x in self._older_idx.get((eid, key), ()) if cycle(x) <= cycle(d) - 2)
         if not old:
             return None, None, None
-        p = old[-1]
+        p = old[-1]  # newest season two or more back; latest date in it
         e = self.entry(eid, p, self.snap)
-        return (self.regular(eid, d) if e == "REGULAR" else e), "TWO_YEARS_AGO", (p.isoformat(), e)
+        basis = "TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"
+        return (self.regular(eid, d) if e == "REGULAR" else e), basis, (p.isoformat(), e)
 
     def predict(self, eid, d: date, key: str):
         a, h, _, _ = self.explain(eid, d, key)

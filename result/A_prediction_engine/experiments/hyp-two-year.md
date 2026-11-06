@@ -55,3 +55,49 @@ Score: 60.12 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5232, "missed": 1631, "exact": 3727, "harmful_wrong_state": 310, "same_state_off": 130, "spam_wrong_hours": 88}
 ```
+
+## #2 newest older season (lookback past two seasons)
+Hypothesis: if there is no entry two seasons back either, the newest entry for the `day_key` from any older season
+still predicts this season (the generator repeats each business's holiday habit year to year, with some change); for
+2026 this reaches the cycle-2023 entries (Dec 2023 / Jan 2024), expected about +3.0 on dev and no effect on the
+back-test (there is no season before 2023).
+Change: `_two_seasons_ago()` takes the newest season with `cycle <= cycle(d) - 2` (latest date in it). Basis
+`TWO_YEARS_AGO` when it is two seasons back, `OLDER_SEASON` when older; evidence still names the date used.
+Dev 2026: 61.17 → 64.15   Back-test 2025: 60.12 → 60.12
+Wrong-state: 271 → 346 (2026), 310 → 310 (2025)   Missed: 1550 → 1245 (2026), 1631 → 1631 (2025)
+Exact precision / recall: 0.882 / 0.668 → 0.86 / 0.715 (2026); back-test unchanged
+Error report (2026): OLDER_SEASON 507 rows: 345 exact, 26 off, 87 wrong-state, 46 noise (net 241.5 points);
+OLDER_ONLY missed rows 320 → 15.
+Decision: KEEP (rule 7: sum +2.98, neither season drops). **Rule 8 caveat:** the back-test cannot measure this
+(nothing older than 2023), so the gain is dev-only. No threshold was tuned (it is "use the newest entry the business
+made"), which is why I kept it, but it is a separate commit so the human can drop it with one `git revert`.
+
+```
+Score: 64.15 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     4473
+  precision_exact                      0.86
+  recall_exact                         0.715
+  harmful_suggestions                  346
+  search_views_protected_pct           70.9
+  closed_door_views_prevented_pct      80.8
+  businesses_contacted                 750
+  avg_dates_per_contacted_business     5.96
+  ignored_prediction_rows_not_in_labels 12232
+  breakdown: {"correct_silence": 5367, "missed": 1245, "exact": 3845, "harmful_wrong_state": 346, "same_state_off": 114, "spam_wrong_hours": 140, "redundant_confirm": 21, "flag_correct": 11, "missed_closed_business": 4, "suggest_to_closed_business": 7}
+
+Score: 60.12 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     4255
+  precision_exact                      0.876
+  recall_exact                         0.659
+  harmful_suggestions                  310
+  search_views_protected_pct           64.1
+  closed_door_views_prevented_pct      75.6
+  businesses_contacted                 746
+  avg_dates_per_contacted_business     5.7
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5232, "missed": 1631, "exact": 3727, "harmful_wrong_state": 310, "same_state_off": 130, "spam_wrong_hours": 88}
+```
