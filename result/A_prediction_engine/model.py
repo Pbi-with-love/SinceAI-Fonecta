@@ -142,7 +142,7 @@ class Baseline:
         e = self.entry(eid, p, self.snap)
         basis, ev = ("TWO_YEARS_AGO" if cycle(p) == cycle(d) - 2 else "OLDER_SEASON"), (p.isoformat(), e)
         if e == "REGULAR":
-            return self.regular(eid, d), basis, ev
+            return None, None, None  # "regular hours" two or more seasons ago: too weak to overrule the next blocks
         if e == "closed":
             return e, basis, ev
         reg_then, reg_now = self._regular_on(eid, p), self.regular(eid, d)

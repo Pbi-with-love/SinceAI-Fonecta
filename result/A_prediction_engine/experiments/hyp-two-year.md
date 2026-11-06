@@ -234,3 +234,45 @@ Score: 60.59 / 100   (dev_labels_2025_backtest.csv)
   ignored_prediction_rows_not_in_labels 0
   breakdown: {"correct_silence": 5248, "missed": 1634, "exact": 3742, "harmful_wrong_state": 295, "same_state_off": 112, "spam_wrong_hours": 87}
 ```
+
+## #6 an old "regular hours" entry falls through
+Hypothesis: an `isRegularHours` entry two or more seasons old is weak evidence (in #2's label check these rows needed
+action 9 of 80 times on dev and 19 of 48 on the back-test, against about 1 in 9 for old `closed` entries), but today
+it yields cand = regular = shown, which silences the row and stops the peer block from acting.
+Change: `_two_seasons_ago()` returns no candidate for an old REGULAR entry, so the cascade continues.
+Dev 2026: 64.60 → 64.68   Back-test 2025: 60.59 → 60.79
+Wrong-state: 338 → 339 (2026), 295 → 296 (2025)   Missed: 1247 → 1242 (2026), 1634 → 1622 (2025)
+Exact: 3866 → 3871 (2026), 3742 → 3754 (2025)
+Error report: PEERS 477 → 484 rows, exact 388 → 393 (2026); 840 → 853 rows, exact 726 → 738 (2025).
+Decision: KEEP (rule 7: both seasons up, sum +0.28). Merge note: these rows now go to whatever follows this block,
+the owner-pattern block and then the peer block after the merges, so re-score this effect after each merge.
+
+```
+Score: 64.68 / 100   (dev_labels_2026.csv)
+  rows                                 11100
+  rows_needing_action                  5398
+  suggestions_made                     4469
+  precision_exact                      0.866
+  recall_exact                         0.72
+  harmful_suggestions                  339
+  search_views_protected_pct           71.1
+  closed_door_views_prevented_pct      80.8
+  businesses_contacted                 750
+  avg_dates_per_contacted_business     5.96
+  ignored_prediction_rows_not_in_labels 12225
+  breakdown: {"correct_silence": 5374, "missed": 1242, "exact": 3871, "harmful_wrong_state": 339, "same_state_off": 91, "spam_wrong_hours": 140, "redundant_confirm": 21, "flag_correct": 11, "missed_closed_business": 4, "suggest_to_closed_business": 7}
+
+Score: 60.79 / 100   (dev_labels_2025_backtest.csv)
+  rows                                 11118
+  rows_needing_action                  5654
+  suggestions_made                     4249
+  precision_exact                      0.884
+  recall_exact                         0.664
+  harmful_suggestions                  296
+  search_views_protected_pct           64.7
+  closed_door_views_prevented_pct      75.8
+  businesses_contacted                 746
+  avg_dates_per_contacted_business     5.7
+  ignored_prediction_rows_not_in_labels 0
+  breakdown: {"correct_silence": 5247, "missed": 1622, "exact": 3754, "harmful_wrong_state": 296, "same_state_off": 112, "spam_wrong_hours": 87}
+```
