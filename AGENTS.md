@@ -1,6 +1,8 @@
 # AGENTS.md — Instructions for AI coding agents
 
 > Codex and other agents read this file automatically. Claude Code reads it through `CLAUDE.md`, which imports it (`@AGENTS.md`).
+>
+> **Then read `AGENTS.local.md` in the root of your worktree.** It holds *this* worktree's assignment: your role, your hypothesis, the only files you own, what the other agents are doing, and your progress notes. It is git-ignored, so each worktree has its own copy. If it is missing, stop and ask the human. If it conflicts with this file, this file wins.
 
 You are working on our team's entry for the Fonecta challenge "Connect Suggests – Customer Approves" (Since AI Hackathon 2026). Read this whole file before writing any code. The rules in section 2 are **hard rules**: if a task seems to require breaking one, stop and ask the human instead.
 

@@ -8,3 +8,6 @@ __pycache__/
 # Secrets: Yext key lives only in environment variables
 .env
 .env.*
+
+# Per-worktree agent assignment (never committed)
+AGENTS.local.md
