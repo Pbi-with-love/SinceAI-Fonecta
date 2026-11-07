@@ -1,0 +1,1976 @@
+{
+  "name": "Connect · Step 3 Contact",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5393e3eb-64b9-4b36-a7f9-8f5e427f73f9",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "TELEGRAM_STAFF_CHAT_ID",
+              "type": "string",
+              "value": "<__PLACEHOLDER_VALUE__Telegram chat ID of the staff group__>"
+            },
+            {
+              "id": "c2",
+              "name": "YEXT_BASE_URL",
+              "type": "string",
+              "value": "https://sbx-api.yextapis.com/v2/accounts/me"
+            },
+            {
+              "id": "c3",
+              "name": "YEXT_VERSION",
+              "type": "string",
+              "value": "20261106"
+            },
+            {
+              "id": "c5",
+              "name": "UNDO_WINDOW_HOURS",
+              "type": "number",
+              "value": 24
+            },
+            {
+              "id": "c6",
+              "name": "bundle_ids",
+              "type": "array",
+              "value": "={{ Array.isArray($json.body?.bundle_ids) ? $json.body.bundle_ids : [] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c06443af-088b-48dd-b902-9fa0b789125e",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "connect-contact",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0e622453-cad3-4945-84b6-b1a4e1e5a535",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        368
+      ],
+      "webhookId": "f5e03e72-1108-4664-8668-102cda340fa2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "I0F8zdyD4IKk5YIY",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "returnAll": true,
+        "orderBy": "created_at",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "QUEUED"
+            }
+          ]
+        }
+      },
+      "id": "99f83e1b-b337-4102-8893-4b7e8d420637",
+      "name": "Get Queued Bundles",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        512,
+        272
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config').first().json;\nconst all = $input.all().map(i => i.json);\nconst first = all[0] || {};\nif (first.error && !first.bundle_id) {\n  const e = first.error;\n  return [{ json: { _empty: true, fetch_error: typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e) } }];\n}\nlet rows = all.filter(r => r && r.bundle_id);\nconst ids = Array.isArray(cfg.bundle_ids) ? cfg.bundle_ids.map(String) : [];\nif (ids.length) rows = rows.filter(r => ids.includes(String(r.bundle_id)));\nif (!rows.length) return [{ json: { _empty: true, fetch_error: null } }];\nreturn rows.map(r => ({ json: r }));"
+      },
+      "id": "4b25a65f-4074-41e4-9fdd-937d92e3d4a7",
+      "name": "Filter Requested",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "not-empty",
+              "leftValue": "={{ $json._empty === true }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "625f8fd9-cb28-46cc-8d35-6ef0db0a5090",
+      "name": "Any queued?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.all().map(i => i.json).filter(r => r && r.route);\nconst byBundle = {};\nraw.forEach(r => { byBundle[r.bundle_id] = r; });\nconst rows = Object.values(byBundle);\nlet fetchError = null;\ntry { fetchError = $('Filter Requested').first().json.fetch_error || null; } catch (e) { fetchError = null; }\nconst per_route = {};\nconst per_result = {};\nrows.forEach(r => {\n  per_route[r.route] = (per_route[r.route] || 0) + 1;\n  per_result[r.result] = (per_result[r.result] || 0) + 1;\n});\nreturn [{ json: { total: rows.length, per_route, per_result, fetch_error: fetchError, bundles: rows } }];"
+      },
+      "id": "7725320d-8d82-435d-b374-114b5cfc566f",
+      "name": "Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const b = $json;\nlet route = String(b.route || \"\").toUpperCase();\nlet reason = null;\nif (b.opted_out === true) { route = \"SKIP\"; reason = \"OPTED_OUT\"; }\nelse if (!b.telegram_chat_id) { route = \"SKIP\"; reason = \"NO_TELEGRAM_CHAT_ID\"; }\nelse if (![\"SKIP\", \"STAFF\", \"AUTO_APPLY\", \"SUGGEST\", \"ASK\"].includes(route)) { route = \"SKIP\"; reason = \"UNKNOWN_ROUTE_\" + route; }\nelse if (route === \"SKIP\") reason = \"ROUTE_SKIP\";\nreturn { json: Object.assign({}, b, { route_final: route, skip_reason: reason }) };"
+      },
+      "id": "33b2d4cf-ecba-464e-9a65-a817b1c2367f",
+      "name": "Route Guard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_final }}",
+                    "rightValue": "SKIP",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SKIP"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_final }}",
+                    "rightValue": "STAFF",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "STAFF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_final }}",
+                    "rightValue": "AUTO_APPLY",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "AUTO_APPLY"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.route_final }}",
+                    "rightValue": "SUGGEST",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  },
+                  {
+                    "leftValue": "={{ $json.route_final }}",
+                    "rightValue": "ASK",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              },
+              "renameOutput": true,
+              "outputKey": "SUGGEST / ASK"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a055252a-f6e0-4f39-a8e3-cf5f0ad6fc15",
+      "name": "Route",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1744,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.bundle_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "SKIPPED"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "e5c5d7d4-f460-412f-9913-82fe8b454a79",
+      "name": "Set SKIPPED",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        528
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rg = $('Route Guard').item.json;\nconst e = $json.error;\nconst err = e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : null;\nreturn { json: { bundle_id: rg.bundle_id, route: \"SKIP\", result: err ? \"ERROR\" : \"SKIPPED\", error: err || rg.skip_reason } };"
+      },
+      "id": "ea5fda3d-a8ef-489f-9bff-a00e10e00951",
+      "name": "Done SKIP",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1.2
+      },
+      "id": "3a5bdabd-12ee-4c2b-ab46-d5d03b93a113",
+      "name": "Wait 1.2 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4432,
+        768
+      ],
+      "webhookId": "22e617ce-de61-453e-9029-752ff85f6c9e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "66e925fe-cd91-4401-bce2-12e4e757d891",
+      "name": "Loop Over Bundles",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1264,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const cfg = $('Config').first().json;\nreturn { json: {\n  chat_id: String(cfg.TELEGRAM_STAFF_CHAT_ID || \"\"),\n  language: \"en\",\n  text: null,\n  key: \"msg_staff_flag\",\n  params: { business_name: $json.business_name || \"?\", entity_id: $json.entity_id || \"?\", text: $json.intro_text || \"\" },\n  lines: [],\n  buttons: [],\n  edit_message_id: null,\n} };"
+      },
+      "id": "7fe318a7-3422-48aa-8867-1eddff5464f1",
+      "name": "Staff Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3TQmfWp5iP706Ax7",
+          "cachedResultName": "Connect · Reply"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $json.chat_id }}",
+            "language": "={{ $json.language }}",
+            "text": "={{ $json.text }}",
+            "key": "={{ $json.key }}",
+            "params": "={{ $json.params }}",
+            "lines": "={{ $json.lines }}",
+            "buttons": "={{ $json.buttons }}",
+            "edit_message_id": "={{ $json.edit_message_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "params",
+              "displayName": "params",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "lines",
+              "displayName": "lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "buttons",
+              "displayName": "buttons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "edit_message_id",
+              "displayName": "edit_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "21f7c7d1-db03-4943-a63c-e85beafbeb69",
+      "name": "Send Staff Flag",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        720
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rg = $('Route Guard').item.json;\nconst e = $json.error;\nconst ok = $json.ok === true;\nconst err = ok ? null : (e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : \"staff message not sent\");\nreturn { json: { bundle_id: rg.bundle_id, route: \"STAFF\", result: ok ? \"STAFF_FLAGGED\" : \"STAFF_SEND_FAILED\", error: err } };"
+      },
+      "id": "865813ab-5bc9-44b6-823e-204d01f37435",
+      "name": "Done STAFF",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.bundle_id }}"
+            }
+          ]
+        }
+      },
+      "id": "1ea9ae54-756e-4957-a829-e9f54c31239f",
+      "name": "Get Bundle Items",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        944
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r && r.id !== undefined && r.id !== null);\nif (!rows.length) return [{ json: { _none: true }, pairedItem: { item: 0 } }];\nreturn rows.map(r => ({ json: r, pairedItem: { item: 0 } }));"
+      },
+      "id": "54bcd1bf-0a48-4a02-a263-faaadc2492e7",
+      "name": "Check Items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has",
+              "leftValue": "={{ $json._none === true }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3cf38658-2417-4401-af10-40a6a36720bb",
+      "name": "Has items?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2480,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "final_hours",
+              "fieldValue": "={{ $json.proposed_hours }}"
+            }
+          ]
+        }
+      },
+      "id": "c31fc2b3-e329-4a78-8857-44ff11bfa158",
+      "name": "Set final = proposed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        944
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const expected = $('Check Items').all().length;\nconst done = $input.all().map(i => i.json).filter(r => r && r.id !== undefined && r.id !== null && !r.error).length;\nreturn [{ json: { ok: done === expected && expected > 0, updated: done, expected }, pairedItem: { item: 0 } }];"
+      },
+      "id": "3119324f-0ddc-4614-98e4-67f60b747ba0",
+      "name": "All items updated?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2960,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ok",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d665a60f-db9b-4c1a-a2d1-e3e04d9bd4c6",
+      "name": "Updates OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3200,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Route Guard').item.json.bundle_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "APPROVED"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "38b25d7f-6a1b-4153-a76b-886537e934dd",
+      "name": "Set APPROVED",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3440,
+        944
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "decisions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "bundle_id",
+              "fieldValue": "={{ $('Route Guard').item.json.bundle_id }}"
+            },
+            {
+              "fieldId": "action",
+              "fieldValue": "APPROVE"
+            },
+            {
+              "fieldId": "raw_text",
+              "fieldValue": "AUTO_APPLY standing permission"
+            },
+            {
+              "fieldId": "parser",
+              "fieldValue": "SYSTEM"
+            }
+          ]
+        }
+      },
+      "id": "e7b61783-f878-4669-9c68-340e09c399c3",
+      "name": "Log APPROVE",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3680,
+        944
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "sVqz2sS9rDOZkP5m",
+          "cachedResultName": "Connect · Apply to Yext"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "bundle_id": "={{ $('Route Guard').item.json.bundle_id }}",
+            "mode": "APPLY",
+            "notify": "AUTO",
+            "YEXT_BASE_URL": "={{ $('Config').first().json.YEXT_BASE_URL }}",
+            "YEXT_VERSION": "={{ $('Config').first().json.YEXT_VERSION }}",
+            "TELEGRAM_STAFF_CHAT_ID": "={{ $('Config').first().json.TELEGRAM_STAFF_CHAT_ID }}",
+            "UNDO_WINDOW_HOURS": "={{ $('Config').first().json.UNDO_WINDOW_HOURS }}"
+          },
+          "schema": [
+            {
+              "id": "bundle_id",
+              "displayName": "bundle_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "notify",
+              "displayName": "notify",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_BASE_URL",
+              "displayName": "YEXT_BASE_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_VERSION",
+              "displayName": "YEXT_VERSION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "TELEGRAM_STAFF_CHAT_ID",
+              "displayName": "TELEGRAM_STAFF_CHAT_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "UNDO_WINDOW_HOURS",
+              "displayName": "UNDO_WINDOW_HOURS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "7d354d72-86b4-428e-b4be-a9c497550a95",
+      "name": "Apply to Yext (AUTO)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        3920,
+        944
+      ],
+      "executeOnce": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rg = $('Route Guard').item.json;\nconst j = $json;\nconst e = j.error;\nconst errText = e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : null;\nlet result, error = null;\nif (j._none === true) { result = \"AUTO_NO_ITEMS\"; error = \"bundle has no items\"; }\nelse if (j.ok === false) { result = \"AUTO_ITEM_UPDATE_FAILED\"; error = \"updated \" + j.updated + \" of \" + j.expected; }\nelse if (j.status) { result = \"AUTO_\" + j.status; error = j.error || null; }\nelse if (errText) { result = \"ERROR\"; error = errText; }\nelse { result = \"AUTO_UNKNOWN\"; }\nreturn { json: { bundle_id: rg.bundle_id, route: \"AUTO_APPLY\", result, error } };"
+      },
+      "id": "b675a6a5-ccfa-4a30-b6e8-9705d84da8cc",
+      "name": "Done AUTO",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4160,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const b = $json;\nconst id = b.bundle_id;\nconst buttons = b.route_final === \"ASK\"\n  ? [{ key: \"btn_closed\", data: \"qc:\" + id }, { key: \"btn_regular\", data: \"qr:\" + id }, { key: \"btn_edit\", data: \"e:\" + id }]\n  : [{ key: \"btn_approve\", data: \"a:\" + id }, { key: \"btn_edit\", data: \"e:\" + id }, { key: \"btn_decline\", data: \"d:\" + id }];\nreturn { json: {\n  chat_id: String(b.telegram_chat_id),\n  language: [\"fi\", \"sv\", \"nb\", \"en\"].includes(b.language) ? b.language : \"en\",\n  text: b.intro_text || \"\",\n  key: null,\n  params: {},\n  lines: [],\n  buttons,\n  edit_message_id: null,\n} };"
+      },
+      "id": "63f5bfa2-9d71-44d1-a743-e4b9a668a776",
+      "name": "Intro Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3TQmfWp5iP706Ax7",
+          "cachedResultName": "Connect · Reply"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $json.chat_id }}",
+            "language": "={{ $json.language }}",
+            "text": "={{ $json.text }}",
+            "key": "={{ $json.key }}",
+            "params": "={{ $json.params }}",
+            "lines": "={{ $json.lines }}",
+            "buttons": "={{ $json.buttons }}",
+            "edit_message_id": "={{ $json.edit_message_id }}"
+          },
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "params",
+              "displayName": "params",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "lines",
+              "displayName": "lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "buttons",
+              "displayName": "buttons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "edit_message_id",
+              "displayName": "edit_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "0a0aa5b8-773c-4a91-81e5-bdb10f73dca1",
+      "name": "Send Intro",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2240,
+        1328
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ok",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d09ff7ea-c7cb-4e5a-af59-20793a814bb5",
+      "name": "Sent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2480,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Route Guard').item.json.bundle_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "SENT"
+            },
+            {
+              "fieldId": "telegram_message_id",
+              "fieldValue": "={{ $json.telegram_message_id }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "7a8e7a2a-f6fa-471b-9bc5-c48bd5c8d064",
+      "name": "Set SENT",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1232
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rg = $('Route Guard').item.json;\nlet sent = null;\ntry { sent = $('Send Intro').item.json; } catch (err) { sent = null; }\nconst e = $json.error;\nconst isNodeError = e && typeof e === \"object\";\nlet result, error = null;\nif (sent && sent.ok === true && !isNodeError) { result = \"SENT\"; }\nelse if (sent && sent.ok === false) { result = \"SEND_FAILED\"; error = sent.error; }\nelse { result = \"ERROR\"; error = e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : \"unknown\"; }\nif (sent && sent.ok === true && isNodeError) { result = \"SENT_STATUS_NOT_SAVED\"; error = e.message || JSON.stringify(e); }\nreturn { json: { bundle_id: rg.bundle_id, route: rg.route_final, result, error } };"
+      },
+      "id": "4a1b78ef-4d2a-411c-8753-91ab34b3e34a",
+      "name": "Done SEND",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2960,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "decisions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "bundle_id",
+              "fieldValue": "={{ $('Route Guard').item.json.bundle_id }}"
+            },
+            {
+              "fieldId": "action",
+              "fieldValue": "SKIP"
+            },
+            {
+              "fieldId": "raw_text",
+              "fieldValue": "={{ $json.error || 'Telegram send failed' }}"
+            },
+            {
+              "fieldId": "parser",
+              "fieldValue": "SYSTEM"
+            }
+          ]
+        }
+      },
+      "id": "53655c8a-f539-48e1-b995-58394b8e6a63",
+      "name": "Log Send Failed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1424
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "wh",
+              "leftValue": "={{ $('Webhook').isExecuted }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a2d3d87b-9d86-435e-8d5d-929b3032509c",
+      "name": "Triggered by webhook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6c96086e-8b55-444d-aa9e-2a59d8ca9ba3",
+      "name": "Respond with Summary",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1984,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Fetch queued\nReads all bundles with status QUEUED (optionally only body.bundle_ids). Errors and empty results go straight to the summary.",
+        "height": 420,
+        "width": 1240,
+        "color": 5
+      },
+      "id": "5df597df-a0c9-4e03-9463-935d6c2e1997",
+      "name": "Fetch queued",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Route\nRoute Guard forces SKIP when the owner opted out or has no Telegram chat. Then: SKIP / STAFF / AUTO_APPLY / SUGGEST+ASK.",
+        "height": 260,
+        "width": 460,
+        "color": 6
+      },
+      "id": "5139b542-07ed-4556-96ee-2af289e8ec89",
+      "name": "Route 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Send one by one\nOne bundle per loop turn. SUGGEST: Approve / Edit / No thanks. ASK: Closed / Open as usual / Edit. Status becomes SENT only when Telegram confirms. 1.2 s pause per bundle.",
+        "height": 460,
+        "width": 1140,
+        "color": 4
+      },
+      "id": "cc3a7e7e-c1d0-402f-ab1d-f1749fa6f9aa",
+      "name": "Send one by one",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Summary\nCounts per route and per result, returned to the webhook caller.",
+        "height": 240,
+        "width": 760,
+        "color": 3
+      },
+      "id": "7d7c9299-c015-4e9b-b5fc-6d5e924e7359",
+      "name": "Summary 1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Lane SKIP\nOwner opted out, no Telegram chat or unknown route: mark SKIPPED and log the reason. Nothing is sent.",
+        "height": 200,
+        "width": 640,
+        "color": 7
+      },
+      "id": "ed5ce622-8308-49dd-a7d0-0eea6d4ece40",
+      "name": "Lane SKIP",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Lane STAFF\nNeeds a human: post the case to the staff chat. Bundle status stays QUEUED.",
+        "height": 200,
+        "width": 640,
+        "color": 2
+      },
+      "id": "e7548b60-25b4-4be3-9195-5580666b0336",
+      "name": "Lane STAFF",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Lane AUTO_APPLY (standing permission)\nfinal_hours = proposed_hours for every item, status APPROVED, log, then Apply to Yext. The owner is told afterwards with an Undo button.",
+        "height": 200,
+        "width": 2340,
+        "color": 3
+      },
+      "id": "30076788-dee8-4ea0-9a0e-d00833080cf7",
+      "name": "Lane AUTO_APPLY",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "decisions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "bundle_id",
+              "fieldValue": "={{ $('Route Guard').item.json.bundle_id }}"
+            },
+            {
+              "fieldId": "action",
+              "fieldValue": "SKIP"
+            },
+            {
+              "fieldId": "raw_text",
+              "fieldValue": "={{ $('Route Guard').item.json.skip_reason }}"
+            },
+            {
+              "fieldId": "parser",
+              "fieldValue": "SYSTEM"
+            }
+          ]
+        }
+      },
+      "id": "0cad383a-b6f0-4518-9677-d85a99b97433",
+      "name": "Log SKIP",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        528
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Get Queued Bundles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Queued Bundles": {
+      "main": [
+        [
+          {
+            "node": "Filter Requested",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Filter Requested",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Requested": {
+      "main": [
+        [
+          {
+            "node": "Any queued?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any queued?": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Bundles",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Triggered by webhook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Guard": {
+      "main": [
+        [
+          {
+            "node": "Route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route": {
+      "main": [
+        [
+          {
+            "node": "Set SKIPPED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Staff Payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Bundle Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Intro Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set SKIPPED": {
+      "main": [
+        [
+          {
+            "node": "Log SKIP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done SKIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done SKIP": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.2 s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1.2 s": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Bundles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Bundles": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Staff Payload": {
+      "main": [
+        [
+          {
+            "node": "Send Staff Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Staff Flag": {
+      "main": [
+        [
+          {
+            "node": "Done STAFF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done STAFF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done STAFF": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.2 s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Bundle Items": {
+      "main": [
+        [
+          {
+            "node": "Check Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Items": {
+      "main": [
+        [
+          {
+            "node": "Has items?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has items?": {
+      "main": [
+        [
+          {
+            "node": "Set final = proposed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set final = proposed": {
+      "main": [
+        [
+          {
+            "node": "All items updated?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "All items updated?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All items updated?": {
+      "main": [
+        [
+          {
+            "node": "Updates OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Updates OK?": {
+      "main": [
+        [
+          {
+            "node": "Set APPROVED",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set APPROVED": {
+      "main": [
+        [
+          {
+            "node": "Log APPROVE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log APPROVE": {
+      "main": [
+        [
+          {
+            "node": "Apply to Yext (AUTO)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply to Yext (AUTO)": {
+      "main": [
+        [
+          {
+            "node": "Done AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done AUTO",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done AUTO": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.2 s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intro Payload": {
+      "main": [
+        [
+          {
+            "node": "Send Intro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Intro": {
+      "main": [
+        [
+          {
+            "node": "Sent?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done SEND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sent?": {
+      "main": [
+        [
+          {
+            "node": "Set SENT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Send Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set SENT": {
+      "main": [
+        [
+          {
+            "node": "Done SEND",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done SEND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done SEND": {
+      "main": [
+        [
+          {
+            "node": "Wait 1.2 s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Send Failed": {
+      "main": [
+        [
+          {
+            "node": "Done SEND",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done SEND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triggered by webhook?": {
+      "main": [
+        [
+          {
+            "node": "Respond with Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log SKIP": {
+      "main": [
+        [
+          {
+            "node": "Done SKIP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Done SKIP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "b1444b3d-b72f-4b40-b4b4-352d25a73ee8",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "07d184b165c6174ff8adbaf572afc94b95591c0d70b03269a37660687ca9f7c3"
+  },
+  "nodeGroups": [
+    {
+      "id": "af5068a0-36ce-478e-b73c-3e580965377f",
+      "name": "Fetch queued bundles",
+      "nodeIds": [
+        "c06443af-088b-48dd-b902-9fa0b789125e",
+        "99f83e1b-b337-4102-8893-4b7e8d420637",
+        "4b25a65f-4074-41e4-9fdd-937d92e3d4a7",
+        "625f8fd9-cb28-46cc-8d35-6ef0db0a5090"
+      ],
+      "description": "Manual run or authenticated POST; reads QUEUED bundles, optionally only the given bundle_ids."
+    },
+    {
+      "id": "425c7a40-9242-47a9-add4-42e52923cb62",
+      "name": "Contact one bundle",
+      "nodeIds": [
+        "33b2d4cf-ecba-464e-9a65-a817b1c2367f",
+        "a055252a-f6e0-4f39-a8e3-cf5f0ad6fc15",
+        "e5c5d7d4-f460-412f-9913-82fe8b454a79",
+        "0cad383a-b6f0-4518-9677-d85a99b97433",
+        "ea5fda3d-a8ef-489f-9bff-a00e10e00951",
+        "7fe318a7-3422-48aa-8867-1eddff5464f1",
+        "21f7c7d1-db03-4943-a63c-e85beafbeb69",
+        "865813ab-5bc9-44b6-823e-204d01f37435",
+        "1ea9ae54-756e-4957-a829-e9f54c31239f",
+        "54bcd1bf-0a48-4a02-a263-faaadc2492e7",
+        "3cf38658-2417-4401-af10-40a6a36720bb",
+        "c31fc2b3-e329-4a78-8857-44ff11bfa158",
+        "3119324f-0ddc-4614-98e4-67f60b747ba0",
+        "d665a60f-db9b-4c1a-a2d1-e3e04d9bd4c6",
+        "38b25d7f-6a1b-4153-a76b-886537e934dd",
+        "e7b61783-f878-4669-9c68-340e09c399c3",
+        "7d354d72-86b4-428e-b4be-a9c497550a95",
+        "b675a6a5-ccfa-4a30-b6e8-9705d84da8cc",
+        "63f5bfa2-9d71-44d1-a743-e4b9a668a776",
+        "0a0aa5b8-773c-4a91-81e5-bdb10f73dca1",
+        "d09ff7ea-c7cb-4e5a-af59-20793a814bb5",
+        "7a8e7a2a-f6fa-471b-9bc5-c48bd5c8d064",
+        "53655c8a-f539-48e1-b995-58394b8e6a63",
+        "4a1b78ef-4d2a-411c-8753-91ab34b3e34a",
+        "3a5bdabd-12ee-4c2b-ab46-d5d03b93a113"
+      ],
+      "description": "Per bundle: skip, flag to staff, auto-apply with permission, or send the intro with 3 buttons; then waits 1.2 s."
+    },
+    {
+      "id": "a84fff6d-a0a4-43af-95f0-8c39e9d85c38",
+      "name": "Report summary",
+      "nodeIds": [
+        "7725320d-8d82-435d-b374-114b5cfc566f",
+        "a2d3d87b-9d86-435e-8d5d-929b3032509c",
+        "6c96086e-8b55-444d-aa9e-2a59d8ca9ba3"
+      ],
+      "description": "Counts bundles per route and result; answers the webhook caller when the run came from it."
+    }
+  ],
+  "id": "5vylsJYjuliYM1pR",
+  "tags": []
+}
