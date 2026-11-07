@@ -77,6 +77,21 @@ date, shown and proposed hours appear in a matching line (no time in the text th
 - Route Guard sends a bundle to SKIP when `telegram_chat_id` is empty, so the fake placeholder is non-empty on purpose.
 - `Intro Payload` only accepts `language` in fi/sv/nb/en. All our bundles comply.
 
+## Loading into Supabase (`load_to_supabase.py`)
+
+Standard library only, Supabase REST API. Reads `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` from the environment; the key is
+only sent as a header, never printed or written. Loads `bundles`, then `bundle_items`, then prints a summary.
+
+| Option | Effect |
+|---|---|
+| `--chat-id <id>` | overrides `telegram_chat_id` of every bundle (otherwise `FAKE-<entity_id>`, with a warning) |
+| `--yext-entity SinceAI13` | overrides `yext_entity_id` of every bundle |
+| `--only FI-D0007,FI-D0017` | loads only these businesses |
+| `--reset` | first deletes ALL rows of `decisions`, `apply_log`, `chat_sessions`, `bundle_items`, `bundles` |
+| `--dry-run` | no network call |
+
+Without `--reset`, loading a `bundle_id` that already exists fails (HTTP 409). Tested only with `--dry-run` and a local fake server.
+
 ## Known limitations
 
 - **Seasonal closures are not covered.** `FI-D0006` (summer terrace that forgot its winter closure) gets no bundle: Part A
@@ -91,19 +106,16 @@ date, shown and proposed hours appear in a matching line (no time in the text th
 ## Wording for a native-speaker check
 
 Fixed on 2026-11-07: sv `från för två år sedan` → `för två år sedan`; nb `fra for to år siden` → `for to år siden`.
-Still to check (all strings are in `build_bundles.py`, constants `REASON`, `TEXT`, `OLDER_QUESTION`, `MORE`):
+The ASK opening was changed from a "guess" to "we'd like to double-check" (fi/sv/nb/en). Still to check (all strings are in `build_bundles.py`, constants `REASON`, `TEXT`, `OLDER_QUESTION`, `MORE`):
 
 | Lang | Text | Doubt |
 |---|---|---|
-| sv | `Vi visar nu → gissning:` | "gissning" may sound careless to a customer; maybe `vårt förslag` |
 | sv | `så gör liknande företag` | as a reason in brackets it may read oddly; maybe `liknande företag brukar göra så` |
 | sv | `recensioner eller ändringar tyder på nedläggning` | register (staff only in practice) |
 | sv | `År {y} hade ni stängt den här dagen. Hur blir det i år?` | natural? |
-| nb | `Vi viser nå → gjetning:` | same doubt as sv "gissning" |
 | nb | `slik gjør lignende bedrifter` | word order / naturalness |
 | nb | `I {y} holdt dere stengt denne dagen. Hva gjelder i år?` | natural? |
 | nb | `i tråd med din tillatelse har vi oppdatert …` | formal enough / too formal? |
-| fi | `Näytämme nyt → arvaus:` | "arvaus" (guess) may sound careless |
 | fi | `Vuonna {y} olitte kiinni tänä päivänä. Entä tänä vuonna?` | natural? |
 | fi | `muiden pyhäpäivien perusteella` | reason for OWNER_PATTERN; clear enough? |
 

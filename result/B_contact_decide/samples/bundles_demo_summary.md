@@ -65,7 +65,7 @@ Items: 2. Basis: OLDER_SEASON 1, PEERS 1.
 
 ```
 Hei Janne!
-Ravintola Kanerva: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Ravintola Kanerva: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Uudenvuodenpäivä, pe 1.1.: 16:00–23:00 → suljettu (samankaltaisten yritysten tapa)
 • Loppiaisaatto, ti 5.1.: 16:00–22:00 → 16:00–21:00? Vuonna 2024 olitte auki 16:00–21:00 tänä päivänä. Entä tänä vuonna?
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
@@ -93,7 +93,7 @@ Items: 2. Basis: PEERS 2.
 
 ```
 Hei Anna!
-Kukkakauppa Kide: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Kukkakauppa Kide: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Tapaninpäivä, la 26.12.: 09:00–15:00 → suljettu (samankaltaisten yritysten tapa)
 • Loppiainen, ke 6.1.: 09:00–18:00 → suljettu (samankaltaisten yritysten tapa)
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
@@ -122,7 +122,7 @@ Items: 1. Basis: OLDER_SEASON 1.
 
 ```
 Hei Matti!
-Muoti Lyhty: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Muoti Lyhty: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Loppiaisaatto, ti 5.1.: 10:00–20:00 → 10:00–17:00? Vuonna 2024 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
@@ -144,7 +144,7 @@ Items: 4. Basis: OLDER_SEASON 4.
 
 ```
 Hei Heikki!
-Suksivuokraamo Kuura: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Suksivuokraamo Kuura: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Koulujen loma, ma 21.12., ti 22.12., ma 4.1.: 09:00–17:00 → 09:00–18:00? Vuonna 2024 olitte auki 09:00–18:00 tänä päivänä. Entä tänä vuonna?
 • Uudenvuodenpäivä, pe 1.1.: 09:00–17:00 → 10:00–16:00? Vuonna 2024 olitte auki 10:00–16:00 tänä päivänä. Entä tänä vuonna?
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
@@ -172,7 +172,7 @@ Items: 1. Basis: OLDER_SEASON 1.
 
 ```
 Hei Mikko!
-Parturi-Kampaamo Helmi: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Parturi-Kampaamo Helmi: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Loppiaisaatto, ti 5.1.: 10:00–18:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
@@ -227,7 +227,7 @@ Items: 3. Basis: OLDER_SEASON 3.
 
 ```
 Hei Aleksi!
-Hammasklinikka Kallio: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Hammasklinikka Kallio: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 08:00–16:00 → suljettu? Vuonna 2023 olitte kiinni tänä päivänä. Entä tänä vuonna?
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
@@ -250,7 +250,7 @@ Items: 5. Basis: OLDER_SEASON 5.
 
 ```
 Hei Anna!
-Leikkimaa Onni: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Leikkimaa Onni: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 12:00–19:00 → 10:00–21:00? Vuonna 2023 olitte auki 10:00–21:00 tänä päivänä. Entä tänä vuonna?
 • Uudenvuodenaatto, to 31.12.: 12:00–19:00 → 12:00–17:00? Vuonna 2023 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?
 • Uudenvuodenpäivä, pe 1.1.: 12:00–19:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?
@@ -274,7 +274,7 @@ Items: 2. Basis: PEERS 2.
 
 ```
 Hei Aino!
-Kahvila Kipinä: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+Kahvila Kipinä: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:
 • Tapaninpäivä, la 26.12.: 10:00–16:00 → suljettu (samankaltaisten yritysten tapa)
 • Uudenvuodenpäivä, pe 1.1.: 08:00–17:00 → suljettu (samankaltaisten yritysten tapa)
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
@@ -298,7 +298,7 @@ Items: 1. Basis: PEERS 1.
 
 ```
 Hei Marte!
-Bakeri Fjord: vi er usikre på åpningstidene deres de kommende helligdagene. Vi viser nå → gjetning:
+Bakeri Fjord: Vi vil dobbeltsjekke åpningstidene deres de kommende helligdagene. Nå vises → forslag:
 • Andre juledag, lør 26.12.: 08:00–15:00 → stengt (slik gjør lignende bedrifter)
 Si fra: stengt, åpent som vanlig eller endre?
 ```
@@ -324,7 +324,7 @@ Items: 3. Basis: PEERS 3.
 
 ```
 Hej Per!
-Restaurang Fyren: vi är osäkra på era öppettider under kommande helgdagar. Vi visar nu → gissning:
+Restaurang Fyren: Vi vill dubbelkolla era öppettider under kommande helgdagar. Nu visas → förslag:
 • Julafton, tors 24/12: 11:00–23:00 → stängt (så gör liknande företag)
 • Juldagen, fre 25/12: 11:00–23:00 → stängt (så gör liknande företag)
 • Nyårsdagen, fre 1/1: 11:00–23:00 → stängt (så gör liknande företag)

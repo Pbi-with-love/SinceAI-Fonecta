@@ -146,7 +146,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Janne!\nRavintola Kanerva: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Uudenvuodenpäivä, pe 1.1.: 16:00–23:00 → suljettu (samankaltaisten yritysten tapa)\n• Loppiaisaatto, ti 5.1.: 16:00–22:00 → 16:00–21:00? Vuonna 2024 olitte auki 16:00–21:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Janne!\nRavintola Kanerva: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Uudenvuodenpäivä, pe 1.1.: 16:00–23:00 → suljettu (samankaltaisten yritysten tapa)\n• Loppiaisaatto, ti 5.1.: 16:00–22:00 → 16:00–21:00? Vuonna 2024 olitte auki 16:00–21:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -280,7 +280,7 @@
    "has_permission": true,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Anna!\nKukkakauppa Kide: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Tapaninpäivä, la 26.12.: 09:00–15:00 → suljettu (samankaltaisten yritysten tapa)\n• Loppiainen, ke 6.1.: 09:00–18:00 → suljettu (samankaltaisten yritysten tapa)\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Anna!\nKukkakauppa Kide: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Tapaninpäivä, la 26.12.: 09:00–15:00 → suljettu (samankaltaisten yritysten tapa)\n• Loppiainen, ke 6.1.: 09:00–18:00 → suljettu (samankaltaisten yritysten tapa)\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -414,7 +414,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Matti!\nMuoti Lyhty: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Loppiaisaatto, ti 5.1.: 10:00–20:00 → 10:00–17:00? Vuonna 2024 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Matti!\nMuoti Lyhty: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Loppiaisaatto, ti 5.1.: 10:00–20:00 → 10:00–17:00? Vuonna 2024 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -548,7 +548,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Heikki!\nSuksivuokraamo Kuura: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Koulujen loma, ma 21.12., ti 22.12., ma 4.1.: 09:00–17:00 → 09:00–18:00? Vuonna 2024 olitte auki 09:00–18:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenpäivä, pe 1.1.: 09:00–17:00 → 10:00–16:00? Vuonna 2024 olitte auki 10:00–16:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Heikki!\nSuksivuokraamo Kuura: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Koulujen loma, ma 21.12., ti 22.12., ma 4.1.: 09:00–17:00 → 09:00–18:00? Vuonna 2024 olitte auki 09:00–18:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenpäivä, pe 1.1.: 09:00–17:00 → 10:00–16:00? Vuonna 2024 olitte auki 10:00–16:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -682,7 +682,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Mikko!\nParturi-Kampaamo Helmi: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Loppiaisaatto, ti 5.1.: 10:00–18:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Mikko!\nParturi-Kampaamo Helmi: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Loppiaisaatto, ti 5.1.: 10:00–18:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -950,7 +950,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Aleksi!\nHammasklinikka Kallio: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 08:00–16:00 → suljettu? Vuonna 2023 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Aleksi!\nHammasklinikka Kallio: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 08:00–16:00 → suljettu? Vuonna 2023 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -1084,7 +1084,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Anna!\nLeikkimaa Onni: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 12:00–19:00 → 10:00–21:00? Vuonna 2023 olitte auki 10:00–21:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenaatto, to 31.12.: 12:00–19:00 → 12:00–17:00? Vuonna 2023 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenpäivä, pe 1.1.: 12:00–19:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Anna!\nLeikkimaa Onni: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 12:00–19:00 → 10:00–21:00? Vuonna 2023 olitte auki 10:00–21:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenaatto, to 31.12.: 12:00–19:00 → 12:00–17:00? Vuonna 2023 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenpäivä, pe 1.1.: 12:00–19:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -1218,7 +1218,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Aino!\nKahvila Kipinä: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Tapaninpäivä, la 26.12.: 10:00–16:00 → suljettu (samankaltaisten yritysten tapa)\n• Uudenvuodenpäivä, pe 1.1.: 08:00–17:00 → suljettu (samankaltaisten yritysten tapa)\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "intro_text": "Hei Aino!\nKahvila Kipinä: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:\n• Tapaninpäivä, la 26.12.: 10:00–16:00 → suljettu (samankaltaisten yritysten tapa)\n• Uudenvuodenpäivä, pe 1.1.: 08:00–17:00 → suljettu (samankaltaisten yritysten tapa)\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
    "publishers": [
     {
      "publisherId": "APPLE",
@@ -1352,7 +1352,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hei Marte!\nBakeri Fjord: vi er usikre på åpningstidene deres de kommende helligdagene. Vi viser nå → gjetning:\n• Andre juledag, lør 26.12.: 08:00–15:00 → stengt (slik gjør lignende bedrifter)\nSi fra: stengt, åpent som vanlig eller endre?",
+   "intro_text": "Hei Marte!\nBakeri Fjord: Vi vil dobbeltsjekke åpningstidene deres de kommende helligdagene. Nå vises → forslag:\n• Andre juledag, lør 26.12.: 08:00–15:00 → stengt (slik gjør lignende bedrifter)\nSi fra: stengt, åpent som vanlig eller endre?",
    "publishers": [
     {
      "publisherId": "1881",
@@ -1486,7 +1486,7 @@
    "has_permission": false,
    "route": "ASK",
    "status": "QUEUED",
-   "intro_text": "Hej Per!\nRestaurang Fyren: vi är osäkra på era öppettider under kommande helgdagar. Vi visar nu → gissning:\n• Julafton, tors 24/12: 11:00–23:00 → stängt (så gör liknande företag)\n• Juldagen, fre 25/12: 11:00–23:00 → stängt (så gör liknande företag)\n• Nyårsdagen, fre 1/1: 11:00–23:00 → stängt (så gör liknande företag)\nBerätta för oss: stängt, öppet som vanligt eller ändra?",
+   "intro_text": "Hej Per!\nRestaurang Fyren: Vi vill dubbelkolla era öppettider under kommande helgdagar. Nu visas → förslag:\n• Julafton, tors 24/12: 11:00–23:00 → stängt (så gör liknande företag)\n• Juldagen, fre 25/12: 11:00–23:00 → stängt (så gör liknande företag)\n• Nyårsdagen, fre 1/1: 11:00–23:00 → stängt (så gör liknande företag)\nBerätta för oss: stängt, öppet som vanligt eller ändra?",
    "publishers": [
     {
      "publisherId": "APPLE",

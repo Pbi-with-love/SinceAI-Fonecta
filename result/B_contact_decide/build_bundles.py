@@ -75,13 +75,13 @@ TEXT = {  # route -> language -> (greeting, intro, closing); {name} owner, {biz}
                "Do you approve? You can also edit or decline them."),
     },
     "ASK": {
-        "fi": ("Hei {name}!", "{biz}: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:",
+        "fi": ("Hei {name}!", "{biz}: Haluamme varmistaa aukioloaikanne tulevina pyhinä. Nyt näkyy → ehdotus:",
                "Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?"),
-        "sv": ("Hej {name}!", "{biz}: vi är osäkra på era öppettider under kommande helgdagar. Vi visar nu → gissning:",
+        "sv": ("Hej {name}!", "{biz}: Vi vill dubbelkolla era öppettider under kommande helgdagar. Nu visas → förslag:",
                "Berätta för oss: stängt, öppet som vanligt eller ändra?"),
-        "nb": ("Hei {name}!", "{biz}: vi er usikre på åpningstidene deres de kommende helligdagene. Vi viser nå → gjetning:",
+        "nb": ("Hei {name}!", "{biz}: Vi vil dobbeltsjekke åpningstidene deres de kommende helligdagene. Nå vises → forslag:",
                "Si fra: stengt, åpent som vanlig eller endre?"),
-        "en": ("Hi {name}!", "{biz}: we are not sure about your hours on the coming holidays. Showing now → our guess:",
+        "en": ("Hi {name}!", "{biz}: We'd like to double-check your hours on the coming holidays. Showing now → proposed:",
                "Please tell us: closed, open as usual, or edit?"),
     },
     "AUTO_APPLY": {
