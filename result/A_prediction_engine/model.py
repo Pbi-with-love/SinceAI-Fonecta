@@ -15,6 +15,7 @@ import argparse
 import csv
 import json
 import os
+import random
 from collections import defaultdict
 from datetime import date, datetime
 
@@ -132,7 +133,9 @@ class Baseline:
             op = self._owner_pattern(eid, d, key)
             if op:
                 cand, basis, ev = op[0], "OWNER_PATTERN", op[1]
-        if cand is None:
+        if cand is None and self.ARCH_PLACE in ("a", "b"):  # archetype habit table (hyp-archetype-table)
+            cand, basis, ev = self._archetype_candidate(ent, d, key, shown)
+        if cand is None and self.ARCH_PLACE != "b":          # config (b): the table replaces the peer rule
             cand, basis, ev = self._peer_candidate(ent, d, key, shown)
         if cand and cand != shown:
             return "SUGGEST", cand, basis, ev
@@ -151,6 +154,9 @@ class Baseline:
         "OLDER_SEASON": 0.70,             # 351 / 500 (dev 2026 only: the back-test has no older season)
         "OWNER_PATTERN": 0.88,            # 587 / 666
         "PEERS": 0.77,                    # 846 / 1,098
+        # hyp-archetype-table: out of sample (each dev business scored with the fold table that never saw it),
+        # config (a) at ARCH_THRESHOLD 0.90, same smoothing: dev 2026 102 / 107 + back-test 2025 207 / 218 → 309 / 325.
+        "ARCHETYPE_TABLE": 0.95,
         "NO_ACTION:MATCHES_SHOWN": 0.96,  # 749 / 776: a rule's candidate equals what is shown
         "NO_ACTION:NONE": 0.80,           # 9,845 / 12,286: no rule had a candidate
     }
@@ -309,6 +315,88 @@ class Baseline:
             return "closed", "PEERS", (f"{closed_among_entered:.0%} of similar businesses ({seg}, {tier}, {cc}) "
                                        f"that entered {key} hours were closed; {entered_closed:.0%} of all of them "
                                        f"entered closed")
+        return None, None, None
+
+    # ---- Archetype habit table (experiment hyp-archetype-table, basis ARCHETYPE_TABLE) ---------------------------
+    # What businesses of this kind actually did on this special day in earlier seasons, learned by
+    # build/build_archetype_table.py from the organisers' training data (dev businesses' true hours) and stored as
+    # counts in tables/archetype_table_<season>.json. This file never opens labels/: it reads only those tables.
+    # Out of sample by default: a dev business uses the table learned from the other 4 folds (fixed seeded folds by
+    # business, derived from data/splits.csv); test and demo businesses use the table learned from all dev businesses.
+    # ARCH_IN_SAMPLE = True gives every dev business the all-dev table (comparison only, never for predictions).
+    # Back-off: segment x day_key x country -> archetype x day_key x country -> archetype x day_key ->
+    # archetype x day_class; the first cell with >= ARCH_MIN_BUSINESSES businesses is used. Suggests "closed" only
+    # when the weekday's published regular hours are open, the owner entered nothing for this date, and the share of
+    # closed business-days in that cell is >= ARCH_THRESHOLD.
+    ARCH_PLACE = "a"          # "a": after owner pattern, before peers · "b": instead of peers · "": off
+    ARCH_THRESHOLD = 0.90
+    ARCH_IN_SAMPLE = False
+    ARCH_SEED, ARCH_FOLDS, ARCH_MIN_BUSINESSES = 20261107, 5, 15
+    ARCH_TABLES = os.path.join(ROOT, "result", "A_prediction_engine", "tables")
+    _COUNTRY = {"FI": "Finland", "SE": "Sweden", "NO": "Norway"}
+    _CLASS_TEXT = {"MAJOR": "major public holidays", "SOFT": "smaller public holidays", "EVE_MAJOR": "major holiday eves",
+                   "EVE_MINOR": "minor holiday eves", "INTER": "days between holidays", "OBS": "observance days",
+                   "COMM": "commercial days"}
+
+    def _arch(self):
+        """Lazy loader: the season's table file, the fold map and the lookups. Audits what it loads."""
+        if getattr(self, "_arch_data", None) is None:
+            path = os.path.join(self.ARCH_TABLES, f"archetype_table_{self.season}.json")
+            with open(path, encoding="utf-8") as f:
+                t = json.load(f)
+            m, snap = t["meta"], self.snap.isoformat()
+            assert m["season"] == self.season and m["snapshot"] == snap == m["truth_dates_before"], (path, m["snapshot"])
+            assert all(v < snap for v in m["newest_training_date"].values()), f"{path}: training data not before {snap}"
+            assert (m["seed"], m["n_folds"], m["min_businesses"]) == \
+                   (self.ARCH_SEED, self.ARCH_FOLDS, self.ARCH_MIN_BUSINESSES), f"{path}: built with other settings"
+            split = {r["entity_id"]: r["split"] for r in csv.DictReader(open(D("splits.csv"), encoding="utf-8"))}
+            dev = sorted(e for e, s in split.items() if s == "dev")
+            random.Random(self.ARCH_SEED).shuffle(dev)
+            folds = {e: i % self.ARCH_FOLDS for i, e in enumerate(dev)}
+            assert folds == t["folds"], f"{path}: fold map differs from data/splits.csv + seed"
+            cats = list(csv.DictReader(open(D("categories.csv"), encoding="utf-8")))
+            arch = {r["segment"]: r["archetype"] for r in cats}
+            seg_name = {r["segment"]: r["name_en"].lower() for r in cats}
+            arch_name = defaultdict(list)
+            for r in cats:
+                arch_name[r["archetype"]].append(r["name_en"].lower())
+            self._arch_data = {"tables": t["tables"], "folds": folds, "split": split, "arch": arch, "cut": snap,
+                               "seg_name": seg_name, "arch_name": {a: " / ".join(v) for a, v in arch_name.items()}}
+        return self._arch_data
+
+    def _arch_table_name(self, eid):
+        """'fold<k>' (the table that never saw this business) for a dev business, 'all' for test and demo."""
+        a = self._arch()
+        if a["split"].get(eid) == "dev" and not self.ARCH_IN_SAMPLE:
+            return f"fold{a['folds'][eid]}"
+        return "all"
+
+    def _archetype_candidate(self, ent, d, key, shown):
+        """("closed", "ARCHETYPE_TABLE", evidence sentence) or (None, None, None)."""
+        eid, cc, seg = ent["meta"]["id"], ent["meta"]["countryCode"], ent["c_segment"]
+        if self.entry(eid, d, self.snap) is not None:
+            return None, None, None  # the owner already entered something for this very date
+        if self.regular(eid, d) == "closed" or shown == "closed":
+            return None, None, None  # rule 5: only days the published regular hours say open
+        a = self._arch()
+        table, arch, cls = a["tables"][self._arch_table_name(eid)], a["arch"].get(seg), self._day_class(cc, d)
+        levels = [(f"L1|{seg}|{key}|{cc}", a["seg_name"].get(seg, seg), f"in {self._COUNTRY[cc]}", None),
+                  (f"L2|{arch}|{key}|{cc}", a["arch_name"].get(arch, arch), f"in {self._COUNTRY[cc]}", None),
+                  (f"L3|{arch}|{key}", a["arch_name"].get(arch, arch), "in Finland, Sweden and Norway", None)]
+        if cls:
+            levels.append((f"L4|{arch}|{cls}", a["arch_name"].get(arch, arch), "in Finland, Sweden and Norway",
+                           self._CLASS_TEXT.get(cls, cls)))
+        for cell, what, where, when in levels:
+            n_bus, n_days, n_closed = table.get(cell, (0, 0, 0))
+            if n_bus < self.ARCH_MIN_BUSINESSES:
+                continue  # too few businesses: back off to a wider cell
+            p = n_closed / n_days
+            if p < self.ARCH_THRESHOLD:
+                return None, None, None
+            when = when or self._day_name(eid, d, key)
+            return "closed", "ARCHETYPE_TABLE", (
+                f"in earlier seasons, {what} businesses {where} whose regular hours said open were closed on {when} "
+                f"in {p:.0%} of cases (n={n_bus} businesses, {n_days} business-days; dev history before {a['cut']})")
         return None, None, None
 
     def predict(self, eid, d: date, key: str):
