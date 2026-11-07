@@ -1,0 +1,2948 @@
+{
+ "bundles": [
+  {
+   "bundle_id": "B-FI-D0001-SUGGEST",
+   "entity_id": "FI-D0001",
+   "business_name": "Kahvila Aurora",
+   "yext_entity_id": "FI-D0001",
+   "owner_name": "Aleksi",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0001",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Aleksi!\nKahvila Aurora: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):\n• Jouluaatto, to 24.12.: 07:30–18:00 → 07:30–13:00 (omat tietosi viime vuodelta)\n• Joulupäivä, pe 25.12.: 07:30–18:00 → suljettu (omat tietosi viime vuodelta)\n• Uudenvuodenpäivä, pe 1.1.: 07:30–18:00 → suljettu (omat tietosi viime vuodelta)\n• Loppiainen, ke 6.1.: 07:30–18:00 → 10:00–16:00 (omat tietosi kahden vuoden takaa)\nHyväksytkö muutokset? Voit myös muokata tai hylätä ne.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0002-SUGGEST",
+   "entity_id": "FI-D0002",
+   "business_name": "Ravintola Kanerva",
+   "yext_entity_id": "FI-D0002",
+   "owner_name": "Janne",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0002",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Janne!\nRavintola Kanerva: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):\n• Jouluaatto, to 24.12.: 16:00–22:00 → 11:00–15:00 (omat tietosi viime vuodelta)\n• Joulupäivä, pe 25.12.: 16:00–23:00 → suljettu (omat tietosi viime vuodelta)\n• Tapaninpäivä, la 26.12.: 16:00–23:00 → suljettu (omat tietosi kahden vuoden takaa)\n• Uudenvuodenaatto, to 31.12.: 16:00–22:00 → suljettu (omat tietosi kahden vuoden takaa)\n• Loppiainen, ke 6.1.: 16:00–22:00 → suljettu (omat tietosi viime vuodelta)\nHyväksytkö muutokset? Voit myös muokata tai hylätä ne.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0002-ASK",
+   "entity_id": "FI-D0002",
+   "business_name": "Ravintola Kanerva",
+   "yext_entity_id": "FI-D0002",
+   "owner_name": "Janne",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0002",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Janne!\nRavintola Kanerva: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Uudenvuodenpäivä, pe 1.1.: 16:00–23:00 → suljettu (samankaltaisten yritysten tapa)\n• Loppiaisaatto, ti 5.1.: 16:00–22:00 → 16:00–21:00? Vuonna 2024 olitte auki 16:00–21:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0003-AUTO_APPLY",
+   "entity_id": "FI-D0003",
+   "business_name": "Kukkakauppa Kide",
+   "yext_entity_id": "FI-D0003",
+   "owner_name": "Anna",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0003",
+   "opted_out": false,
+   "has_permission": true,
+   "route": "AUTO_APPLY",
+   "status": "QUEUED",
+   "intro_text": "Hei Anna!\nKukkakauppa Kide: luvallasi olemme päivittäneet aukioloaikasi (ennen → nyt):\n• Itsenäisyyspäivä, su 6.12.: suljettu → 10:00–14:00 (omat tietosi viime vuodelta)\n• Aatonaatto, ke 23.12.: 09:00–18:00 → 09:00–20:00 (omat tietosi kahden vuoden takaa)\n• Jouluaatto, to 24.12.: 09:00–18:00 → 09:00–13:00 (omat tietosi viime vuodelta)\n• Joulupäivä, pe 25.12.: 09:00–18:00 → 10:00–14:00 (omat tietosi viime vuodelta)\n• Uudenvuodenaatto, to 31.12.: 09:00–18:00 → 09:00–15:00 (omat tietosi viime vuodelta)\n• Uudenvuodenpäivä, pe 1.1.: 09:00–18:00 → suljettu (omat tietosi viime vuodelta)\nVoit perua muutokset 24 tunnin kuluessa.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0003-ASK",
+   "entity_id": "FI-D0003",
+   "business_name": "Kukkakauppa Kide",
+   "yext_entity_id": "FI-D0003",
+   "owner_name": "Anna",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0003",
+   "opted_out": false,
+   "has_permission": true,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Anna!\nKukkakauppa Kide: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Tapaninpäivä, la 26.12.: 09:00–15:00 → suljettu (samankaltaisten yritysten tapa)\n• Loppiainen, ke 6.1.: 09:00–18:00 → suljettu (samankaltaisten yritysten tapa)\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "entity_id": "FI-D0004",
+   "business_name": "Muoti Lyhty",
+   "yext_entity_id": "FI-D0004",
+   "owner_name": "Matti",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0004",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Matti!\nMuoti Lyhty: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):\n• Aatonaatto, ke 23.12.: 10:00–20:00 → 10:00–21:00 (kauppakeskus on ilmoittanut aukioloaikansa)\n• Jouluaatto, to 24.12.: 10:00–20:00 → 10:00–13:00 (kauppakeskus on ilmoittanut aukioloaikansa)\n• Joulupäivä, pe 25.12.: 10:00–20:00 → suljettu (kauppakeskus on ilmoittanut aukioloaikansa)\n• Tapaninpäivä, la 26.12.: 10:00–18:00 → 11:00–17:00 (kauppakeskus on ilmoittanut aukioloaikansa)\n• Uudenvuodenaatto, to 31.12.: 10:00–20:00 → 10:00–18:00 (omat tietosi viime vuodelta)\n• Uudenvuodenpäivä, pe 1.1.: 10:00–20:00 → suljettu (omat tietosi viime vuodelta)\n• Loppiainen, ke 6.1.: 10:00–20:00 → 12:00–18:00 (omat tietosi viime vuodelta)\nHyväksytkö muutokset? Voit myös muokata tai hylätä ne.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0004-ASK",
+   "entity_id": "FI-D0004",
+   "business_name": "Muoti Lyhty",
+   "yext_entity_id": "FI-D0004",
+   "owner_name": "Matti",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0004",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Matti!\nMuoti Lyhty: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Loppiaisaatto, ti 5.1.: 10:00–20:00 → 10:00–17:00? Vuonna 2024 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0005-SUGGEST",
+   "entity_id": "FI-D0005",
+   "business_name": "Suksivuokraamo Kuura",
+   "yext_entity_id": "FI-D0005",
+   "owner_name": "Heikki",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0005",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Heikki!\nSuksivuokraamo Kuura: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):\n• Isänpäivä, su 8.11.: 09:00–17:00 → suljettu (omat tietosi viime vuodelta)\nHyväksytkö muutokset? Voit myös muokata tai hylätä ne.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0005-ASK",
+   "entity_id": "FI-D0005",
+   "business_name": "Suksivuokraamo Kuura",
+   "yext_entity_id": "FI-D0005",
+   "owner_name": "Heikki",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0005",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Heikki!\nSuksivuokraamo Kuura: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Koulujen loma, ma 21.12., ti 22.12., ma 4.1.: 09:00–17:00 → 09:00–18:00? Vuonna 2024 olitte auki 09:00–18:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenpäivä, pe 1.1.: 09:00–17:00 → 10:00–16:00? Vuonna 2024 olitte auki 10:00–16:00 tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "entity_id": "FI-D0007",
+   "business_name": "Parturi-Kampaamo Helmi",
+   "yext_entity_id": "FI-D0007",
+   "owner_name": "Mikko",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0007",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Mikko!\nParturi-Kampaamo Helmi: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):\n• Aatonaatto, ke 23.12.: 10:00–18:00 → 10:00–20:00 (omat tietosi viime vuodelta)\n• Jouluaatto, to 24.12.: 10:00–18:00 → suljettu (omat tietosi viime vuodelta)\n• Joulupäivä, pe 25.12.: 10:00–18:00 → suljettu (omat tietosi viime vuodelta)\n• Tapaninpäivä, la 26.12.: 09:00–14:00 → suljettu (omat tietosi viime vuodelta)\n• Välipäivä, ti 29.12., ke 30.12.: 10:00–18:00 → suljettu (omat tietosi viime vuodelta)\n• Uudenvuodenpäivä, pe 1.1.: 10:00–18:00 → suljettu (muiden pyhäpäivien perusteella)\nHyväksytkö muutokset? Voit myös muokata tai hylätä ne.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0007-ASK",
+   "entity_id": "FI-D0007",
+   "business_name": "Parturi-Kampaamo Helmi",
+   "yext_entity_id": "FI-D0007",
+   "owner_name": "Mikko",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0007",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Mikko!\nParturi-Kampaamo Helmi: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Loppiaisaatto, ti 5.1.: 10:00–18:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "entity_id": "FI-D0010",
+   "business_name": "Pub Kulma",
+   "yext_entity_id": "FI-D0010",
+   "owner_name": "Oskar",
+   "language": "sv",
+   "telegram_chat_id": "FAKE-FI-D0010",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hej Oskar!\nPub Kulma: dina öppettider kan vara fel under kommande helgdagar. Vi föreslår dessa ändringar (nu → förslag):\n• Evenemangskväll i närheten, lör 21/11, fre 4/12, fre 11/12, lör 2/1: 14:00–03:00 → 15:00–03:00 (dina egna uppgifter för två år sedan)\n• Evenemangskväll i närheten, mån 30/11, mån 7/12, tors 17/12, tis 22/12: 15:00–01:00 → 15:00–03:00 (dina egna uppgifter för två år sedan)\n• Itsenäisyyspäivä (Independence Day), sön 6/12: 15:00–00:00 → stängt (utifrån dina andra helgdagar)\n• Evenemangskväll i närheten, sön 20/12: 15:00–00:00 → 15:00–03:00 (dina egna uppgifter för två år sedan)\n• Jouluaatto (Christmas Eve), tors 24/12: 15:00–01:00 → stängt (utifrån dina andra helgdagar)\n• Joulupäivä (Christmas Day), fre 25/12: 14:00–03:00 → stängt (dina egna uppgifter från förra året)\n• Tapaninpäivä (Boxing Day), lör 26/12: 14:00–03:00 → stängt (utifrån dina andra helgdagar)\n• Uudenvuodenpäivä (New Year's Day), fre 1/1: 14:00–03:00 → stängt (dina egna uppgifter från förra året)\n… och 2 dagar till\nGodkänner du ändringarna? Du kan också ändra eller avstå.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "entity_id": "FI-D0011",
+   "business_name": "Pizzeria Torni",
+   "yext_entity_id": "FI-D0011",
+   "owner_name": "Tuomas",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0011",
+   "opted_out": false,
+   "has_permission": true,
+   "route": "STAFF",
+   "status": "QUEUED",
+   "intro_text": "STAFF: Pizzeria Torni (FI-D0011) looks closed for good. Do not publish suggestions; check the listing.\nAffected dates: 15 special days, 2026-11-08 to 2027-01-06.\nEvidence: Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0012-AUTO_APPLY",
+   "entity_id": "FI-D0012",
+   "business_name": "Tilitoimisto Otso",
+   "yext_entity_id": "FI-D0012",
+   "owner_name": "Laura",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0012",
+   "opted_out": false,
+   "has_permission": true,
+   "route": "AUTO_APPLY",
+   "status": "QUEUED",
+   "intro_text": "Hei Laura!\nTilitoimisto Otso: luvallasi olemme päivittäneet aukioloaikasi (ennen → nyt):\n• Jouluaatto, to 24.12.: 08:30–16:30 → suljettu (omat tietosi viime vuodelta)\n• Joulupäivä, pe 25.12.: 08:30–16:30 → suljettu (omat tietosi viime vuodelta)\n• Uudenvuodenaatto, to 31.12.: 08:30–16:30 → suljettu (omat tietosi viime vuodelta)\n• Uudenvuodenpäivä, pe 1.1.: 08:30–16:30 → suljettu (omat tietosi viime vuodelta)\n• Loppiainen, ke 6.1.: 08:30–16:30 → suljettu (omat tietosi viime vuodelta)\nVoit perua muutokset 24 tunnin kuluessa.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0013-ASK",
+   "entity_id": "FI-D0013",
+   "business_name": "Hammasklinikka Kallio",
+   "yext_entity_id": "FI-D0013",
+   "owner_name": "Aleksi",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0013",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Aleksi!\nHammasklinikka Kallio: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 08:00–16:00 → suljettu? Vuonna 2023 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0014-SUGGEST",
+   "entity_id": "FI-D0014",
+   "business_name": "Leikkimaa Onni",
+   "yext_entity_id": "FI-D0014",
+   "owner_name": "Anna",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0014",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Anna!\nLeikkimaa Onni: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):\n• Jouluaatto, to 24.12.: 12:00–19:00 → suljettu (omat tietosi kahden vuoden takaa)\n• Joulupäivä, pe 25.12.: 12:00–19:00 → suljettu (omat tietosi viime vuodelta)\nHyväksytkö muutokset? Voit myös muokata tai hylätä ne.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0014-ASK",
+   "entity_id": "FI-D0014",
+   "business_name": "Leikkimaa Onni",
+   "yext_entity_id": "FI-D0014",
+   "owner_name": "Anna",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0014",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Anna!\nLeikkimaa Onni: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 12:00–19:00 → 10:00–21:00? Vuonna 2023 olitte auki 10:00–21:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenaatto, to 31.12.: 12:00–19:00 → 12:00–17:00? Vuonna 2023 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?\n• Uudenvuodenpäivä, pe 1.1.: 12:00–19:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0017-SUGGEST",
+   "entity_id": "FI-D0017",
+   "business_name": "Kahvila Kipinä",
+   "yext_entity_id": "FI-D0017",
+   "owner_name": "Aino",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0017",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Aino!\nKahvila Kipinä: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):\n• Joulupäivä, pe 25.12.: 08:00–17:00 → suljettu (samankaltaisten yritysten tapa)\nHyväksytkö muutokset? Voit myös muokata tai hylätä ne.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-FI-D0017-ASK",
+   "entity_id": "FI-D0017",
+   "business_name": "Kahvila Kipinä",
+   "yext_entity_id": "FI-D0017",
+   "owner_name": "Aino",
+   "language": "fi",
+   "telegram_chat_id": "FAKE-FI-D0017",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Aino!\nKahvila Kipinä: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:\n• Tapaninpäivä, la 26.12.: 10:00–16:00 → suljettu (samankaltaisten yritysten tapa)\n• Uudenvuodenpäivä, pe 1.1.: 08:00–17:00 → suljettu (samankaltaisten yritysten tapa)\nKerro meille: suljettu, auki kuten tavallisesti vai muokkaa?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FONECTA_CALLER",
+     "publisherName": "Fonecta Caller",
+     "typicalUpdateSpeedSeconds": 3600
+    },
+    {
+     "publisherId": "FONECTA_FINDER",
+     "publisherName": "Finder.fi / Fonecta.fi",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-NO-D0009-SUGGEST",
+   "entity_id": "NO-D0009",
+   "business_name": "Bakeri Fjord",
+   "yext_entity_id": "NO-D0009",
+   "owner_name": "Marte",
+   "language": "nb",
+   "telegram_chat_id": "FAKE-NO-D0009",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hei Marte!\nBakeri Fjord: åpningstidene dine kan være feil de kommende helligdagene. Vi foreslår disse endringene (nå → forslag):\n• Første juledag, fre 25.12.: 07:00–18:00 → stengt (dine egne opplysninger fra i fjor)\n• Første nyttårsdag, fre 1.1.: 07:00–18:00 → stengt (dine egne opplysninger for to år siden)\nGodkjenner du endringene? Du kan også endre eller avslå dem.",
+   "publishers": [
+    {
+     "publisherId": "1881",
+     "publisherName": "1881.no",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "GULESIDER",
+     "publisherName": "Gule Sider",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-NO-D0009-ASK",
+   "entity_id": "NO-D0009",
+   "business_name": "Bakeri Fjord",
+   "yext_entity_id": "NO-D0009",
+   "owner_name": "Marte",
+   "language": "nb",
+   "telegram_chat_id": "FAKE-NO-D0009",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hei Marte!\nBakeri Fjord: vi er usikre på åpningstidene deres de kommende helligdagene. Vi viser nå → gjetning:\n• Andre juledag, lør 26.12.: 08:00–15:00 → stengt (slik gjør lignende bedrifter)\nSi fra: stengt, åpent som vanlig eller endre?",
+   "publishers": [
+    {
+     "publisherId": "1881",
+     "publisherName": "1881.no",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "GULESIDER",
+     "publisherName": "Gule Sider",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-SE-D0008-SUGGEST",
+   "entity_id": "SE-D0008",
+   "business_name": "Kafé Linnea",
+   "yext_entity_id": "SE-D0008",
+   "owner_name": "Maria",
+   "language": "sv",
+   "telegram_chat_id": "FAKE-SE-D0008",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "SUGGEST",
+   "status": "QUEUED",
+   "intro_text": "Hej Maria!\nKafé Linnea: dina öppettider kan vara fel under kommande helgdagar. Vi föreslår dessa ändringar (nu → förslag):\n• Lucia, sön 13/12: 10:00–17:00 → 07:00–18:00 (dina egna uppgifter för två år sedan)\n• Julafton, tors 24/12: 08:00–18:00 → stängt (dina egna uppgifter från förra året)\n• Juldagen, fre 25/12: 08:00–18:00 → stängt (dina egna uppgifter för två år sedan)\n• Nyårsdagen, fre 1/1: 08:00–18:00 → stängt (dina egna uppgifter från förra året)\n• Trettondedag jul, ons 6/1: 08:00–18:00 → 10:00–16:00 (dina egna uppgifter från förra året)\nGodkänner du ändringarna? Du kan också ändra eller avstå.",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "ENIRO",
+     "publisherName": "Eniro",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "HITTA",
+     "publisherName": "Hitta.se",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  },
+  {
+   "bundle_id": "B-SE-D0016-ASK",
+   "entity_id": "SE-D0016",
+   "business_name": "Restaurang Fyren",
+   "yext_entity_id": "SE-D0016",
+   "owner_name": "Per",
+   "language": "sv",
+   "telegram_chat_id": "FAKE-SE-D0016",
+   "opted_out": false,
+   "has_permission": false,
+   "route": "ASK",
+   "status": "QUEUED",
+   "intro_text": "Hej Per!\nRestaurang Fyren: vi är osäkra på era öppettider under kommande helgdagar. Vi visar nu → gissning:\n• Julafton, tors 24/12: 11:00–23:00 → stängt (så gör liknande företag)\n• Juldagen, fre 25/12: 11:00–23:00 → stängt (så gör liknande företag)\n• Nyårsdagen, fre 1/1: 11:00–23:00 → stängt (så gör liknande företag)\nBerätta för oss: stängt, öppet som vanligt eller ändra?",
+   "publishers": [
+    {
+     "publisherId": "APPLE",
+     "publisherName": "Apple Maps",
+     "typicalUpdateSpeedSeconds": 172800
+    },
+    {
+     "publisherId": "BING",
+     "publisherName": "Bing",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "CHATGPT_SEARCH",
+     "publisherName": "AI assistants (via Bing/Apple data)",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "ENIRO",
+     "publisherName": "Eniro",
+     "typicalUpdateSpeedSeconds": 86400
+    },
+    {
+     "publisherId": "FACEBOOK",
+     "publisherName": "Facebook",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "FOURSQUARE",
+     "publisherName": "Foursquare",
+     "typicalUpdateSpeedSeconds": 604800
+    },
+    {
+     "publisherId": "GOOGLEMYBUSINESS",
+     "publisherName": "Google (Search & Maps)",
+     "typicalUpdateSpeedSeconds": 120
+    },
+    {
+     "publisherId": "HITTA",
+     "publisherName": "Hitta.se",
+     "typicalUpdateSpeedSeconds": 600
+    },
+    {
+     "publisherId": "TRIPADVISOR",
+     "publisherName": "Tripadvisor",
+     "typicalUpdateSpeedSeconds": 259200
+    },
+    {
+     "publisherId": "WAZE",
+     "publisherName": "Waze (via Google)",
+     "typicalUpdateSpeedSeconds": 172800
+    }
+   ],
+   "telegram_message_id": null
+  }
+ ],
+ "bundle_items": [
+  {
+   "bundle_id": "B-FI-D0001-SUGGEST",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "07:30-18:00",
+   "proposed_hours": "07:30-13:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 07:30–13:00 for Christmas Eve (Wed 24 Dec 2025).",
+    "The channels currently show open 07:30–18:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0001-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "07:30-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 07:30–18:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0001-SUGGEST",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "07:30-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for New Year's Day (Thu 01 Jan 2026).",
+    "The channels currently show open 07:30–18:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0001-SUGGEST",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "07:30-18:00",
+   "proposed_hours": "10:00-16:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 10:00–16:00 for Epiphany (Mon 06 Jan 2025); nothing was entered for it last season.",
+    "The channels currently show open 07:30–18:00 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0002-ASK",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "16:00-23:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "79% of similar businesses (restaurant, large_city, FI) that entered NEW_YEARS_DAY hours were closed; 30% of all of them entered closed.",
+    "The channels currently show open 16:00–23:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-FI-D0002-ASK",
+   "date": "2027-01-05",
+   "day_name": "Epiphany Eve",
+   "shown_hours": "16:00-22:00",
+   "proposed_hours": "16:00-21:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 16:00–21:00 for Epiphany Eve (Fri 05 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 16:00–22:00 for Epiphany Eve, Tue 05 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0002-SUGGEST",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "16:00-22:00",
+   "proposed_hours": "11:00-15:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 11:00–15:00 for Christmas Eve (Wed 24 Dec 2025).",
+    "The channels currently show open 16:00–22:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0002-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "16:00-23:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 16:00–23:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0002-SUGGEST",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "16:00-23:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered closed for Boxing Day (Thu 26 Dec 2024); nothing was entered for it last season.",
+    "The channels currently show open 16:00–23:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0002-SUGGEST",
+   "date": "2026-12-31",
+   "day_name": "New Year's Eve",
+   "shown_hours": "16:00-22:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered closed for New Year's Eve (Tue 31 Dec 2024); nothing was entered for it last season.",
+    "The channels currently show open 16:00–22:00 for New Year's Eve, Thu 31 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0002-SUGGEST",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "16:00-22:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Epiphany (Tue 06 Jan 2026).",
+    "The channels currently show open 16:00–22:00 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0003-ASK",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "09:00-15:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "51% of similar businesses (florist, large_city, FI) that entered BOXING_DAY hours were closed; 16% of all of them entered closed.",
+    "The channels currently show open 09:00–15:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-FI-D0003-ASK",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "09:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "52% of similar businesses (florist, large_city, FI) that entered EPIPHANY hours were closed; 17% of all of them entered closed.",
+    "The channels currently show open 09:00–18:00 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-FI-D0003-AUTO_APPLY",
+   "date": "2026-12-06",
+   "day_name": "Independence Day",
+   "shown_hours": "closed",
+   "proposed_hours": "10:00-14:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 10:00–14:00 for Independence Day (Sat 06 Dec 2025).",
+    "The channels currently show closed for Independence Day, Sun 06 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0003-AUTO_APPLY",
+   "date": "2026-12-23",
+   "day_name": "Day before Christmas Eve",
+   "shown_hours": "09:00-18:00",
+   "proposed_hours": "09:00-20:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 09:00–20:00 for Day before Christmas Eve (Mon 23 Dec 2024); nothing was entered for it last season.",
+    "The channels currently show open 09:00–18:00 for Day before Christmas Eve, Wed 23 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0003-AUTO_APPLY",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "09:00-18:00",
+   "proposed_hours": "09:00-13:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 09:00–13:00 for Christmas Eve (Wed 24 Dec 2025).",
+    "The channels currently show open 09:00–18:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0003-AUTO_APPLY",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "09:00-18:00",
+   "proposed_hours": "10:00-14:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 10:00–14:00 for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 09:00–18:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0003-AUTO_APPLY",
+   "date": "2026-12-31",
+   "day_name": "New Year's Eve",
+   "shown_hours": "09:00-18:00",
+   "proposed_hours": "09:00-15:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 09:00–15:00 for New Year's Eve (Wed 31 Dec 2025).",
+    "The channels currently show open 09:00–18:00 for New Year's Eve, Thu 31 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0003-AUTO_APPLY",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "09:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for New Year's Day (Thu 01 Jan 2026).",
+    "The channels currently show open 09:00–18:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-ASK",
+   "date": "2027-01-05",
+   "day_name": "Epiphany Eve",
+   "shown_hours": "10:00-20:00",
+   "proposed_hours": "10:00-17:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 10:00–17:00 for Epiphany Eve (Fri 05 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 10:00–20:00 for Epiphany Eve, Tue 05 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "date": "2026-12-23",
+   "day_name": "Day before Christmas Eve",
+   "shown_hours": "10:00-20:00",
+   "proposed_hours": "10:00-21:00",
+   "final_hours": null,
+   "basis": "SHOPPING_CENTRE",
+   "evidence": [
+    "Kauppakeskus Revontuli, the shopping centre the business is in, has entered open 10:00–21:00 for Day before Christmas Eve.",
+    "The channels currently show open 10:00–20:00 for Day before Christmas Eve, Wed 23 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "10:00-20:00",
+   "proposed_hours": "10:00-13:00",
+   "final_hours": null,
+   "basis": "SHOPPING_CENTRE",
+   "evidence": [
+    "Kauppakeskus Revontuli, the shopping centre the business is in, has entered open 10:00–13:00 for Christmas Eve.",
+    "The channels currently show open 10:00–20:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "10:00-20:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "SHOPPING_CENTRE",
+   "evidence": [
+    "Kauppakeskus Revontuli, the shopping centre the business is in, has entered closed for Christmas Day.",
+    "The channels currently show open 10:00–20:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "11:00-17:00",
+   "final_hours": null,
+   "basis": "SHOPPING_CENTRE",
+   "evidence": [
+    "Kauppakeskus Revontuli, the shopping centre the business is in, has entered open 11:00–17:00 for Boxing Day.",
+    "The channels currently show open 10:00–18:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "date": "2026-12-31",
+   "day_name": "New Year's Eve",
+   "shown_hours": "10:00-20:00",
+   "proposed_hours": "10:00-18:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 10:00–18:00 for New Year's Eve (Wed 31 Dec 2025).",
+    "The channels currently show open 10:00–20:00 for New Year's Eve, Thu 31 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "10:00-20:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for New Year's Day (Thu 01 Jan 2026).",
+    "The channels currently show open 10:00–20:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0004-SUGGEST",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "10:00-20:00",
+   "proposed_hours": "12:00-18:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 12:00–18:00 for Epiphany (Tue 06 Jan 2026).",
+    "The channels currently show open 10:00–20:00 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0005-ASK",
+   "date": "2026-12-21",
+   "day_name": "a school-break day",
+   "shown_hours": "09:00-17:00",
+   "proposed_hours": "09:00-18:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 09:00–18:00 for a school-break day (Wed 03 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 09:00–17:00 for a school-break day, Mon 21 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0005-ASK",
+   "date": "2026-12-22",
+   "day_name": "a school-break day",
+   "shown_hours": "09:00-17:00",
+   "proposed_hours": "09:00-18:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 09:00–18:00 for a school-break day (Wed 03 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 09:00–17:00 for a school-break day, Tue 22 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0005-ASK",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "09:00-17:00",
+   "proposed_hours": "10:00-16:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 10:00–16:00 for New Year's Day (Mon 01 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 09:00–17:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0005-ASK",
+   "date": "2027-01-04",
+   "day_name": "a school-break day",
+   "shown_hours": "09:00-17:00",
+   "proposed_hours": "09:00-18:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 09:00–18:00 for a school-break day (Wed 03 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 09:00–17:00 for a school-break day, Mon 04 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0005-SUGGEST",
+   "date": "2026-11-08",
+   "day_name": "Father's Day",
+   "shown_hours": "09:00-17:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Father's Day (Sun 09 Nov 2025).",
+    "The channels currently show open 09:00–17:00 for Father's Day, Sun 08 Nov 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-ASK",
+   "date": "2027-01-05",
+   "day_name": "Epiphany Eve",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered closed for Epiphany Eve (Fri 05 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 10:00–18:00 for Epiphany Eve, Tue 05 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "date": "2026-12-23",
+   "day_name": "Day before Christmas Eve",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "10:00-20:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 10:00–20:00 for Day before Christmas Eve (Tue 23 Dec 2025).",
+    "The channels currently show open 10:00–18:00 for Day before Christmas Eve, Wed 23 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Eve (Wed 24 Dec 2025).",
+    "The channels currently show open 10:00–18:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 10:00–18:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "09:00-14:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Boxing Day (Fri 26 Dec 2025).",
+    "The channels currently show open 09:00–14:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "date": "2026-12-29",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Between Christmas and New Year (Tue 30 Dec 2025).",
+    "The channels currently show open 10:00–18:00 for Between Christmas and New Year, Tue 29 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "date": "2026-12-30",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Between Christmas and New Year (Tue 30 Dec 2025).",
+    "The channels currently show open 10:00–18:00 for Between Christmas and New Year, Wed 30 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0007-SUGGEST",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "10:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OWNER_PATTERN",
+   "evidence": [
+    "The owner has never entered New Year's Day, but was closed on all 9 holidays it entered (GOOD_FRIDAY 2025-04-18, MIDSUMMER_DAY 2025-06-21, XMAS_EVE 2025-12-24, XMAS_DAY 2025-12-25, BOXING_DAY 2025-12-26, MAY_DAY 2026-05-01, ASCENSION 2026-05-14, ALL_SAINTS 2026-10-31, EPIPHANY 2027-01-06); 87% of peers who entered hours for NEW_YEARS_DAY were closed.",
+    "The channels currently show open 10:00–18:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-11-21",
+   "day_name": "an event night nearby",
+   "shown_hours": "14:00-03:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 14:00–03:00 for an event night nearby, Sat 21 Nov 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-11-30",
+   "day_name": "an event night nearby",
+   "shown_hours": "15:00-01:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 15:00–01:00 for an event night nearby, Mon 30 Nov 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-04",
+   "day_name": "an event night nearby",
+   "shown_hours": "14:00-03:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 14:00–03:00 for an event night nearby, Fri 04 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-06",
+   "day_name": "Independence Day",
+   "shown_hours": "15:00-00:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OWNER_PATTERN",
+   "evidence": [
+    "The owner has never entered Independence Day, but was closed on all 2 holidays it entered (XMAS_DAY 2025-12-25, NEW_YEARS_DAY 2026-01-01); 81% of peers who entered hours for INDEPENDENCE_DAY were closed.",
+    "The channels currently show open 15:00–00:00 for Independence Day, Sun 06 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-07",
+   "day_name": "an event night nearby",
+   "shown_hours": "15:00-01:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 15:00–01:00 for an event night nearby, Mon 07 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-11",
+   "day_name": "an event night nearby",
+   "shown_hours": "14:00-03:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 14:00–03:00 for an event night nearby, Fri 11 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-17",
+   "day_name": "an event night nearby",
+   "shown_hours": "15:00-01:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 15:00–01:00 for an event night nearby, Thu 17 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-20",
+   "day_name": "an event night nearby",
+   "shown_hours": "15:00-00:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 15:00–00:00 for an event night nearby, Sun 20 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-22",
+   "day_name": "an event night nearby",
+   "shown_hours": "15:00-01:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 15:00–01:00 for an event night nearby, Tue 22 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "15:00-01:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OWNER_PATTERN",
+   "evidence": [
+    "The owner has never entered Christmas Eve, but was closed on all 2 holidays it entered (XMAS_DAY 2025-12-25, NEW_YEARS_DAY 2026-01-01); 36% of peers who entered hours for XMAS_EVE were closed.",
+    "The channels currently show open 15:00–01:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "14:00-03:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 14:00–03:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "14:00-03:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OWNER_PATTERN",
+   "evidence": [
+    "The owner has never entered Boxing Day, but was closed on all 2 holidays it entered (XMAS_DAY 2025-12-25, NEW_YEARS_DAY 2026-01-01); 77% of peers who entered hours for BOXING_DAY were closed.",
+    "The channels currently show open 14:00–03:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "14:00-03:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for New Year's Day (Thu 01 Jan 2026).",
+    "The channels currently show open 14:00–03:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2027-01-02",
+   "day_name": "an event night nearby",
+   "shown_hours": "14:00-03:00",
+   "proposed_hours": "15:00-03:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 15:00–03:00 for an event night nearby (Mon 23 Sep 2024); nothing was entered for it last season.",
+    "The channels currently show open 14:00–03:00 for an event night nearby, Sat 02 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2027-01-05",
+   "day_name": "Epiphany Eve",
+   "shown_hours": "15:00-01:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Epiphany Eve (Mon 05 Jan 2026).",
+    "The channels currently show open 15:00–01:00 for Epiphany Eve, Tue 05 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0010-SUGGEST",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "15:00-01:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OWNER_PATTERN",
+   "evidence": [
+    "The owner has never entered Epiphany, but was closed on all 2 holidays it entered (XMAS_DAY 2025-12-25, NEW_YEARS_DAY 2026-01-01); 76% of peers who entered hours for EPIPHANY were closed.",
+    "The channels currently show open 15:00–01:00 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-11-08",
+   "day_name": "Father's Day",
+   "shown_hours": "12:00-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 12:00–21:00 for Father's Day, Sun 08 Nov 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-11-13",
+   "day_name": "an event night nearby",
+   "shown_hours": "10:30-23:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–23:00 for an event night nearby, Fri 13 Nov 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-11-27",
+   "day_name": "Black Friday",
+   "shown_hours": "10:30-23:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–23:00 for Black Friday, Fri 27 Nov 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-06",
+   "day_name": "Independence Day",
+   "shown_hours": "12:00-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 12:00–21:00 for Independence Day, Sun 06 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-23",
+   "day_name": "Day before Christmas Eve",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for Day before Christmas Eve, Wed 23 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "10:30-23:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–23:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "10:30-23:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–23:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-28",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for Between Christmas and New Year, Mon 28 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-29",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for Between Christmas and New Year, Tue 29 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-30",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for Between Christmas and New Year, Wed 30 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2026-12-31",
+   "day_name": "New Year's Eve",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for New Year's Eve, Thu 31 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "10:30-23:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–23:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2027-01-05",
+   "day_name": "Epiphany Eve",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for Epiphany Eve, Tue 05 Jan 2027."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0011-STAFF",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "10:30-21:00",
+   "proposed_hours": null,
+   "final_hours": null,
+   "basis": "CLOSED_SIGNALS",
+   "evidence": [
+    "Recent reviews or edits on Google and other channels say the business has closed for good. A person should check before anything is published.",
+    "The channels currently show open 10:30–21:00 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-FI-D0012-AUTO_APPLY",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "08:30-16:30",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Eve (Wed 24 Dec 2025).",
+    "The channels currently show open 08:30–16:30 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0012-AUTO_APPLY",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "08:30-16:30",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 08:30–16:30 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0012-AUTO_APPLY",
+   "date": "2026-12-31",
+   "day_name": "New Year's Eve",
+   "shown_hours": "08:30-16:30",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for New Year's Eve (Wed 31 Dec 2025).",
+    "The channels currently show open 08:30–16:30 for New Year's Eve, Thu 31 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0012-AUTO_APPLY",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "08:30-16:30",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for New Year's Day (Thu 01 Jan 2026).",
+    "The channels currently show open 08:30–16:30 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0012-AUTO_APPLY",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "08:30-16:30",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Epiphany (Tue 06 Jan 2026).",
+    "The channels currently show open 08:30–16:30 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0013-ASK",
+   "date": "2026-12-28",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "08:00-16:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered closed for Between Christmas and New Year (Fri 29 Dec 2023); nothing was entered for it last season.",
+    "The channels currently show open 08:00–16:00 for Between Christmas and New Year, Mon 28 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0013-ASK",
+   "date": "2026-12-29",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "08:00-16:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered closed for Between Christmas and New Year (Fri 29 Dec 2023); nothing was entered for it last season.",
+    "The channels currently show open 08:00–16:00 for Between Christmas and New Year, Tue 29 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0013-ASK",
+   "date": "2026-12-30",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "08:00-16:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered closed for Between Christmas and New Year (Fri 29 Dec 2023); nothing was entered for it last season.",
+    "The channels currently show open 08:00–16:00 for Between Christmas and New Year, Wed 30 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0014-ASK",
+   "date": "2026-12-28",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "12:00-19:00",
+   "proposed_hours": "10:00-21:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 10:00–21:00 for Between Christmas and New Year (Thu 28 Dec 2023); nothing was entered for it last season.",
+    "The channels currently show open 12:00–19:00 for Between Christmas and New Year, Mon 28 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0014-ASK",
+   "date": "2026-12-29",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "12:00-19:00",
+   "proposed_hours": "10:00-21:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 10:00–21:00 for Between Christmas and New Year (Thu 28 Dec 2023); nothing was entered for it last season.",
+    "The channels currently show open 12:00–19:00 for Between Christmas and New Year, Tue 29 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0014-ASK",
+   "date": "2026-12-30",
+   "day_name": "Between Christmas and New Year",
+   "shown_hours": "12:00-19:00",
+   "proposed_hours": "10:00-21:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 10:00–21:00 for Between Christmas and New Year (Thu 28 Dec 2023); nothing was entered for it last season.",
+    "The channels currently show open 12:00–19:00 for Between Christmas and New Year, Wed 30 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0014-ASK",
+   "date": "2026-12-31",
+   "day_name": "New Year's Eve",
+   "shown_hours": "12:00-19:00",
+   "proposed_hours": "12:00-17:00",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered open 10:00–17:00 for New Year's Eve (Sun 31 Dec 2023); nothing was entered for it last season.",
+    "We keep that closing time and use today's regular opening: open 12:00–17:00.",
+    "The channels currently show open 12:00–19:00 for New Year's Eve, Thu 31 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0014-ASK",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "12:00-19:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "OLDER_SEASON",
+   "evidence": [
+    "In an earlier season the owner entered closed for New Year's Day (Mon 01 Jan 2024); nothing was entered for it last season.",
+    "The channels currently show open 12:00–19:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0014-SUGGEST",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "12:00-19:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered closed for Christmas Eve (Tue 24 Dec 2024); nothing was entered for it last season.",
+    "The channels currently show open 12:00–19:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0014-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "12:00-19:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 12:00–19:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-FI-D0017-ASK",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "10:00-16:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "62% of similar businesses (cafe, large_city, FI) that entered BOXING_DAY hours were closed; 21% of all of them entered closed.",
+    "The channels currently show open 10:00–16:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-FI-D0017-ASK",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "08:00-17:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "76% of similar businesses (cafe, large_city, FI) that entered NEW_YEARS_DAY hours were closed; 31% of all of them entered closed.",
+    "The channels currently show open 08:00–17:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-FI-D0017-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "08:00-17:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "86% of similar businesses (cafe, large_city, FI) that entered XMAS_DAY hours were closed; 38% of all of them entered closed.",
+    "The channels currently show open 08:00–17:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "MEDIUM"
+  },
+  {
+   "bundle_id": "B-NO-D0009-ASK",
+   "date": "2026-12-26",
+   "day_name": "Boxing Day",
+   "shown_hours": "08:00-15:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "62% of similar businesses (bakery, large_city, NO) that entered BOXING_DAY hours were closed; 16% of all of them entered closed.",
+    "The channels currently show open 08:00–15:00 for Boxing Day, Sat 26 Dec 2026."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-NO-D0009-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "07:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Day (Thu 25 Dec 2025).",
+    "The channels currently show open 07:00–18:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-NO-D0009-SUGGEST",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "07:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered closed for New Year's Day (Wed 01 Jan 2025); nothing was entered for it last season.",
+    "The channels currently show open 07:00–18:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-SE-D0008-SUGGEST",
+   "date": "2026-12-13",
+   "day_name": "St Lucy's Day",
+   "shown_hours": "10:00-17:00",
+   "proposed_hours": "07:00-18:00",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered open 07:00–18:00 for St Lucy's Day (Fri 13 Dec 2024); nothing was entered for it last season.",
+    "The channels currently show open 10:00–17:00 for St Lucy's Day, Sun 13 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-SE-D0008-SUGGEST",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "08:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for Christmas Eve (Wed 24 Dec 2025).",
+    "The channels currently show open 08:00–18:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-SE-D0008-SUGGEST",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "08:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "TWO_YEARS_AGO",
+   "evidence": [
+    "Two seasons ago the owner entered closed for Christmas Day (Wed 25 Dec 2024); nothing was entered for it last season.",
+    "The channels currently show open 08:00–18:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-SE-D0008-SUGGEST",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "08:00-18:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered closed for New Year's Day (Thu 01 Jan 2026).",
+    "The channels currently show open 08:00–18:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-SE-D0008-SUGGEST",
+   "date": "2027-01-06",
+   "day_name": "Epiphany",
+   "shown_hours": "08:00-18:00",
+   "proposed_hours": "10:00-16:00",
+   "final_hours": null,
+   "basis": "LAST_YEAR",
+   "evidence": [
+    "Last season the owner entered open 10:00–16:00 for Epiphany (Tue 06 Jan 2026).",
+    "The channels currently show open 08:00–18:00 for Epiphany, Wed 06 Jan 2027."
+   ],
+   "confidence": "HIGH"
+  },
+  {
+   "bundle_id": "B-SE-D0016-ASK",
+   "date": "2026-12-24",
+   "day_name": "Christmas Eve",
+   "shown_hours": "11:00-23:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "82% of similar businesses (restaurant, large_city, SE) that entered XMAS_EVE hours were closed; 22% of all of them entered closed.",
+    "The channels currently show open 11:00–23:00 for Christmas Eve, Thu 24 Dec 2026."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-SE-D0016-ASK",
+   "date": "2026-12-25",
+   "day_name": "Christmas Day",
+   "shown_hours": "11:00-23:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "68% of similar businesses (restaurant, large_city, SE) that entered XMAS_DAY hours were closed; 21% of all of them entered closed.",
+    "The channels currently show open 11:00–23:00 for Christmas Day, Fri 25 Dec 2026."
+   ],
+   "confidence": "LOW"
+  },
+  {
+   "bundle_id": "B-SE-D0016-ASK",
+   "date": "2027-01-01",
+   "day_name": "New Year's Day",
+   "shown_hours": "11:00-23:00",
+   "proposed_hours": "closed",
+   "final_hours": null,
+   "basis": "PEERS",
+   "evidence": [
+    "81% of similar businesses (restaurant, large_city, SE) that entered NEW_YEARS_DAY hours were closed; 27% of all of them entered closed.",
+    "The channels currently show open 11:00–23:00 for New Year's Day, Fri 01 Jan 2027."
+   ],
+   "confidence": "LOW"
+  }
+ ]
+}
