@@ -41,7 +41,7 @@ back-test 62.79, exact 3981, harmful_wrong_state 409, spam 89, missed 1315 (matc
 Net points vs reference by day group (B/after/3/20/0.9; between holidays / eves / shopping days / major holidays / other):
 dev 2026 0.0 / +2.7 / 0.0 / -9.1 / 0.0; back-test +3.0 / +4.2 / 0.0 / -4.0 / 0.0. Source A, same config: dev -124.3 / -17.7 / 0 / -6.1 / 0; back-test -136.0 / -5.3 / 0 / -4.0 / 0.
 Rows touched (KNN produced a candidate, incl. "kept regular hours" votes that only keep silence): B 1,454 / 1,517; changed action: 64 / 71.
-Other B cells (all 48): out-of-sample dev between -4.4 and +0.0, back-test between -4.5 and +0.06; wrong state rises in all 48 (min 394 on dev, 394 in 2025); in-sample is 0.3-1.5 points higher than out of sample (best in-sample 68.08 / 64.80 at K5 t0.8).
+Other B cells (all 48): out-of-sample dev between -4.4 and +0.0, back-test between -4.5 and +0.06; wrong state rises in all 48 (lowest: 406 on dev, 394 in 2025); in-sample is 0.3-1.5 points higher than out of sample (best in-sample 68.08 / 64.80 at K5 t0.8).
 
 ### Why it does not gain
 - The block fires on 1,300-2,100 rows but almost all are "kept regular hours" votes (silence; the baseline missed nothing there).
