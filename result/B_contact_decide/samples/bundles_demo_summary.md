@@ -5,18 +5,22 @@ Season 2026, snapshot 2026-11-06. All Telegram ids are fake placeholders. Nothin
 | Business | Bundle | Route | Items | Confidence | Language | Permission |
 |---|---|---|---|---|---|---|
 | FI-D0001 Kahvila Aurora | B-FI-D0001-SUGGEST | SUGGEST | 4 | HIGH 4 | fi | no |
-| FI-D0002 Ravintola Kanerva | B-FI-D0002-SUGGEST | SUGGEST | 6 | HIGH 6 | fi | no |
-| FI-D0002 Ravintola Kanerva | B-FI-D0002-ASK | ASK | 1 | LOW 1 | fi | no |
+| FI-D0002 Ravintola Kanerva | B-FI-D0002-SUGGEST | SUGGEST | 5 | HIGH 5 | fi | no |
+| FI-D0002 Ravintola Kanerva | B-FI-D0002-ASK | ASK | 2 | HIGH 1, LOW 1 | fi | no |
 | FI-D0003 Kukkakauppa Kide | B-FI-D0003-AUTO_APPLY | AUTO_APPLY | 6 | HIGH 6 | fi | yes |
 | FI-D0003 Kukkakauppa Kide | B-FI-D0003-ASK | ASK | 2 | LOW 2 | fi | yes |
-| FI-D0004 Muoti Lyhty | B-FI-D0004-SUGGEST | SUGGEST | 8 | HIGH 8 | fi | no |
-| FI-D0005 Suksivuokraamo Kuura | B-FI-D0005-SUGGEST | SUGGEST | 5 | HIGH 5 | fi | no |
-| FI-D0007 Parturi-Kampaamo Helmi | B-FI-D0007-SUGGEST | SUGGEST | 8 | HIGH 8 | fi | no |
+| FI-D0004 Muoti Lyhty | B-FI-D0004-SUGGEST | SUGGEST | 7 | HIGH 7 | fi | no |
+| FI-D0004 Muoti Lyhty | B-FI-D0004-ASK | ASK | 1 | HIGH 1 | fi | no |
+| FI-D0005 Suksivuokraamo Kuura | B-FI-D0005-SUGGEST | SUGGEST | 1 | HIGH 1 | fi | no |
+| FI-D0005 Suksivuokraamo Kuura | B-FI-D0005-ASK | ASK | 4 | HIGH 4 | fi | no |
+| FI-D0007 Parturi-Kampaamo Helmi | B-FI-D0007-SUGGEST | SUGGEST | 7 | HIGH 7 | fi | no |
+| FI-D0007 Parturi-Kampaamo Helmi | B-FI-D0007-ASK | ASK | 1 | HIGH 1 | fi | no |
 | FI-D0010 Pub Kulma | B-FI-D0010-SUGGEST | SUGGEST | 16 | HIGH 16 | sv | no |
 | FI-D0011 Pizzeria Torni | B-FI-D0011-STAFF | STAFF | 15 | MEDIUM 15 | fi | yes |
 | FI-D0012 Tilitoimisto Otso | B-FI-D0012-AUTO_APPLY | AUTO_APPLY | 5 | HIGH 5 | fi | yes |
-| FI-D0013 Hammasklinikka Kallio | B-FI-D0013-SUGGEST | SUGGEST | 3 | HIGH 3 | fi | no |
-| FI-D0014 Leikkimaa Onni | B-FI-D0014-SUGGEST | SUGGEST | 7 | HIGH 7 | fi | no |
+| FI-D0013 Hammasklinikka Kallio | B-FI-D0013-ASK | ASK | 3 | HIGH 3 | fi | no |
+| FI-D0014 Leikkimaa Onni | B-FI-D0014-SUGGEST | SUGGEST | 2 | HIGH 2 | fi | no |
+| FI-D0014 Leikkimaa Onni | B-FI-D0014-ASK | ASK | 5 | HIGH 5 | fi | no |
 | FI-D0017 Kahvila Kipinä | B-FI-D0017-SUGGEST | SUGGEST | 1 | MEDIUM 1 | fi | no |
 | FI-D0017 Kahvila Kipinä | B-FI-D0017-ASK | ASK | 2 | LOW 2 | fi | no |
 | NO-D0009 Bakeri Fjord | B-NO-D0009-SUGGEST | SUGGEST | 2 | HIGH 2 | nb | no |
@@ -42,7 +46,7 @@ Hyväksytkö muutokset? Voit myös muokata tai hylätä ne.
 
 ### B-FI-D0002-SUGGEST (Ravintola Kanerva, SUGGEST, fi)
 
-Items: 6. Basis: LAST_YEAR 3, OLDER_SEASON 1, TWO_YEARS_AGO 2.
+Items: 5. Basis: LAST_YEAR 3, TWO_YEARS_AGO 2.
 
 ```
 Hei Janne!
@@ -51,19 +55,19 @@ Ravintola Kanerva: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdot
 • Joulupäivä, pe 25.12.: 16:00–23:00 → suljettu (omat tietosi viime vuodelta)
 • Tapaninpäivä, la 26.12.: 16:00–23:00 → suljettu (omat tietosi kahden vuoden takaa)
 • Uudenvuodenaatto, to 31.12.: 16:00–22:00 → suljettu (omat tietosi kahden vuoden takaa)
-• Loppiaisaatto, ti 5.1.: 16:00–22:00 → 16:00–21:00 (omat tietosi aiemmalta kaudelta)
 • Loppiainen, ke 6.1.: 16:00–22:00 → suljettu (omat tietosi viime vuodelta)
 Hyväksytkö muutokset? Voit myös muokata tai hylätä ne.
 ```
 
 ### B-FI-D0002-ASK (Ravintola Kanerva, ASK, fi)
 
-Items: 1. Basis: PEERS 1.
+Items: 2. Basis: OLDER_SEASON 1, PEERS 1.
 
 ```
 Hei Janne!
 Ravintola Kanerva: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
 • Uudenvuodenpäivä, pe 1.1.: 16:00–23:00 → suljettu (samankaltaisten yritysten tapa)
+• Loppiaisaatto, ti 5.1.: 16:00–22:00 → 16:00–21:00? Vuonna 2024 olitte auki 16:00–21:00 tänä päivänä. Entä tänä vuonna?
 Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
 
@@ -97,7 +101,7 @@ Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 
 ### B-FI-D0004-SUGGEST (Muoti Lyhty, SUGGEST, fi)
 
-Items: 8. Basis: LAST_YEAR 3, OLDER_SEASON 1, SHOPPING_CENTRE 4.
+Items: 7. Basis: LAST_YEAR 3, SHOPPING_CENTRE 4.
 
 ```
 Hei Matti!
@@ -108,27 +112,47 @@ Muoti Lyhty: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme n
 • Tapaninpäivä, la 26.12.: 10:00–18:00 → 11:00–17:00 (kauppakeskus on ilmoittanut aukioloaikansa)
 • Uudenvuodenaatto, to 31.12.: 10:00–20:00 → 10:00–18:00 (omat tietosi viime vuodelta)
 • Uudenvuodenpäivä, pe 1.1.: 10:00–20:00 → suljettu (omat tietosi viime vuodelta)
-• Loppiaisaatto, ti 5.1.: 10:00–20:00 → 10:00–17:00 (omat tietosi aiemmalta kaudelta)
 • Loppiainen, ke 6.1.: 10:00–20:00 → 12:00–18:00 (omat tietosi viime vuodelta)
 Hyväksytkö muutokset? Voit myös muokata tai hylätä ne.
 ```
 
+### B-FI-D0004-ASK (Muoti Lyhty, ASK, fi)
+
+Items: 1. Basis: OLDER_SEASON 1.
+
+```
+Hei Matti!
+Muoti Lyhty: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+• Loppiaisaatto, ti 5.1.: 10:00–20:00 → 10:00–17:00? Vuonna 2024 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?
+Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
+```
+
 ### B-FI-D0005-SUGGEST (Suksivuokraamo Kuura, SUGGEST, fi)
 
-Items: 5. Basis: LAST_YEAR 1, OLDER_SEASON 4.
+Items: 1. Basis: LAST_YEAR 1.
 
 ```
 Hei Heikki!
 Suksivuokraamo Kuura: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):
 • Isänpäivä, su 8.11.: 09:00–17:00 → suljettu (omat tietosi viime vuodelta)
-• Koulujen loma, ma 21.12., ti 22.12., ma 4.1.: 09:00–17:00 → 09:00–18:00 (omat tietosi aiemmalta kaudelta)
-• Uudenvuodenpäivä, pe 1.1.: 09:00–17:00 → 10:00–16:00 (omat tietosi aiemmalta kaudelta)
 Hyväksytkö muutokset? Voit myös muokata tai hylätä ne.
+```
+
+### B-FI-D0005-ASK (Suksivuokraamo Kuura, ASK, fi)
+
+Items: 4. Basis: OLDER_SEASON 4.
+
+```
+Hei Heikki!
+Suksivuokraamo Kuura: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+• Koulujen loma, ma 21.12., ti 22.12., ma 4.1.: 09:00–17:00 → 09:00–18:00? Vuonna 2024 olitte auki 09:00–18:00 tänä päivänä. Entä tänä vuonna?
+• Uudenvuodenpäivä, pe 1.1.: 09:00–17:00 → 10:00–16:00? Vuonna 2024 olitte auki 10:00–16:00 tänä päivänä. Entä tänä vuonna?
+Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
 
 ### B-FI-D0007-SUGGEST (Parturi-Kampaamo Helmi, SUGGEST, fi)
 
-Items: 8. Basis: LAST_YEAR 6, OLDER_SEASON 1, OWNER_PATTERN 1.
+Items: 7. Basis: LAST_YEAR 6, OWNER_PATTERN 1.
 
 ```
 Hei Mikko!
@@ -139,8 +163,18 @@ Parturi-Kampaamo Helmi: aukioloaikasi saattavat olla väärin tulevina pyhinä. 
 • Tapaninpäivä, la 26.12.: 09:00–14:00 → suljettu (omat tietosi viime vuodelta)
 • Välipäivä, ti 29.12., ke 30.12.: 10:00–18:00 → suljettu (omat tietosi viime vuodelta)
 • Uudenvuodenpäivä, pe 1.1.: 10:00–18:00 → suljettu (muiden pyhäpäivien perusteella)
-• Loppiaisaatto, ti 5.1.: 10:00–18:00 → suljettu (omat tietosi aiemmalta kaudelta)
 Hyväksytkö muutokset? Voit myös muokata tai hylätä ne.
+```
+
+### B-FI-D0007-ASK (Parturi-Kampaamo Helmi, ASK, fi)
+
+Items: 1. Basis: OLDER_SEASON 1.
+
+```
+Hei Mikko!
+Parturi-Kampaamo Helmi: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+• Loppiaisaatto, ti 5.1.: 10:00–18:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?
+Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
 
 ### B-FI-D0010-SUGGEST (Pub Kulma, SUGGEST, sv)
@@ -150,10 +184,10 @@ Items: 16. Basis: LAST_YEAR 3, OWNER_PATTERN 4, TWO_YEARS_AGO 9.
 ```
 Hej Oskar!
 Pub Kulma: dina öppettider kan vara fel under kommande helgdagar. Vi föreslår dessa ändringar (nu → förslag):
-• Evenemangskväll i närheten, lör 21/11, fre 4/12, fre 11/12, lör 2/1: 14:00–03:00 → 15:00–03:00 (dina egna uppgifter från för två år sedan)
-• Evenemangskväll i närheten, mån 30/11, mån 7/12, tors 17/12, tis 22/12: 15:00–01:00 → 15:00–03:00 (dina egna uppgifter från för två år sedan)
+• Evenemangskväll i närheten, lör 21/11, fre 4/12, fre 11/12, lör 2/1: 14:00–03:00 → 15:00–03:00 (dina egna uppgifter för två år sedan)
+• Evenemangskväll i närheten, mån 30/11, mån 7/12, tors 17/12, tis 22/12: 15:00–01:00 → 15:00–03:00 (dina egna uppgifter för två år sedan)
 • Itsenäisyyspäivä (Independence Day), sön 6/12: 15:00–00:00 → stängt (utifrån dina andra helgdagar)
-• Evenemangskväll i närheten, sön 20/12: 15:00–00:00 → 15:00–03:00 (dina egna uppgifter från för två år sedan)
+• Evenemangskväll i närheten, sön 20/12: 15:00–00:00 → 15:00–03:00 (dina egna uppgifter för två år sedan)
 • Jouluaatto (Christmas Eve), tors 24/12: 15:00–01:00 → stängt (utifrån dina andra helgdagar)
 • Joulupäivä (Christmas Day), fre 25/12: 14:00–03:00 → stängt (dina egna uppgifter från förra året)
 • Tapaninpäivä (Boxing Day), lör 26/12: 14:00–03:00 → stängt (utifrån dina andra helgdagar)
@@ -187,30 +221,40 @@ Tilitoimisto Otso: luvallasi olemme päivittäneet aukioloaikasi (ennen → nyt)
 Voit perua muutokset 24 tunnin kuluessa.
 ```
 
-### B-FI-D0013-SUGGEST (Hammasklinikka Kallio, SUGGEST, fi)
+### B-FI-D0013-ASK (Hammasklinikka Kallio, ASK, fi)
 
 Items: 3. Basis: OLDER_SEASON 3.
 
 ```
 Hei Aleksi!
-Hammasklinikka Kallio: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):
-• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 08:00–16:00 → suljettu (omat tietosi aiemmalta kaudelta)
-Hyväksytkö muutokset? Voit myös muokata tai hylätä ne.
+Hammasklinikka Kallio: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 08:00–16:00 → suljettu? Vuonna 2023 olitte kiinni tänä päivänä. Entä tänä vuonna?
+Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
 
 ### B-FI-D0014-SUGGEST (Leikkimaa Onni, SUGGEST, fi)
 
-Items: 7. Basis: LAST_YEAR 1, OLDER_SEASON 5, TWO_YEARS_AGO 1.
+Items: 2. Basis: LAST_YEAR 1, TWO_YEARS_AGO 1.
 
 ```
 Hei Anna!
 Leikkimaa Onni: aukioloaikasi saattavat olla väärin tulevina pyhinä. Ehdotamme näitä muutoksia (nyt → ehdotus):
 • Jouluaatto, to 24.12.: 12:00–19:00 → suljettu (omat tietosi kahden vuoden takaa)
 • Joulupäivä, pe 25.12.: 12:00–19:00 → suljettu (omat tietosi viime vuodelta)
-• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 12:00–19:00 → 10:00–21:00 (omat tietosi aiemmalta kaudelta)
-• Uudenvuodenaatto, to 31.12.: 12:00–19:00 → 12:00–17:00 (omat tietosi aiemmalta kaudelta)
-• Uudenvuodenpäivä, pe 1.1.: 12:00–19:00 → suljettu (omat tietosi aiemmalta kaudelta)
 Hyväksytkö muutokset? Voit myös muokata tai hylätä ne.
+```
+
+### B-FI-D0014-ASK (Leikkimaa Onni, ASK, fi)
+
+Items: 5. Basis: OLDER_SEASON 5.
+
+```
+Hei Anna!
+Leikkimaa Onni: emme ole varmoja, milloin olette auki tulevina pyhinä. Näytämme nyt → arvaus:
+• Välipäivä, ma 28.12., ti 29.12., ke 30.12.: 12:00–19:00 → 10:00–21:00? Vuonna 2023 olitte auki 10:00–21:00 tänä päivänä. Entä tänä vuonna?
+• Uudenvuodenaatto, to 31.12.: 12:00–19:00 → 12:00–17:00? Vuonna 2023 olitte auki 10:00–17:00 tänä päivänä. Entä tänä vuonna?
+• Uudenvuodenpäivä, pe 1.1.: 12:00–19:00 → suljettu? Vuonna 2024 olitte kiinni tänä päivänä. Entä tänä vuonna?
+Kerro meille: suljettu, auki kuten tavallisesti vai muokkaa?
 ```
 
 ### B-FI-D0017-SUGGEST (Kahvila Kipinä, SUGGEST, fi)
@@ -244,7 +288,7 @@ Items: 2. Basis: LAST_YEAR 1, TWO_YEARS_AGO 1.
 Hei Marte!
 Bakeri Fjord: åpningstidene dine kan være feil de kommende helligdagene. Vi foreslår disse endringene (nå → forslag):
 • Første juledag, fre 25.12.: 07:00–18:00 → stengt (dine egne opplysninger fra i fjor)
-• Første nyttårsdag, fre 1.1.: 07:00–18:00 → stengt (dine egne opplysninger fra for to år siden)
+• Første nyttårsdag, fre 1.1.: 07:00–18:00 → stengt (dine egne opplysninger for to år siden)
 Godkjenner du endringene? Du kan også endre eller avslå dem.
 ```
 
@@ -266,9 +310,9 @@ Items: 5. Basis: LAST_YEAR 3, TWO_YEARS_AGO 2.
 ```
 Hej Maria!
 Kafé Linnea: dina öppettider kan vara fel under kommande helgdagar. Vi föreslår dessa ändringar (nu → förslag):
-• Lucia, sön 13/12: 10:00–17:00 → 07:00–18:00 (dina egna uppgifter från för två år sedan)
+• Lucia, sön 13/12: 10:00–17:00 → 07:00–18:00 (dina egna uppgifter för två år sedan)
 • Julafton, tors 24/12: 08:00–18:00 → stängt (dina egna uppgifter från förra året)
-• Juldagen, fre 25/12: 08:00–18:00 → stängt (dina egna uppgifter från för två år sedan)
+• Juldagen, fre 25/12: 08:00–18:00 → stängt (dina egna uppgifter för två år sedan)
 • Nyårsdagen, fre 1/1: 08:00–18:00 → stängt (dina egna uppgifter från förra året)
 • Trettondedag jul, ons 6/1: 08:00–18:00 → 10:00–16:00 (dina egna uppgifter från förra året)
 Godkänner du ändringarna? Du kan också ändra eller avstå.

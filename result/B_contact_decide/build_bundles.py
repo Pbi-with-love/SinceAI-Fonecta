@@ -50,11 +50,11 @@ REASON = {  # one short reason per basis (AGENTS.md section 2.4: LOW = peers onl
            "OLDER_SEASON": "omat tietosi aiemmalta kaudelta", "OWNER_PATTERN": "muiden pyhäpäivien perusteella",
            "SHOPPING_CENTRE": "kauppakeskus on ilmoittanut aukioloaikansa", "PEERS": "samankaltaisten yritysten tapa",
            "CLOSED_SIGNALS": "arvostelut tai muokkaukset kertovat lopettamisesta"},
-    "sv": {"LAST_YEAR": "dina egna uppgifter från förra året", "TWO_YEARS_AGO": "dina egna uppgifter från för två år sedan",
+    "sv": {"LAST_YEAR": "dina egna uppgifter från förra året", "TWO_YEARS_AGO": "dina egna uppgifter för två år sedan",
            "OLDER_SEASON": "dina egna uppgifter från en tidigare säsong", "OWNER_PATTERN": "utifrån dina andra helgdagar",
            "SHOPPING_CENTRE": "köpcentret har meddelat sina tider", "PEERS": "så gör liknande företag",
            "CLOSED_SIGNALS": "recensioner eller ändringar tyder på nedläggning"},
-    "nb": {"LAST_YEAR": "dine egne opplysninger fra i fjor", "TWO_YEARS_AGO": "dine egne opplysninger fra for to år siden",
+    "nb": {"LAST_YEAR": "dine egne opplysninger fra i fjor", "TWO_YEARS_AGO": "dine egne opplysninger for to år siden",
            "OLDER_SEASON": "dine egne opplysninger fra en tidligere sesong", "OWNER_PATTERN": "basert på dine andre helligdager",
            "SHOPPING_CENTRE": "kjøpesenteret har meldt inn sine tider", "PEERS": "slik gjør lignende bedrifter",
            "CLOSED_SIGNALS": "anmeldelser eller endringer tyder på nedleggelse"},
@@ -94,6 +94,16 @@ TEXT = {  # route -> language -> (greeting, intro, closing); {name} owner, {biz}
         "en": ("Hi {name}!", "{biz}: with your standing permission we have updated your opening hours (before → now):",
                "You can undo the changes within 24 hours."),
     },
+}
+OLDER_QUESTION = {  # ASK line for basis OLDER_SEASON: the real year and what the owner entered then
+    "fi": {"closed": "Vuonna {y} olitte kiinni tänä päivänä. Entä tänä vuonna?",
+           "open": "Vuonna {y} olitte auki {h} tänä päivänä. Entä tänä vuonna?"},
+    "sv": {"closed": "År {y} hade ni stängt den här dagen. Hur blir det i år?",
+           "open": "År {y} hade ni öppet {h} den här dagen. Hur blir det i år?"},
+    "nb": {"closed": "I {y} holdt dere stengt denne dagen. Hva gjelder i år?",
+           "open": "I {y} hadde dere åpent {h} denne dagen. Hva gjelder i år?"},
+    "en": {"closed": "In {y} you were closed on this day. What about this year?",
+           "open": "In {y} you were open {h} on this day. What about this year?"},
 }
 MORE = {"fi": "… ja {n} muuta päivää", "sv": "… och {n} dagar till", "nb": "… og {n} dager til", "en": "… and {n} more days"}
 
@@ -172,18 +182,23 @@ def build_intro(route, owner, biz, lang, items, names, country, eid):
     groups, order = defaultdict(list), []
     for it in items:
         nm = holiday_name(names, country, it["date"], it["_day_key"], it["day_name"], lang)
-        key = (nm, it["shown_hours"], it["proposed_hours"], it["basis"])
+        key = (nm, it["shown_hours"], it["proposed_hours"], it["basis"], it.get("_old"))
         if key not in groups:
             order.append(key)
         groups[key].append(it["date"])
     lines = [greeting.format(name=owner), intro.format(biz=biz)]
     shown_lines = 0
     for key in order:
-        nm, shown, prop, basis = key
+        nm, shown, prop, basis, old = key
         if shown_lines >= MAX_ITEM_LINES:
             break
         ds = ", ".join(date_label(d, lang) for d in groups[key])
-        lines.append(f"• {nm}, {ds}: {hours_label(shown, lang)} → {hours_label(prop, lang)} ({REASON[lang][basis]})")
+        if route == "ASK" and basis == "OLDER_SEASON" and old:
+            year, old_hours = old
+            q = OLDER_QUESTION[lang]["closed" if old_hours == "closed" else "open"].format(y=year, h=hours_label(old_hours, lang))
+            lines.append(f"• {nm}, {ds}: {hours_label(shown, lang)} → {hours_label(prop, lang)}? {q}")
+        else:
+            lines.append(f"• {nm}, {ds}: {hours_label(shown, lang)} → {hours_label(prop, lang)} ({REASON[lang][basis]})")
         shown_lines += 1
     left = sum(len(groups[k]) for k in order[shown_lines:])
     if left:
@@ -205,16 +220,23 @@ def build(entity_ids):
         for t in sorted(targets[eid], key=lambda r: (r["date"], r["day_key"])):
             x = bl.explain_full(eid, date.fromisoformat(t["date"]), t["day_key"])
             if x["action"] in ("SUGGEST", "FLAG"):
+                old = None
+                if x["basis"] == "OLDER_SEASON":  # raw evidence (date, what was entered) for the ASK question
+                    p_iso, what = bl.explain(eid, date.fromisoformat(t["date"]), t["day_key"])[3]
+                    old = (p_iso[:4], what.split(" (")[0])
                 rows.append({"date": x["date"], "day_name": x["day_name"], "shown_hours": x["shown_hours"],
                              "proposed_hours": x["hours"], "final_hours": None, "basis": x["basis"],
                              "evidence": x["evidence"], "confidence": x["confidence"],
-                             "_action": x["action"], "_day_key": x["day_key"]})
+                             "_action": x["action"], "_day_key": x["day_key"], "_old": old})
         has_perm = ct["standing_permission_holidays"] == "1"
         opted_out = ct["opted_out_of_suggestions"] == "1"
         flag = [r for r in rows if r["_action"] == "FLAG"]
         sugg = [r for r in rows if r["_action"] == "SUGGEST"]
-        high_med = [r for r in sugg if r["confidence"] in ("HIGH", "MEDIUM")]
-        low = [r for r in sugg if r["confidence"] == "LOW"]
+        # ASK: peer-only (LOW) and OLDER_SEASON (one entry from three or more seasons back: 70 % exact, 16 % wrong
+        # state on dev), so neither is proposed nor auto-applied (human decision, 2026-11-07)
+        asked = lambda r: r["confidence"] == "LOW" or r["basis"] == "OLDER_SEASON"
+        high_med = [r for r in sugg if not asked(r)]
+        low = [r for r in sugg if asked(r)]
         planned = []
         if flag:
             planned.append(("STAFF", flag))
@@ -315,8 +337,10 @@ def validate(data):
         if not i["evidence"] or not all(isinstance(s, str) and s for s in i["evidence"]):
             errs.append(f"item {tag}: evidence must be a non-empty list of strings")
         # routing rules
-        if b["route"] == "ASK" and i["confidence"] != "LOW":
-            errs.append(f"item {tag}: ASK bundle holds only LOW items")
+        if b["route"] == "ASK" and i["confidence"] != "LOW" and i["basis"] != "OLDER_SEASON":
+            errs.append(f"item {tag}: ASK bundle holds only LOW or OLDER_SEASON items")
+        if b["route"] in ("SUGGEST", "AUTO_APPLY") and i["basis"] == "OLDER_SEASON":
+            errs.append(f"item {tag}: OLDER_SEASON item in {b['route']} bundle")
         if b["route"] in ("SUGGEST", "AUTO_APPLY") and i["confidence"] == "LOW":
             errs.append(f"item {tag}: LOW item in {b['route']} bundle")
         if b["route"] == "AUTO_APPLY" and (i["confidence"] != "HIGH" or not b["has_permission"]):
@@ -345,7 +369,8 @@ def validate(data):
         for l in lines:  # every time in the text must belong to some item of the bundle
             if l.startswith("•"):
                 nums = set(re.findall(r"\d\d:\d\d", l))
-                ok = {t for i in its for t in re.findall(r"\d\d:\d\d", (i["shown_hours"] or "") + (i["proposed_hours"] or ""))}
+                ok = {t for i in its for t in re.findall(r"\d\d:\d\d", (i["shown_hours"] or "") + (i["proposed_hours"] or "")
+                                                         + " ".join(i["evidence"] or []))}
                 if not nums <= ok:
                     errs.append(f"{b['bundle_id']}: line has times not in items: {l}")
     return errs
