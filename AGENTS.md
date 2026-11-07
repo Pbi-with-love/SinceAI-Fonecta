@@ -20,7 +20,7 @@ If the organisers' documents disagree with this file about data, columns or scor
 
 Fonecta Connect publishes local businesses' information (opening hours, photos, reviews) to 35+ channels through Yext. Owners forget to enter holiday hours, so channels show "open" when the door is locked. Our system predicts, for every (business, special date), whether the shown hours will be wrong and what the right hours are.
 
-**Current scope: Part A, the prediction engine only.** Do not build messaging, n8n workflows, UIs or Yext writes unless the human asks.
+**Scope: Part A (prediction engine) is closed. Part B work started on 2026-11-07 on `part-b/*` branches, limited to `result/B_contact_decide/`.** `model.py` and `predictions_2026.csv` are frozen: Part B only imports `explain_full()` from `model.py`, read-only. Do not build UIs, n8n workflows or Yext writes beyond what the human asks.
 
 For each row in `evaluation/targets_2026.csv` (columns include `entity_id`, `date`, `day_key`) the engine outputs one of:
 
