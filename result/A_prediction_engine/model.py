@@ -150,35 +150,67 @@ class Baseline:
         "TWO_YEARS_AGO": 0.84,            # 1,480 / 1,771
         "OLDER_SEASON": 0.70,             # 351 / 500 (dev 2026 only: the back-test has no older season)
         "OWNER_PATTERN": 0.88,            # 587 / 666
-        "PEERS": 0.77,                    # 846 / 1,098
+        "PEERS": 0.77,                    # 846 / 1,098 (all peer suggestions)
+        "PEERS:MEDIUM": 0.93,             # 353 / 379, wrong state 26 (7 %): the peer cell is very sure (see below)
+        "PEERS:LOW": 0.69,                # 494 / 719, wrong state 225 (31 %): every other peer suggestion
         "NO_ACTION:MATCHES_SHOWN": 0.96,  # 749 / 776: a rule's candidate equals what is shown
         "NO_ACTION:NONE": 0.80,           # 9,845 / 12,286: no rule had a candidate
     }
+
+    # Confidence levels for Part B (human decision, 2026-11-07). The peer rule is the main source of wrong-state
+    # suggestions, so in the product a peer-only suggestion is sent to the owner as a question (ASK), not a proposal.
+    #   HIGH:   the business's own history (LAST_YEAR, TWO_YEARS_AGO, OLDER_SEASON, OWNER_PATTERN), and the shopping
+    #           centre's own published hours (85 % exact, 6 % wrong state).
+    #   MEDIUM: PEERS when the peer cell is very sure (closed_share_among_entered >= 0.85 and share_entered_closed
+    #           >= 0.25: 93 % exact / 7 % wrong state on dev, both seasons; 2026 92 % / 8 %, 2025 93 % / 7 %), and
+    #           CLOSED_SIGNALS (a FLAG goes to a person anyway; only 11 measured cases).
+    #   LOW:    every other PEERS suggestion (69 % exact / 31 % wrong state; 225 of the 251 peer wrong-state rows).
+    # Measured wrong-state rates of the HIGH bases: LAST_YEAR 4 %, SHOPPING_CENTRE 6 %, TWO_YEARS_AGO 8 %,
+    # OWNER_PATTERN 12 %, OLDER_SEASON 16 %. NO_ACTION has no level: nothing is sent.
+    OWN_HISTORY = ("LAST_YEAR", "TWO_YEARS_AGO", "OLDER_SEASON", "OWNER_PATTERN")
+    PEER_MEDIUM_CLOSED_AMONG_ENTERED = 0.85
+    PEER_MEDIUM_SHARE_ENTERED_CLOSED = 0.25
+
+    def _confidence_level(self, eid, day_key: str, action: str, basis):
+        if action == "NO_ACTION":
+            return None
+        if basis in self.OWN_HISTORY or basis == "SHOPPING_CENTRE":
+            return "HIGH"
+        if basis == "PEERS":
+            ent = self.ents[eid]
+            b = self.bench.get((ent["meta"]["countryCode"], self.tiers[ent["address"]["city"]], ent["c_segment"], day_key))
+            sure = (b is not None and b["closed_share_among_entered"] and
+                    float(b["closed_share_among_entered"]) >= self.PEER_MEDIUM_CLOSED_AMONG_ENTERED and
+                    float(b["share_entered_closed"]) >= self.PEER_MEDIUM_SHARE_ENTERED_CLOSED)
+            return "MEDIUM" if sure else "LOW"
+        return "MEDIUM"  # CLOSED_SIGNALS, and any future basis until it is measured
 
     def explain_full(self, eid, d: date, day_key: str) -> dict:
         """Everything Part B needs to write a message about one (business, date). Calls explain() unchanged.
 
         Returns a dict: entity_id, date, day_key, day_name, action, hours (None unless SUGGEST), shown_hours, basis,
-        evidence (list of readable sentences), confidence (0–1, see CONFIDENCE), mismatch (inferred from what is shown
-        vs what we suggest: SHOWN_OPEN_ACTUALLY_CLOSED | SHOWN_CLOSED_ACTUALLY_OPEN | DIFFERENT_HOURS |
-        CLOSED_FOR_GOOD for a FLAG | None when we stay quiet)."""
+        evidence (list of readable sentences), confidence (HIGH | MEDIUM | LOW, None when we stay quiet; see the levels
+        above: LOW means ask the owner rather than propose), confidence_score (0–1, measured, see CONFIDENCE), mismatch
+        (inferred from what is shown vs what we suggest: SHOWN_OPEN_ACTUALLY_CLOSED | SHOWN_CLOSED_ACTUALLY_OPEN |
+        DIFFERENT_HOURS | CLOSED_FOR_GOOD for a FLAG | None when we stay quiet)."""
         action, hours, basis, ev = self.explain(eid, d, day_key)
         shown = self.displayed(eid, d)
         cand = hours if action == "SUGGEST" else shown
         name = self._day_name(eid, d, day_key)
         evidence = self._evidence_lines(basis, ev, action, cand, name)
         evidence.append(f"The channels currently show {_hours_text(shown)} for {name}, {_nice_date(d)}.")
+        level = self._confidence_level(eid, day_key, action, basis)
         if action == "SUGGEST":
-            conf = self.CONFIDENCE.get(basis)
+            score = self.CONFIDENCE.get(f"PEERS:{level}" if basis == "PEERS" else basis)
             mismatch = ("SHOWN_OPEN_ACTUALLY_CLOSED" if hours == "closed" and shown != "closed" else
                         "SHOWN_CLOSED_ACTUALLY_OPEN" if shown == "closed" and hours != "closed" else "DIFFERENT_HOURS")
         elif action == "FLAG":
-            conf, mismatch = self.CONFIDENCE.get(basis), "CLOSED_FOR_GOOD"
+            score, mismatch = self.CONFIDENCE.get(basis), "CLOSED_FOR_GOOD"
         else:
-            conf, mismatch = self.CONFIDENCE["NO_ACTION:MATCHES_SHOWN" if basis else "NO_ACTION:NONE"], None
+            score, mismatch = self.CONFIDENCE["NO_ACTION:MATCHES_SHOWN" if basis else "NO_ACTION:NONE"], None
         return {"entity_id": eid, "date": d.isoformat(), "day_key": day_key, "day_name": name, "action": action,
                 "hours": hours if action == "SUGGEST" else None, "shown_hours": shown, "basis": basis,
-                "evidence": evidence, "confidence": conf, "mismatch": mismatch}
+                "evidence": evidence, "confidence": level, "confidence_score": score, "mismatch": mismatch}
 
     def _day_name(self, eid, d: date, day_key: str) -> str:
         if getattr(self, "_day_names", None) is None:

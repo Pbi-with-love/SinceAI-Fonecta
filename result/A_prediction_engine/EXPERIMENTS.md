@@ -73,3 +73,34 @@ Question: can customer reviews recover the rows the frozen engine still misses? 
      - "Closed all day" reviews: 66 (36) rows, truth closed on only 27 (16); 38 (19) were already right and open. The reviews are wrong, not misread.
      - "Closed early" reviews: suggesting `<shown opening>-<closing time in the review>` gives 7 exact of 16 (3 of 9) → +0.11 (+0.04).
 5. **Conclusion: not worth an LLM for the score.** Better parsing only helps the small "closed early" group. On the rows the engine still misses, full-day closure reviews are wrong more often than right: the truthful ones sit on businesses whose history the engine already uses. Best case about +0.1–0.2 on roughly 20 dev rows (~55 test rows). Use reviews in Part B as **evidence quoted in the message** and for prioritisation, not as a predictor.
+
+## #4 hyp/archetype-table (habit table learned from dev truth) — REVERTED: value too small for its complexity (human, 2026-11-07)
+Hypothesis: `peer_benchmarks.csv` counts only owners who entered hours; the organisers' training data `labels/dev_truth_history.csv` shows what businesses of each type *actually* did, so a table learned from it should find closures that peers miss.
+Change (branch only, never merged): `build/build_archetype_table.py` learns P(closed) per cell from truth dates before each season's snapshot (2026: < 2026-11-06; 2025: < 2025-11-06), with 5 fixed folds by business (dev businesses use the table from the other 4 folds; test and demo use the all-dev table), a 15-business minimum and back-off (segment×day_key×country → archetype×day_key×country → archetype×day_key → archetype×day_class), counting only days whose regular hours were open. `model.py` reads only `tables/archetype_table_<season>.json` (~1.9 MB in total). Basis `ARCHETYPE_TABLE`. Branch `hyp/archetype-table` at 334fb8b (kept locally for reference); full log in that branch's `experiments/hyp-archetype-table.md`.
+
+Out-of-sample results (reference main: 65.92 / 62.73, wrong state 383 / 377, needless 161 / 87):
+
+| Config | Threshold | Dev 2026 | Wrong | Needless | Back-test 2025 | Wrong | Needless | In-sample dev / bt |
+|---|---|---|---|---|---|---|---|---|
+| (a) new block after owner pattern, before peers | 0.80 | 65.95 | 384 | 161 | 62.82 | 378 | 87 | 65.97 / 62.86 |
+| (a) | 0.85 | 65.97 | 383 | 161 | 62.84 | 377 | 87 | 65.97 / 62.84 |
+| (a) | **0.90** | **65.95** | 383 | 161 | **62.82** | 377 | 87 | 65.95 / 62.82 |
+| (a) | 0.95 | 65.92 | 383 | 161 | 62.77 | 377 | 87 | 65.92 / 62.79 |
+| (b) table replaces the peer rule | 0.80 | 65.51 | 296 | 161 | 61.35 | 265 | 87 | 65.97 / 61.87 |
+| (b) | 0.85 | 64.73 | 287 | 161 | 60.22 | 255 | 87 | 65.27 / 60.88 |
+| (b) | 0.90 | 64.12 | 280 | 161 | 59.12 | 244 | 87 | 64.16 / 59.32 |
+| (b) | 0.95 | 63.51 | 278 | 160 | 57.94 | 237 | 87 | 63.58 / 58.06 |
+
+- (a) at 0.85 and at 0.90 pass the pre-set keep rule (out-of-sample score up in both seasons, wrong state not up). At 0.90 the gain is +0.03 / +0.09: only +2 / +5 exact rows, from 3 businesses that have no usable peer cell. Where the table is confident (P ≥ 0.80), the peer rule already suggests the same "closed" on 210 of 214 rows. The missed closures sit in cells at P(closed) 0.2–0.6, so a type-level habit cannot pick them out.
+- **(b) replacing the peer rule removes 87–140 wrong-state rows per season (383 → 278–296, 377 → 237–265), but loses 0.41–4.79 points**, because it misses 150–500 more exact closures.
+- Independent verification by the coordinator, all passed:
+  - `model.py` run without any `labels/` directory gives byte-identical output.
+  - Flipping all 22,565 truth rows dated ≥ 2025-11-06 leaves all six 2025 tables unchanged.
+  - Flipping the truth of the 161 fold-0 businesses leaves only the `fold0` table unchanged, and `model.py` gives fold-0 businesses `fold0` and test businesses `all`.
+  - Tables and CSVs are byte-identical on rebuild and rerun.
+
+Decision: **REVERTED.** +0.03 / +0.09 is within noise and does not justify a learner script that reads labels plus 1.9 MB of tables. The keep rule is a minimum condition, not an obligation to merge.
+Lesson: the peer rule is the main source of wrong-state suggestions (251 of the 760 wrong-state rows over both seasons, 23 % of its suggestions), but its exact closures are worth more than its errors cost. The product answer is delivery, not prediction: peer-only suggestions go to the owner as a question (ASK), with `explain_full()` confidence LOW, or MEDIUM when the peer cell is very sure (93 % exact, 7 % wrong state).
+
+## Part A closed (2026-11-07)
+Final: **dev 2026 65.92 · back-test 2025 62.73** (baseline 54.49 · 53.23), tag `part-a-final`. `predictions_2026.csv` is unchanged since `part-a-freeze`. No new branches or experiments.

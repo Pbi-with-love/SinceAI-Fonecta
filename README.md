@@ -4,11 +4,11 @@ Since AI Hackathon 2026 × Fonecta · Turku, 6–8 Nov 2026
 
 Local businesses forget to enter holiday and special-day opening hours, so Google, Apple Maps and other channels show "open" while the door is locked. Our system turns Fonecta Connect from a dashboard owners must remember to visit into a proactive assistant: it **detects** which business × date will show wrong hours, **suggests** the right hours with a reason, **contacts** the owner, lets them **decide** in one tap without logging in, and **applies** the change through the Yext API.
 
-> **Status:** Part A (prediction engine) is **frozen** at tag `part-a-freeze`: **dev 2026 65.92 · back-test 2025 62.73** (organisers' baseline 54.49 · 53.23). Parts B–E are next.
+> **Status:** Part A (prediction engine) is **closed** at tag `part-a-final` (scores unchanged since `part-a-freeze`): **dev 2026 65.92 · back-test 2025 62.73** (organisers' baseline 54.49 · 53.23). Parts B–E are next.
 
 | Part | What it does | Status |
 |---|---|---|
-| **A. Prediction engine** | For every (business, date): `SUGGEST` + hours, `NO_ACTION`, or `FLAG`, with a reason | ✅ Frozen (`part-a-freeze`) |
+| **A. Prediction engine** | For every (business, date): `SUGGEST` + hours, `NO_ACTION`, or `FLAG`, with a reason | ✅ Closed (`part-a-final`) |
 | B. Contact & decide | Message the owner, one-tap approve / edit / decline | ⏳ Planned |
 | C. Apply | Read → merge → write → verify on Yext, confirm where the hours show | ⏳ Planned |
 | D. Learning & standing permission | Learn from edits and declines, earn "handle holidays without asking" | ⏳ Planned |
@@ -153,7 +153,7 @@ erDiagram
 
 ### Decision cascade (final, tag `part-a-freeze`)
 
-The first rule that produces a candidate wins. Every suggestion carries a `basis` and human-readable evidence (`explain()` / `explain_full()` in `model.py`).
+The first rule that produces a candidate wins. Every suggestion carries a `basis` and human-readable evidence (`explain()` / `explain_full()` in `model.py`). `explain_full()` also returns a confidence level for Part B: **HIGH** for the business's own history (steps 3–5) and the shopping centre, **MEDIUM** for very sure peers and closed-for-good flags, and **LOW** for other peer-only suggestions, which the product sends as a question.
 
 1. **Closed for good** (`CLOSED_SIGNALS`): a closure review or a closure edit from Google or another publisher → `FLAG` for a human.
 2. **Shopping centre** (`SHOPPING_CENTRE`): the centre has entered hours for the date → follow the centre.
@@ -212,7 +212,9 @@ Across dev 2026, the 6,626 rows with no history for their `day_key` end as: 4,84
 - **Two-season agreement filter** (tested inside #2). Rows where two older seasons agree are 85 % exact and 5 % wrong state, against 86 % and 8 % with one season. When the seasons disagree, the newer one is right on 14 of 17. It is not a useful filter.
 - **Peer special hours (#3).** Suggesting peers' median special hours gained +0.09 / +0.15 on paper, but 72–78 % of those messages were not needed or proposed wrong hours, and it showed no gain on the independent 2024 season. Reverted: peer data cannot tell *which* business keeps special hours.
 - **A looser owner pattern** (closed on 75 % of other holidays instead of all). It helped only the back-test (dev −0.10) and added 46 / 48 wrong-state rows. Reverted. Special hours, minor eves and the days between holidays cannot be predicted from an owner's other entries: on both seasons it was a coin flip or worse.
+- **A habit table learned from the organisers' training data** (`dev_truth_history.csv`, 5-fold out of sample, time-cut per season). As an extra step before the peer rule, it gained only +0.03 / +0.09 (7 exact rows). Where it is confident, the peer rule already gives the same answer, and the missed closures are not a type-level habit. **Replacing** the peer rule with it removed 90–140 wrong-state rows per season but lost 0.4–4.8 points. Not merged: the gain is within noise and does not justify a learner script reading labels plus 1.9 MB of tables (EXPERIMENTS.md #4).
 - **Undated peer benchmarks** (AGENTS.md fix #12). The organisers' file mixes seasons 2023–2025, so the back-test of any peer-driven rule may be optimistic. It cannot be fixed from this data.
+- **Conclusion: the peer rule is the main source of wrong-state suggestions.** It produces 251 of the 760 wrong-state rows over both seasons, and 23 % of its suggestions flip open/closed. Its exact closures are still worth more than its errors cost. **In the product, a suggestion based only on peers is sent to the owner as a question (ASK), not as a proposal.** `explain_full()` marks it `confidence: LOW`, or `MEDIUM` when the peer cell is very sure (≥ 85 % of peers that entered hours were closed and ≥ 25 % of all peers entered closed: 93 % exact, 7 % wrong state). Suggestions from the business's own history are `HIGH`.
 - **Not done before the freeze:** the correctness fixes #10 (timezone-free review cutoff) and #11 (the 2026 `closed` flag used in the 2025 back-test). Neither is expected to change a score.
 
 ### Trade-off: more wrong-state suggestions
