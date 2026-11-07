@@ -199,7 +199,7 @@ Team plan:
 
 This section applies only to Part A hypothesis testing. Section 6 steps 2–3 (reproduce the baseline, build `result/A_prediction_engine/analysis/error_report.py`) are done by **one agent, sequentially**, before any parallel work starts.
 
-> **Part A is closed** at tag `part-a-final` (dev 2026 65.92 · back-test 2025 62.73). Three branches were merged (two-year, owner-pattern, peer-tuning). One later experiment, `hyp/archetype-table`, was reverted (EXPERIMENTS.md #4). All worktrees were removed; the `hyp/*` branches are kept locally for reference. **No new branches or experiments.**
+> **Part A is closed** at tag `part-a-final` (dev 2026 65.92 · back-test 2025 62.73). Three branches were merged (two-year, owner-pattern, peer-tuning). Two later experiments were reverted: `hyp/archetype-table` (EXPERIMENTS.md #4) and `hyp/knn-behavior` (#5). All worktrees were removed; the `hyp/*` branches are kept, and the two reverted ones are pushed to GitHub for reference. **No new branches or experiments.**
 
 **Setup (2026-11-07, historical):**
 

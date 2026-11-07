@@ -76,7 +76,7 @@ Question: can customer reviews recover the rows the frozen engine still misses? 
 
 ## #4 hyp/archetype-table (habit table learned from dev truth) — REVERTED: value too small for its complexity (human, 2026-11-07)
 Hypothesis: `peer_benchmarks.csv` counts only owners who entered hours; the organisers' training data `labels/dev_truth_history.csv` shows what businesses of each type *actually* did, so a table learned from it should find closures that peers miss.
-Change (branch only, never merged): `build/build_archetype_table.py` learns P(closed) per cell from truth dates before each season's snapshot (2026: < 2026-11-06; 2025: < 2025-11-06), with 5 fixed folds by business (dev businesses use the table from the other 4 folds; test and demo use the all-dev table), a 15-business minimum and back-off (segment×day_key×country → archetype×day_key×country → archetype×day_key → archetype×day_class), counting only days whose regular hours were open. `model.py` reads only `tables/archetype_table_<season>.json` (~1.9 MB in total). Basis `ARCHETYPE_TABLE`. Branch `hyp/archetype-table` at 334fb8b (kept locally for reference); full log in that branch's `experiments/hyp-archetype-table.md`.
+Change (branch only, never merged): `build/build_archetype_table.py` learns P(closed) per cell from truth dates before each season's snapshot (2026: < 2026-11-06; 2025: < 2025-11-06), with 5 fixed folds by business (dev businesses use the table from the other 4 folds; test and demo use the all-dev table), a 15-business minimum and back-off (segment×day_key×country → archetype×day_key×country → archetype×day_key → archetype×day_class), counting only days whose regular hours were open. `model.py` reads only `tables/archetype_table_<season>.json` (~1.9 MB in total). Basis `ARCHETYPE_TABLE`. Branch `hyp/archetype-table` at 334fb8b (pushed to GitHub for reference); full log in `experiments/hyp-archetype-table.md`.
 
 Out-of-sample results (reference main: 65.92 / 62.73, wrong state 383 / 377, needless 161 / 87):
 
@@ -104,3 +104,30 @@ Lesson: the peer rule is the main source of wrong-state suggestions (251 of the 
 
 ## Part A closed (2026-11-07)
 Final: **dev 2026 65.92 · back-test 2025 62.73** (baseline 54.49 · 53.23), tag `part-a-final`. `predictions_2026.csv` is unchanged since `part-a-freeze`. No new branches or experiments.
+
+## #5 hyp/knn-behavior (K nearest businesses by holiday behaviour) — REVERTED: no configuration passes the keep rule (human, 2026-11-07)
+Hypothesis: for a row with no own history for its `day_key` (98 % of the 1,099 missed rows on dev 2026, 95 % of them from businesses that did enter other holidays), the K businesses whose holiday **behaviour** (not industry or city) is most alike predict what the business does on the missing day.
+Change (branch only, never merged; code in `build/model_knn_experiment.py`, log in `experiments/hyp-knn-behavior.md`): a behaviour vector per business (per `day_key`, the state relative to that weekday's regular hours: CLOSED / REGULAR / SHORT_CLOSE with the closing time / OTHER_HOURS / UNKNOWN), a similarity over the `day_key`s both businesses know, and a similarity-weighted vote among K neighbours with a threshold. The new block `KNN_BEHAVIOR` runs only when no earlier rule gave a candidate and the business has no own entry for the `day_key`. Two neighbour sources: **(A)** `holiday_hours_history` before the snapshot, for every business; **(B)** `labels/dev_truth_history.csv` before the snapshot, built by `build/build_knn_truth.py` into `tables/` with 5 fixed folds by business (dev businesses use the other 4 folds, test and demo use all dev). `model.py` never read `labels/`. Branch `hyp/knn-behavior` at f864d14.
+Grid run in full and fixed beforehand: source {A, B} × placement {after OWNER_PATTERN, replacing it} × minimum shared day_keys {2, 3} × K {5, 10, 20} × threshold {0.6, 0.7, 0.8, 0.9} = **96 configurations**, both seasons, out of sample.
+
+Best configuration per source and placement (minimum shared 3, K 20, threshold 0.9). Reference `part-a-final`: 65.92 / 62.73, wrong state 383 / 377, needless 161 / 87.
+
+| Source / placement | Dev 2026 | Back-test 2025 | Wrong state | Needless | In-sample dev / bt |
+|---|---|---|---|---|---|
+| B, after OWNER_PATTERN | **65.80** (−0.12) | **62.79** (+0.06) | **415 / 409** | 165 / 89 | 66.20 / 63.18 |
+| B, replacing OWNER_PATTERN | 65.69 (−0.23) | 62.58 (−0.15) | 408 / 394 | 165 / 89 | 66.07 / 63.00 |
+| A, after OWNER_PATTERN | 63.17 (−2.75) | 60.16 (−2.57) | 590 / 617 | 218 / 128 | — |
+| A, replacing OWNER_PATTERN | 63.03 (−2.89) | 60.00 (−2.73) | 582 / 600 | 218 / 128 | — |
+
+- **0 of 96 configurations pass the keep rule** (out-of-sample score up in both seasons and wrong state not up). Wrong state rises in all 48 source-B cells (lowest 406 on dev). Nothing came near the +0.5 bar for merging. Verified independently by the coordinator from the saved sweep.
+- Net points by day group (B, after, 3, 20, 0.9; between holidays / eves / shopping days / major holidays / other): dev 0.0 / +2.7 / 0.0 / −9.1 / 0.0; back-test +3.0 / +4.2 / 0.0 / −4.0 / 0.0.
+- Rows touched: 1,454 (dev) / 1,517 (back-test), but only 64 / 71 changed an action; the rest are "keep regular hours" votes, which keep silence where the engine missed nothing. Where KNN does suggest `closed` at threshold 0.9: **33 exact vs 30 wrong state on dev, 33 vs 45 on the back-test**. At threshold 0.8: 71 exact vs 102 wrong state.
+- In-sample is 0.3–1.5 points above out-of-sample, the gap the out-of-fold rule exists to expose.
+- Post-hoc variants, not part of the fixed grid, so reported but not selected: a larger weight on industry and country attributes (0.3–0.5) gives dev +0.22 and back-test +0.34 to +0.41, but wrong state stays at 384–391, so it still fails the keep rule, and it drifts back towards the archetype table (#4, reverted).
+- Audit passed (agent and coordinator): no `labels/` read at prediction time, time cut per season, out-of-fold neighbours for dev businesses, two byte-identical runs, no entity IDs in rules. `model.py` on the branch is identical to `part-a-final`, and rerunning it gives 65.92 / 62.73 and a byte-identical `predictions_2026.csv`.
+
+Why it does not gain: neighbours that closed on the holidays they share with a business close on the missing day only about 50–70 % of the time, the same 0.2–0.6 band the archetype table found. Behaviour similarity does not sharpen it. The soft days the experiment targeted (early closing on eves, other hours on shopping days) barely fire: early-closing votes rarely reach 0.9, and other-hours votes carry no hours that transfer to another business.
+Decision: **REVERTED.** The code and tables stay on the branch for reference and are pushed to GitHub as `hyp/knn-behavior`.
+
+### Conclusion of the two "learn from other businesses" experiments (#4 and #5)
+Neither a type-level habit table (#4) nor a behaviour-similarity neighbour search (#5) recovers the remaining missed rows, and both raise wrong-state rows. What is left is mostly days around the major holidays that owners rarely enter (the days between Christmas and New Year, New Year's Eve, Epiphany Eve, 23 December, Black Friday), where each business does something different and often only half a day. A model cannot know the closing time of a business that never said it. The rule-based engine therefore stays as it is, and the product asks the owner for these rows (Parts B and D).

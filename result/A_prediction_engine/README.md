@@ -21,3 +21,5 @@ Error report (run from the same checkout as the predictions):
 python result/A_prediction_engine/analysis/error_report.py --season 2026 --predictions outputs/ours_2026.csv
 python result/A_prediction_engine/analysis/error_report.py --season 2025 --predictions outputs/ours_2025.csv
 ```
+
+Reverted experiments (code on pushed branches, logs in `experiments/`): `hyp/archetype-table` (EXPERIMENTS.md #4) and `hyp/knn-behavior` (EXPERIMENTS.md #5).
