@@ -240,7 +240,7 @@ _Placeholder._
 
 ## Part C — Apply to Yext
 
-_Placeholder._ `examples/yext_client.py` reads `YEXT_BASE_URL` and `YEXT_API_KEY`. Local mock: `python mock_api/server.py` (`http://localhost:8787`, `POST /mock/reset` undoes writes). Sandbox: `YEXT_BASE_URL=https://sbx-api.yextapis.com`, version `v=20261101` (as in `examples/yext_client.py` and `mock_api/server.py`). Use the mock for detection and the sandbox to demo the write path.
+_Placeholder._ `examples/yext_client.py` reads `YEXT_BASE_URL` and `YEXT_API_KEY`. Local mock: `python mock_api/server.py` (`http://localhost:8787`, `POST /mock/reset` undoes writes). Sandbox: `YEXT_BASE_URL=https://sbx-api.yextapis.com`, version `v=20261106` (the organisers' mock and `examples/yext_client.py` use `v=20261101`). Setup scripts for the sandbox entity `SinceAI13`: [`result/C_apply_yext/`](result/C_apply_yext/README.md). Use the mock for detection and the sandbox to demo the write path.
 
 ## Part D — Learning & standing permission
 

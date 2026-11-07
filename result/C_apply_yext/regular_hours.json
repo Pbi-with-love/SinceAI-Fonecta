@@ -1,0 +1,9 @@
+{
+  "monday": {"openIntervals": [{"start": "08:00", "end": "18:00"}]},
+  "tuesday": {"openIntervals": [{"start": "08:00", "end": "18:00"}]},
+  "wednesday": {"openIntervals": [{"start": "08:00", "end": "18:00"}]},
+  "thursday": {"openIntervals": [{"start": "08:00", "end": "18:00"}]},
+  "friday": {"openIntervals": [{"start": "08:00", "end": "18:00"}]},
+  "saturday": {"openIntervals": [{"start": "09:00", "end": "15:00"}]},
+  "sunday": {"isClosed": true}
+}
