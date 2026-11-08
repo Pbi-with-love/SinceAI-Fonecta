@@ -55,8 +55,18 @@ export function OwnerApp({
   const [toast, setToast] = useState<string | null>(null);
   const [exitDir, setExitDir] = useState<Swipe>("right");
 
-  const queue = built.cards.filter((c) => !done.has(c.key));
-  const history = [...local, ...built.history.filter((h) => !local.some((l) => l.key === h.key))];
+  // Dates undone in this session: back in the deck at once, before the server data catches up.
+  const [reopened, setReopened] = useState<Map<string, Card>>(new Map());
+  const queue = [
+    ...built.cards,
+    ...[...reopened.values()].filter((r) => !built.cards.some((c) => c.key === r.key)),
+  ]
+    .filter((c) => !done.has(c.key))
+    .sort((a, b) => a.item.date.localeCompare(b.item.date) || a.key.localeCompare(b.key));
+  const history = [
+    ...local,
+    ...built.history.filter((h) => !local.some((l) => l.key === h.key) && !reopened.has(h.key)),
+  ];
   const top = queue[0];
   const owner = first?.owner_name ?? "";
   const business = first?.business_name ?? deck.entity_id;
@@ -181,6 +191,7 @@ export function OwnerApp({
       return flash(t.failed);
     }
     setLocal((h) => h.filter((x) => x.key !== last.key));
+    setReopened((m) => new Map(m).set(last.key, last.card));
     restore(last.key);
     flash(`${t.restored}: ${hoursLabel(last.item.shown_hours, t)}`);
   };
