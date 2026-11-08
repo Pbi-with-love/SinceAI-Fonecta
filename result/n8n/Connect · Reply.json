@@ -91,7 +91,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        448,
+        560,
         144
       ]
     },
@@ -104,10 +104,9 @@
                 "options": {
                   "caseSensitive": true,
                   "leftValue": "",
-                  "typeValidation": "loose",
+                  "typeValidation": "strict",
                   "version": 2
                 },
-                "combinator": "and",
                 "conditions": [
                   {
                     "id": "one",
@@ -118,7 +117,8 @@
                       "operation": "equals"
                     }
                   }
-                ]
+                ],
+                "combinator": "and"
               },
               "renameOutput": true,
               "outputKey": "1 button"
@@ -128,10 +128,9 @@
                 "options": {
                   "caseSensitive": true,
                   "leftValue": "",
-                  "typeValidation": "loose",
+                  "typeValidation": "strict",
                   "version": 2
                 },
-                "combinator": "and",
                 "conditions": [
                   {
                     "id": "two",
@@ -142,7 +141,8 @@
                       "operation": "equals"
                     }
                   }
-                ]
+                ],
+                "combinator": "and"
               },
               "renameOutput": true,
               "outputKey": "2 buttons"
@@ -159,7 +159,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        448,
+        560,
         704
       ]
     },
@@ -227,7 +227,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        448,
+        560,
         1280
       ]
     },
@@ -264,7 +264,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
+        784,
         480
       ],
       "webhookId": "d53805c3-2364-4970-87cd-de09a7c03be5",
@@ -307,7 +307,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        896,
+        1008,
         48
       ]
     },
@@ -342,7 +342,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        896,
+        1008,
         240
       ]
     },
@@ -385,7 +385,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
+        784,
         720
       ],
       "webhookId": "efb5d2a1-e765-4dab-9cf4-56f4b240a673",
@@ -445,7 +445,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
+        784,
         0
       ],
       "webhookId": "290d8b85-c3e8-45ef-b58b-e031a39c8c2e",
@@ -489,7 +489,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
+        784,
         1104
       ],
       "webhookId": "5b8e641c-d411-4d23-85d2-d5ad1eb38680",
@@ -539,7 +539,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
+        784,
         1296
       ],
       "webhookId": "1662b6d2-a689-409a-90d6-ae31e595274d",
@@ -598,7 +598,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
+        784,
         288
       ],
       "webhookId": "7898d02c-da27-46c4-8133-6d751d2a0509",
@@ -628,7 +628,7 @@
     {
       "parameters": {
         "content": "## Send or edit\nIf edit_message_id is set the existing message is edited, otherwise a new message is sent (HTML, one row of 1–3 buttons when given). Errors never stop the caller: they return { ok: false, error }.",
-        "height": 512,
+        "height": 200,
         "width": 608,
         "color": 4
       },
@@ -637,8 +637,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        416,
-        -96
+        528,
+        -336
       ]
     }
   ],
@@ -849,8 +849,10 @@
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "3b8fdc15-ca2e-404d-8224-b2c26982c65e",
+  "versionId": "4cae6c0a-2511-4fc8-97c1-80d13fac7ee1",
   "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
     "instanceId": "07d184b165c6174ff8adbaf572afc94b95591c0d70b03269a37660687ca9f7c3"
   },
   "nodeGroups": [

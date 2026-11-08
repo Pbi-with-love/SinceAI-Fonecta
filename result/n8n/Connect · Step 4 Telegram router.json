@@ -33,7 +33,7 @@
               "id": "c1",
               "name": "TELEGRAM_STAFF_CHAT_ID",
               "type": "string",
-              "value": "-5485187599"
+              "value": "-1004306919792"
             },
             {
               "id": "c2",
@@ -1892,7 +1892,7 @@
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "f1e07661-bf0a-4704-a34d-963819694325",
+  "versionId": "38e62862-2c8a-42d0-87d4-7f597a46824c",
   "meta": {
     "aiBuilderAssisted": true,
     "builderVariant": "mcp",
