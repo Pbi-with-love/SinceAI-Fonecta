@@ -254,13 +254,44 @@ _Placeholder._
 
 ## Libraries and licences
 
+### Code and data
+
 | Component | Licence | Used in |
 |---|---|---|
-| Python standard library | PSF | Part A |
+| Python standard library | PSF | Part A engine, Part B bundle builder and Supabase loader, Part C sandbox scripts (no third-party Python packages) |
 | Organisers' starter code (`examples/`, `evaluation/`, `mock_api/`) | MIT | Baseline, scoring, mock API |
-| Synthetic dataset | CC BY 4.0 | All parts |
+| Synthetic dataset (`data/`) | CC BY 4.0 | All parts |
+| React, React DOM | MIT | Owner app (`result/B_contact_decide/owner_app/`) |
+| TanStack Start, Router, Query (`@tanstack/*`) | MIT | Owner app: routing, server functions, SSR |
+| Radix UI primitives (`@radix-ui/react-*`) | MIT | Owner app UI components |
+| Tailwind CSS, `@tailwindcss/vite`, `tailwind-merge`, `tw-animate-css`, `clsx` | MIT | Owner app styling |
+| `class-variance-authority` | Apache-2.0 | Owner app styling |
+| Framer Motion | MIT | Owner app: swipe cards and sheets |
+| Lucide icons (`lucide-react`) | ISC | Owner app action buttons |
+| Zod, React Hook Form, `@hookform/resolvers`, date-fns, sonner, vaul, cmdk, embla-carousel, react-day-picker, input-otp, recharts, react-resizable-panels | MIT | Owner app scaffold (shadcn/ui components from the Lovable template) |
+| Fonts Fraunces and Manrope (Google Fonts) | SIL OFL 1.1 | Owner app typography |
+| Build and test tools: Vite, Nitro, Vitest, Testing Library, ESLint, Prettier, `@lovable.dev/vite-tanstack-config`, `@vitejs/plugin-react`, jsdom | MIT | Owner app build and tests only |
+| TypeScript | Apache-2.0 | Owner app build only |
 
-No GPL or AGPL components are used without Fonecta's written approval.
+Checked on 2026-11-08 over all 525 installed npm packages of the owner app, including indirect ones: 448 MIT,
+27 ISC, 21 Apache-2.0, 20 BSD-2/3-Clause, plus 0BSD, Unlicense (`isbot`), BlueOak-1.0.0 (`minimatch`),
+Python-2.0 (`argparse`), CC-BY-4.0 (`caniuse-lite` browser data) and MPL-2.0 (`lightningcss`, a build-time CSS tool,
+used unmodified). No GPL, AGPL or LGPL package.
+
+### External services (used through their APIs, not redistributed)
+
+| Service | Terms | Used for |
+|---|---|---|
+| Yext API (sandbox account provided by Fonecta) | Yext terms, sandbox credentials from Fonecta | Reading and writing holiday hours (`Connect · Apply to Yext`), `result/C_apply_yext/` |
+| n8n Cloud | n8n Cloud terms of service (n8n itself: Sustainable Use License, fair-code). We use the hosted service; the workflow exports in `result/n8n/` are our own | Contact, reply, router, scheduler, web action and Yext apply workflows |
+| Supabase | Supabase terms of service (platform open source, Apache-2.0) | Tables `bundles`, `bundle_items`, `decisions`, `apply_log`, `chat_sessions` |
+| Telegram Bot API | Telegram Bot Platform terms | Owner and staff messages, buttons |
+| Google Gemini API (Gemini 2.5 Flash) | Gemini API terms of service | Only in `Connect · Parse edit`: reading an owner's free-text hours, always followed by a rule-based validator. Predictions never use an LLM |
+| Vercel | Vercel terms of service | Hosting the owner app |
+| Lovable | Lovable terms of service | Generated the first UI scaffold of the owner app; the code in this repository is ours |
+
+No GPL or AGPL components are used without Fonecta's written approval. All credentials live in environment
+variables or in the services' own credential stores, never in the repository.
 
 ## Security
 
