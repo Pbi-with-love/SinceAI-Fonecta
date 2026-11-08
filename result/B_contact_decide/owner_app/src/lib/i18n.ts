@@ -74,6 +74,8 @@ const en = {
   badLink: "This link is not valid. Please open it again from our message.",
   demo: "Demo data: changes are not sent",
   saving: (n: number) => `Saving ${n}…`,
+  autoOn: "Automatic updates are on",
+  autoOff: "Automatic updates are off. We will ask you first.",
 };
 export type Dict = typeof en;
 
@@ -143,6 +145,8 @@ const fi: Dict = {
   badLink: "Linkki ei ole voimassa. Avaa se uudelleen viestistämme.",
   demo: "Demodata: muutoksia ei lähetetä",
   saving: (n) => `Tallennetaan ${n}…`,
+  autoOn: "Automaattiset päivitykset ovat päällä",
+  autoOff: "Automaattiset päivitykset pois päältä. Kysymme ensin.",
 };
 
 const sv: Dict = {
@@ -210,6 +214,8 @@ const sv: Dict = {
   badLink: "Länken är inte giltig. Öppna den igen från vårt meddelande.",
   demo: "Demodata: ändringar skickas inte",
   saving: (n) => `Sparar ${n}…`,
+  autoOn: "Automatiska uppdateringar är på",
+  autoOff: "Automatiska uppdateringar är av. Vi frågar först.",
 };
 
 const nb: Dict = {
@@ -277,6 +283,8 @@ const nb: Dict = {
   badLink: "Lenken er ikke gyldig. Åpne den igjen fra meldingen vår.",
   demo: "Demodata: endringer sendes ikke",
   saving: (n) => `Lagrer ${n}…`,
+  autoOn: "Automatiske oppdateringer er på",
+  autoOff: "Automatiske oppdateringer er av. Vi spør først.",
 };
 
 export const DICTS: Record<Lang, Dict> = { en, fi, sv, nb };

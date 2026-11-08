@@ -99,7 +99,8 @@ export const getDeck = createServerFn({ method: "GET" })
     return { mode, entity_id: data.entity, bundles, items, decisions, applies };
   });
 
-export type WebAction = "APPROVE" | "EDIT" | "DECLINE" | "REGULAR" | "UNDO" | "PERMISSION";
+export type WebAction =
+  "APPROVE" | "EDIT" | "DECLINE" | "REGULAR" | "UNDO" | "PERMISSION" | "REVOKE";
 export type ActionInput = {
   entity: string;
   t?: string | undefined;
@@ -112,7 +113,15 @@ export type ActionInput = {
 
 export const sendAction = createServerFn({ method: "POST" })
   .validator((d: ActionInput): ActionInput => {
-    const actions: WebAction[] = ["APPROVE", "EDIT", "DECLINE", "REGULAR", "UNDO", "PERMISSION"];
+    const actions: WebAction[] = [
+      "APPROVE",
+      "EDIT",
+      "DECLINE",
+      "REGULAR",
+      "UNDO",
+      "PERMISSION",
+      "REVOKE",
+    ];
     if (!actions.includes(d.action)) throw new Error("BAD_ACTION");
     if (d.date !== undefined && !DATE_RE.test(d.date)) throw new Error("BAD_DATE");
     if (d.hours !== undefined && !HOURS_RE.test(d.hours)) throw new Error("BAD_HOURS");

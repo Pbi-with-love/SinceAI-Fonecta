@@ -196,12 +196,20 @@ export function OwnerApp({
     flash(`${t.restored}: ${hoursLabel(last.item.shown_hours, t)}`);
   };
 
+  /** Standing permission for the whole business: PERMISSION turns it on (after the sheet), REVOKE turns it off. */
+  const setPermission = async (on: boolean) => {
+    if (!first || on === standing) return;
+    setStanding(on); // show the new state at once; put it back if the save fails
+    const res = await post(first.bundle_id, on ? "PERMISSION" : "REVOKE");
+    if (res === "fail") {
+      setStanding(!on);
+      return flash(t.failed);
+    }
+    flash(on ? t.autoOn : t.autoOff);
+  };
   const grantStanding = async (on: boolean) => {
     setAskStanding(false);
-    if (!on || standing || !first) return;
-    const res = await post(first.bundle_id, "PERMISSION");
-    if (res === "fail") return flash(t.failed);
-    setStanding(true);
+    if (on) await setPermission(true);
   };
 
   return (
@@ -274,7 +282,7 @@ export function OwnerApp({
               {pending > 0 ? t.saving(pending) : top?.route === "ASK" ? t.hintAsk : t.hint}
             </span>
             <button
-              onClick={() => !standing && setAskStanding(true)}
+              onClick={() => (standing ? void setPermission(false) : setAskStanding(true))}
               className="flex shrink-0 items-center gap-1.5"
               aria-pressed={standing}
             >

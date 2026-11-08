@@ -19,9 +19,9 @@ app's server environment as `N8N_WEB_ACTION_URL`).
 
 | Field | Values |
 |---|---|
-| `action` | `APPROVE`, `EDIT`, `DECLINE`, `REGULAR`, `UNDO`, `PERMISSION` |
-| `date` | `YYYY-MM-DD`, one `bundle_items.date` of the bundle. Null for `PERMISSION` |
-| `hours` | `closed`, `regular` or `HH:MM-HH:MM[,HH:MM-HH:MM]`. Null for `DECLINE`, `UNDO`, `PERMISSION` |
+| `action` | `APPROVE`, `EDIT`, `DECLINE`, `REGULAR`, `UNDO`, `PERMISSION`, `REVOKE` |
+| `date` | `YYYY-MM-DD`, one `bundle_items.date` of the bundle. Null for `PERMISSION` and `REVOKE` |
+| `hours` | `closed`, `regular` or `HH:MM-HH:MM[,HH:MM-HH:MM]`. Null for `DECLINE`, `UNDO`, `PERMISSION`, `REVOKE` |
 | `undo_of` | `"DECLINE"` when the app undoes a decline, otherwise null |
 
 One request = one date (one swipe). The app sends `APPROVE` with `hours = proposed_hours`, `REGULAR` with
@@ -39,6 +39,7 @@ Validate first: the bundle exists, `route` is `SUGGEST`, `ASK` or `AUTO_APPLY`, 
 | `UNDO` | Execute `Apply to Yext` with `mode: "UNDO"`; on success set `bundle_items.final_hours = null` for that date | the date returns to the app's deck |
 | `UNDO` with `undo_of = "DECLINE"` | nothing (a decline never reached Yext); only the `UNDO` decisions row | the date returns to the app's deck. Calling Apply UNDO here would restore the hours before the latest write, which belongs to another date |
 | `PERMISSION` | `bundles.has_permission = true` for every bundle of `entity_id` (same as the router's `Set has_permission`) | no Yext call |
+| `REVOKE` | `bundles.has_permission = false` for every bundle of `entity_id` (same node, opposite value) | no Yext call; the app's switch turns off |
 
 Every action inserts one `decisions` row, which is how the app knows a date was decided after a reload:
 
