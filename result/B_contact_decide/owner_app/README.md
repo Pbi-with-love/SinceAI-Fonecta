@@ -1,5 +1,7 @@
 # Connect Suggests — owner app (no login)
 
+Folder: `result/B_contact_decide/owner_app/` (the contact & decide channel of Part B, next to Telegram).
+
 Mobile-first app where a business owner approves, edits or declines the holiday hours we suggest, one swipe per day.
 It shows the real bundles from Part B (Supabase tables `bundles`, `bundle_items`, `decisions`, `apply_log`) and sends
 every decision to the n8n workflow `Connect · Web action` (spec: `result/n8n/WEB_ACTION.md`), which writes to Yext
@@ -46,10 +48,24 @@ Lovable mock: there is no data or pipeline for them.
 ## Develop
 
 ```sh
+cd result/B_contact_decide/owner_app
 npm install
 npm run dev        # demo mode
 npx vitest run     # deck mapping and parser tests
+
+# live data on your machine (reads SUPABASE_*, N8N_WEB_ACTION_URL, LINK_SECRET from the repo-root .env)
+set -a && . ../../../.env && set +a && npm run dev -- --port 5180
 ```
+
+## Deploy on Vercel
+
+1. Vercel → Add New Project → import `Pbi-with-love/SinceAI-Fonecta`.
+2. **Root Directory**: `result/B_contact_decide/owner_app`. Framework preset: Other (Vite). Build command and output are
+   picked up by Nitro, which detects Vercel and builds with its `vercel` preset (no config change needed).
+3. Environment Variables (Production and Preview): `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `N8N_WEB_ACTION_URL`,
+   `LINK_SECRET` (the same value as in `.env`, so `owner_link.py` makes valid links).
+4. Deploy, then print the owner link with the Vercel domain:
+   `python3 result/B_contact_decide/owner_link.py FI-D0017 --base https://<project>.vercel.app`
 
 ---
 

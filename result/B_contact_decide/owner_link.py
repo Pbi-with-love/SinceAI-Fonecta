@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Print the no-login owner-app link for one or more businesses (standard library only).
 
-token = first 32 hex chars of HMAC-SHA256(entity_id, LINK_SECRET), the same as Frontend/src/lib/connect/api.ts.
+token = first 32 hex chars of HMAC-SHA256(entity_id, LINK_SECRET), the same as owner_app/src/lib/connect/api.ts.
 LINK_SECRET comes from the environment and is never printed.
 
     set -a && . ./.env && set +a

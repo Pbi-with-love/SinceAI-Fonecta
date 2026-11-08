@@ -1,10 +1,10 @@
 # `Connect · Web action` — spec for the owner app's webhook
 
-The owner app (`Frontend/`, no login) sends each decision to this n8n workflow. It must reuse the existing
+The owner app (`result/B_contact_decide/owner_app/`, no login) sends each decision to this n8n workflow. It must reuse the existing
 `Connect · Apply to Yext` sub-workflow, so a decision made in the app and one made in Telegram end in the same
 tables, the same Yext write, the same `apply_log` and the same Undo.
 
-The app's server function (`Frontend/src/lib/connect/api.ts`) has already checked the signed link and that the
+The app's server function (`result/B_contact_decide/owner_app/src/lib/connect/api.ts`) has already checked the signed link and that the
 bundle belongs to the entity before it calls this webhook. The webhook URL itself is a secret (it lives only in the
 app's server environment as `N8N_WEB_ACTION_URL`).
 

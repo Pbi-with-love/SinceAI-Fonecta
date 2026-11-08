@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Export real reference data for the owner app in Frontend/ (standard library only, deterministic).
+"""Export real reference data for the owner app in owner_app/ (standard library only, deterministic).
 
-Writes two files in Frontend/src/lib/connect/:
+Writes two files in owner_app/src/lib/connect/:
 reference.generated.ts (shipped to the browser):
   - HOLIDAY_NAMES: English day name -> name in fi / sv / nb / en, from data/calendar_special_days.csv
     (fi from FI rows, sv from SE rows, nb from NO rows) plus the event / school-break phrases of build_bundles.py;
@@ -21,7 +21,7 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 import build_bundles as bb  # noqa: E402  (REASON, SPECIAL_NAMES, LANGS)
 
-OUT_DIR = os.path.join(ROOT, "Frontend", "src", "lib", "connect")
+OUT_DIR = os.path.join(HERE, "owner_app", "src", "lib", "connect")
 COUNTRY_LANG = {"FI": "fi", "SE": "sv", "NO": "nb"}
 
 
