@@ -6,6 +6,7 @@
 | Final customer messages as text | ✅ [`../B_contact_decide/MESSAGES.md`](../B_contact_decide/MESSAGES.md) |
 | Customer with no history (FI-D0017) | ✅ README section, screenshot in [`media/`](media/) |
 | `predictions_2026.csv` | ✅ repo root |
+| How the 17 demo businesses are handled (`docs/DEMO_SCENARIOS.md`) | ✅ [`DEMO_BUSINESSES.md`](DEMO_BUSINESSES.md): 10 ✅ · 5 ⚠️ · 2 ❌ |
 | Owner app online | ✅ https://since-ai-porchlight.vercel.app (signed links from `owner_link.py`) |
 | Demo video (2–3 min) | ⏳ |
 | Pitch deck | ⏳ |
