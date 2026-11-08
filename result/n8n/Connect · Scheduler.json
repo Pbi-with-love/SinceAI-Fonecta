@@ -46,7 +46,7 @@
               "id": "step3",
               "name": "STEP3_WEBHOOK_URL",
               "type": "string",
-              "value": "https://pbiwithlove.app.n8n.cloud/webhook/connect-contact"
+              "value": "https://<your-n8n-host>/webhook/connect-contact"
             }
           ]
         },

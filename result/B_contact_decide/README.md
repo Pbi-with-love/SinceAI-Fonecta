@@ -111,6 +111,8 @@ Without `--reset`, loading a `bundle_id` that already exists fails (HTTP 409). T
 - `export_frontend_data.py` writes `owner_app/src/lib/connect/reference.generated.ts` (holiday names per language from the
   calendar, the `REASON` texts) and `demo.generated.ts` (this folder's `samples/bundles_demo.json`, used in demo mode).
   Re-run it after `build_bundles.py`.
+- `export_messages.py` writes `MESSAGES.md`: every customer message as text (first messages from the bundles, follow-ups,
+  buttons and the reminder from the n8n exports, read only). Re-run it after changing a template.
 - `owner_link.py FI-D0017 --base https://<app>` prints the no-login link `/o/<entity_id>?t=<token>` (HMAC with
   `LINK_SECRET` from the environment, never printed).
 

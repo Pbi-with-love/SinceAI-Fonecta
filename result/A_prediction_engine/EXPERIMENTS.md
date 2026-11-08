@@ -1,10 +1,35 @@
 # Experiments — Part A
 
-Rule: keep a change only if dev 2026 + back-test 2025 improves and neither score drops by more than 0.3 (see `AGENTS.md` §2.2).
+## At a glance
 
-| # | Name | Dev 2026 | Back-test 2025 | Decision |
-|---|---|---|---|---|
-| 0 | Baseline reproduction | 54.49 | 53.23 | KEEP (reference) |
+**Keep rule, set before any experiment:** keep a change only if dev 2026 + back-test 2025 improves and neither score
+drops by more than 0.3 (`AGENTS.md` §2.2). Passing the rule is the minimum, not a reason to merge: a change must also be
+worth its complexity. Every experiment is scored on both seasons with the organisers' `evaluation/evaluate.py`.
+
+| # | What we tried | Dev 2026 | Back-test 2025 | Decision | Why, in one line |
+|---|---|---|---|---|---|
+| 0 | Baseline reproduction | 54.49 | 53.23 | reference | Byte-identical to the organisers' baseline |
+| 1 | Two-season lookback (own history from older seasons) | 54.49 → **64.68** | 53.23 → **60.79** | ✅ KEEP | The largest gain: owners repeat what they entered two seasons ago |
+| 2 | Owner's own pattern (closed on every other holiday entered) | 64.68 → **65.42** | 60.79 → **61.69** | ✅ KEEP | Clean dev gain; back-test gain may be inflated by undated peer data |
+| 3 | Peer rule tuning (public holidays only, new thresholds) | 65.42 → **65.92** | 61.69 → **62.73** | ✅ KEEP | Passes the freeze rule by +0.500185 on dev, less than one row |
+| – | Peer median special hours (inside #3) | +0.09 | +0.15 | ❌ reverted | 72–78 % of those messages were needless or wrong |
+| – | Reviews as a signal (analysis only) | best ≈ +0.1 | ≈ +0.04 | ❌ not built | Full-day closure reviews are wrong more often than right on the missed rows |
+| 4 | Habit table learned from dev truth | 65.92 → 65.95 | 62.73 → 62.82 | ❌ reverted | Within noise: 7 exact rows for a learner script and 1.9 MB of tables |
+| 5 | K nearest businesses by holiday behaviour (96 configurations) | best 65.80 | best 62.79 | ❌ reverted | 0 of 96 cells pass the keep rule; wrong state 383 → 415 |
+| | **Final (tag `part-a-final`)** | **65.92** | **62.73** | | +11.43 / +9.50 over the baseline |
+
+**How we kept the evaluation honest**
+- Every history row used is entered before the season's snapshot (audited per season: 2026-11-06 and 2025-11-06).
+- `labels/` is never read by `model.py`; learned experiments split folds **by business**, never by row.
+- Two runs give byte-identical CSVs. A `sys.audit` hook checks at runtime that `labels/` is never opened, and `model.py`
+  run without any `labels/` directory gives byte-identical output (#4).
+- Known limits, stated where they apply: `OLDER_SEASON` is measured on dev only (no season before 2023);
+  `peer_benchmarks.csv` has no dates, so peer-driven back-test gains may be optimistic.
+
+**What it means for the product:** suggestions based only on peers flip open/closed 23 % of the time, so the product
+sends them to the owner as a question (route `ASK`), never as a proposal or an automatic update.
+
+The full log of each attempt follows.
 
 ## #0 Baseline reproduction
 Hypothesis: copying `examples/baseline.py` into `result/A_prediction_engine/model.py` reproduces the organisers' scores.
