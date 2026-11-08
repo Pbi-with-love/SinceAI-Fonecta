@@ -1,4 +1,4 @@
-# Connect Suggests — owner app (no login)
+# Porchlight — owner app (no login)
 
 Folder: `result/B_contact_decide/owner_app/` (the contact & decide channel of Part B, next to Telegram).
 

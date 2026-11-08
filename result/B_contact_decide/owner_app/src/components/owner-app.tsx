@@ -235,7 +235,7 @@ export function OwnerApp({
 
       <header className="mt-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-muted-foreground">Fonecta Connect</p>
+          <p className="text-sm font-semibold text-muted-foreground">Porchlight</p>
           <h1 className="font-display text-2xl font-semibold">{t.hello(owner)}</h1>
           <p className="truncate text-sm text-muted-foreground">{business}</p>
         </div>
@@ -760,7 +760,7 @@ function PhoneSheet({ t, text, onClose }: { t: Dict; text: string; onClose: () =
         </div>
         <div className="overflow-hidden rounded-[40px] border-[10px] border-foreground bg-secondary shadow-card">
           <div className="bg-primary px-4 pb-3 pt-5 text-primary-foreground">
-            <p className="text-sm font-bold">Fonecta Connect</p>
+            <p className="text-sm font-bold">Porchlight</p>
             <p className="text-xs opacity-80">Telegram</p>
           </div>
           <div className="max-h-[60dvh] space-y-2 overflow-y-auto p-3">

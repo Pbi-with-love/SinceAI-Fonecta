@@ -4,13 +4,13 @@ import { DICTS } from "@/lib/i18n";
 
 export const OWNER_HEAD = {
   meta: [
-    { title: "Connect Suggests — Holiday hours in one swipe" },
+    { title: "Porchlight — Holiday hours in one swipe" },
     {
       name: "description",
       content:
-        "Fonecta Connect Suggests: approve the suggested holiday hours with a swipe, no login.",
+        "Porchlight: approve the suggested holiday hours with a swipe, no login.",
     },
-    { property: "og:title", content: "Connect Suggests — Holiday hours in one swipe" },
+    { property: "og:title", content: "Porchlight — Holiday hours in one swipe" },
     {
       property: "og:description",
       content:
@@ -27,7 +27,7 @@ export function OwnerError({ error }: { error: unknown }) {
   const bad = error instanceof Error && error.message.includes("BAD_LINK");
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center px-5">
-      <p className="text-sm font-semibold text-muted-foreground">Fonecta Connect</p>
+      <p className="text-sm font-semibold text-muted-foreground">Porchlight</p>
       <h1 className="mt-1 font-display text-2xl font-semibold">{bad ? t.badLink : t.loadError}</h1>
       {!bad && (
         <button

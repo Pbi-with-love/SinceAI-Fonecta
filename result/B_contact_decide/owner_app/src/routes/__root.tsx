@@ -81,9 +81,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Connect Suggests — Fonecta" },
+      { title: "Porchlight — Holiday hours in one swipe" },
       { name: "description", content: "Swipe to approve AI-suggested holiday opening hours." },
-      { property: "og:title", content: "Connect Suggests — Fonecta" },
+      { property: "og:title", content: "Porchlight — Holiday hours in one swipe" },
       { property: "og:description", content: "Swipe to approve AI-suggested holiday opening hours." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
