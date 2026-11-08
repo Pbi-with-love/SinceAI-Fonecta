@@ -59,7 +59,7 @@ set -a && . ../../../.env && set +a && npm run dev -- --port 5180
 
 ## Deploy on Vercel
 
-1. Vercel → Add New Project → import `Pbi-with-love/SinceAI-Fonecta`.
+1. Vercel → Add New Project → import `Pbi-with-love/SinceAI-Porchlight`.
 2. **Root Directory**: `result/B_contact_decide/owner_app`. Framework preset: Other (Vite). Build command and output are
    picked up by Nitro, which detects Vercel and builds with its `vercel` preset (no config change needed).
 3. Environment Variables (Production and Preview): `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `N8N_WEB_ACTION_URL`,

@@ -211,7 +211,7 @@ This section applies only to Part A hypothesis testing. Section 6 steps 2–3 (r
 
 Final cascade after all merges: closed signals → shopping centre → last year → **two years ago** → **owner pattern** → **peers**. (`hyp-interday` for #1 was removed: the data rejected #1, see section 5.)
 
-- Remote: `git@github.com:Pbi-with-love/SinceAI-Fonecta.git`, branch `main`. Hypothesis branches are local; agents never push.
+- Remote: `git@github.com:Pbi-with-love/SinceAI-Porchlight.git`, branch `main`. Hypothesis branches are local; agents never push.
 - **Enforced by a Git hook** (`.git/hooks/pre-commit`, shared by all worktrees). On `hyp/<name>`, a commit is rejected if it contains any file other than `result/A_prediction_engine/model.py` and `result/A_prediction_engine/experiments/hyp-<name>.md`. A merge commit (while `MERGE_HEAD` exists) is exempt, for syncing with `main`. Do not bypass it (`--no-verify` is forbidden). If it blocks you, stop and ask the human.
 - All three branches start from `main` with the error report (`257f381` or later).
 
