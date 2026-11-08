@@ -8,7 +8,7 @@ This folder only prepares the team's sandbox entity **`SinceAI13`** ("Screwdrive
 | File | What it does |
 |---|---|
 | `reset.py` | PUT `regular_hours.json` with **no holidayHours**, then GET again and verify. Run before every video take |
-| `regular_hours.json` | The regular hours `reset.py` writes: Mon–Fri 08:00–18:00, Sat 09:00–15:00, Sun closed |
+| `regular_hours.json` | The regular hours `reset.py` writes: those of the demo business **FI-D0017 Kahvila Kipinä** (Mon–Fri 08:00–17:00, Sat 10:00–16:00, Sun closed, from `data/regular_hours_history.jsonl`), so the "shown now" hours in its Telegram messages match the sandbox |
 | `yext_common.py` | Shared helpers (config from the environment, HTTP calls, hour comparison) |
 
 Environment (from the git-ignored `.env`): `YEXT_API_KEY` (sent in the `api-key` header, never printed or put in a URL),
