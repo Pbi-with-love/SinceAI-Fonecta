@@ -196,25 +196,25 @@ def main():
         L.append("")
         o, n = res[("organisers", 2026)], res[("nager_only", 2026)]
         ob, nb = res[("organisers", 2025)], res[("nager_only", 2025)]
-        L += ["## What we learned", "",
-              f"- **Coverage of public holidays is complete.** All {cov['org_pub']} public holidays of FI, SE and NO in the "
+        L += ["## What we learned: coverage, quality, gaps", "",
+              f"- **Coverage: complete for public holidays.** All {cov['org_pub']} public holidays of FI, SE and NO in the "
               "organisers' file are in Nager on the same date, and every Nager name maps to one of the engine's day keys. "
               f"Nager also already has the next season ({len(cov['beyond'])} days in 2027), so the list would not need a "
               "yearly manual update.",
-              "- **The gap is everything that is not a public holiday**: "
-              + ", ".join(f"{n} {t.lower().replace('_', ' ')}" for t, n in sorted(cov['missing_types'].items()))
-              + " rows. These are exactly the days where hours go wrong most (Christmas Eve's early closing, the days "
-              "between Christmas and New Year, Black Friday, Father's Day).",
-              f"- **Nager alone costs {o['score'] - n['score']:.2f} points on dev and {ob['score'] - nb['score']:.2f} on the "
-              "back-test**: without those days the engine cannot map this season's eves and in-between days to last "
-              "season's, so it stays quiet there.",
-              "- **Live public holidays + our own list of eves and commercial days gives exactly the reference scores.** "
-              "That is the production design: holidays from a live API, eves and commercial days from Connect's own rules.",
-              "- **Quality differences to handle:** Nager marks Christmas Eve (FI, SE), Midsummer Eve (FI, SE) and New Year's "
+              "- **Quality: right dates, different meaning and names.** Nager marks Christmas Eve (FI, SE), Midsummer Eve (FI, SE) and New Year's "
               "Eve (SE) as public holidays and Christmas Eve in Norway as a bank day, while for opening hours they behave as "
               "eves; names differ (`St. Stephen's Day` vs `Boxing Day`, `Labour Day` / `International Workers' Day` vs "
               "`May Day`, `Constitution Day` vs `National Day`), so a fixed name map is needed. Norway's 17 May and Whit "
               "Monday fall on the same date in 2027 (two entries).",
+              "- **Gaps: everything that is not a public holiday**: "
+              + ", ".join(f"{n} {t.lower().replace('_', ' ')}" for t, n in sorted(cov['missing_types'].items()))
+              + " rows. These are exactly the days where hours go wrong most (Christmas Eve's early closing, the days "
+              "between Christmas and New Year, Black Friday, Father's Day).",
+              f"- **Gaps, measured: Nager alone costs {o['score'] - n['score']:.2f} points on dev and {ob['score'] - nb['score']:.2f} on the "
+              "back-test**: without those days the engine cannot map this season's eves and in-between days to last "
+              "season's, so it stays quiet there.",
+              "- **What we would ship: live public holidays + our own list of eves and commercial days gives exactly the reference scores.** "
+              "That is the production design: holidays from a live API, eves and commercial days from Connect's own rules.",
               ""]
     with open(REPORT, "w", encoding="utf-8") as f:
         f.write("\n".join(L))

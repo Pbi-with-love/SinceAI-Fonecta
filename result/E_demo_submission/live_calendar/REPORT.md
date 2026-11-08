@@ -34,10 +34,10 @@ Same `model.py`, only the calendar file is swapped; scored with `evaluation/eval
 | Nager only | 61.38 | 57.16 | 375 / 357 | 0.857 / 0.874 |
 | Nager + our own eves and commercial days | 65.92 | 62.73 | 383 / 377 | 0.861 / 0.873 |
 
-## What we learned
+## What we learned: coverage, quality, gaps
 
-- **Coverage of public holidays is complete.** All 116 public holidays of FI, SE and NO in the organisers' file are in Nager on the same date, and every Nager name maps to one of the engine's day keys. Nager also already has the next season (39 days in 2027), so the list would not need a yearly manual update.
-- **The gap is everything that is not a public holiday**: 27 between holidays, 18 commercial, 41 eve, 21 observance rows. These are exactly the days where hours go wrong most (Christmas Eve's early closing, the days between Christmas and New Year, Black Friday, Father's Day).
-- **Nager alone costs 4.54 points on dev and 5.57 on the back-test**: without those days the engine cannot map this season's eves and in-between days to last season's, so it stays quiet there.
-- **Live public holidays + our own list of eves and commercial days gives exactly the reference scores.** That is the production design: holidays from a live API, eves and commercial days from Connect's own rules.
-- **Quality differences to handle:** Nager marks Christmas Eve (FI, SE), Midsummer Eve (FI, SE) and New Year's Eve (SE) as public holidays and Christmas Eve in Norway as a bank day, while for opening hours they behave as eves; names differ (`St. Stephen's Day` vs `Boxing Day`, `Labour Day` / `International Workers' Day` vs `May Day`, `Constitution Day` vs `National Day`), so a fixed name map is needed. Norway's 17 May and Whit Monday fall on the same date in 2027 (two entries).
+- **Coverage: complete for public holidays.** All 116 public holidays of FI, SE and NO in the organisers' file are in Nager on the same date, and every Nager name maps to one of the engine's day keys. Nager also already has the next season (39 days in 2027), so the list would not need a yearly manual update.
+- **Quality: right dates, different meaning and names.** Nager marks Christmas Eve (FI, SE), Midsummer Eve (FI, SE) and New Year's Eve (SE) as public holidays and Christmas Eve in Norway as a bank day, while for opening hours they behave as eves; names differ (`St. Stephen's Day` vs `Boxing Day`, `Labour Day` / `International Workers' Day` vs `May Day`, `Constitution Day` vs `National Day`), so a fixed name map is needed. Norway's 17 May and Whit Monday fall on the same date in 2027 (two entries).
+- **Gaps: everything that is not a public holiday**: 27 between holidays, 18 commercial, 41 eve, 21 observance rows. These are exactly the days where hours go wrong most (Christmas Eve's early closing, the days between Christmas and New Year, Black Friday, Father's Day).
+- **Gaps, measured: Nager alone costs 4.54 points on dev and 5.57 on the back-test**: without those days the engine cannot map this season's eves and in-between days to last season's, so it stays quiet there.
+- **What we would ship: live public holidays + our own list of eves and commercial days gives exactly the reference scores.** That is the production design: holidays from a live API, eves and commercial days from Connect's own rules.
