@@ -1,0 +1,878 @@
+{
+  "name": "Connect · Reply",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "chat_id"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "text",
+              "type": "any"
+            },
+            {
+              "name": "key",
+              "type": "any"
+            },
+            {
+              "name": "params",
+              "type": "object"
+            },
+            {
+              "name": "lines",
+              "type": "array"
+            },
+            {
+              "name": "buttons",
+              "type": "array"
+            },
+            {
+              "name": "edit_message_id",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "id": "02aa9617-dc35-4fbc-bd47-23dbd3ea7b29",
+      "name": "Reply Input",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const DICT = {\n \"btn_approve\":{\"fi\":\"✅ Hyväksy\",\"sv\":\"✅ Godkänn\",\"nb\":\"✅ Godkjenn\",\"en\":\"✅ Approve\"},\n \"btn_edit\":{\"fi\":\"✏️ Muokkaa\",\"sv\":\"✏️ Ändra\",\"nb\":\"✏️ Endre\",\"en\":\"✏️ Edit\"},\n \"btn_decline\":{\"fi\":\"❌ Ei kiitos\",\"sv\":\"❌ Nej tack\",\"nb\":\"❌ Nei takk\",\"en\":\"❌ No thanks\"},\n \"btn_confirm\":{\"fi\":\"✅ Vahvista\",\"sv\":\"✅ Bekräfta\",\"nb\":\"✅ Bekreft\",\"en\":\"✅ Confirm\"},\n \"btn_cancel\":{\"fi\":\"↩️ Peruuta\",\"sv\":\"↩️ Avbryt\",\"nb\":\"↩️ Avbryt\",\"en\":\"↩️ Cancel\"},\n \"btn_closed\":{\"fi\":\"🔒 Kiinni\",\"sv\":\"🔒 Stängt\",\"nb\":\"🔒 Stengt\",\"en\":\"🔒 Closed\"},\n \"btn_regular\":{\"fi\":\"🕘 Normaalisti auki\",\"sv\":\"🕘 Öppet som vanligt\",\"nb\":\"🕘 Åpent som vanlig\",\"en\":\"🕘 Open as usual\"},\n \"btn_undo\":{\"fi\":\"↩️ Peru muutos\",\"sv\":\"↩️ Ångra\",\"nb\":\"↩️ Angre\",\"en\":\"↩️ Undo\"},\n \"btn_permission_yes\":{\"fi\":\"🤝 Hoida jatkossa\",\"sv\":\"🤝 Sköt det framöver\",\"nb\":\"🤝 Ordne det fremover\",\"en\":\"🤝 Handle it from now on\"},\n \"btn_not_now\":{\"fi\":\"Ei nyt\",\"sv\":\"Inte nu\",\"nb\":\"Ikke nå\",\"en\":\"Not now\"},\n \"btn_retry\":{\"fi\":\"🔁 Yritä uudelleen\",\"sv\":\"🔁 Försök igen\",\"nb\":\"🔁 Prøv igjen\",\"en\":\"🔁 Try again\"},\n \"label_closed\":{\"fi\":\"suljettu\",\"sv\":\"stängt\",\"nb\":\"stengt\",\"en\":\"closed\"},\n \"label_regular\":{\"fi\":\"normaalit aukioloajat\",\"sv\":\"ordinarie öppettider\",\"nb\":\"vanlige åpningstider\",\"en\":\"regular hours\"},\n \"msg_edit_prompt\":{\"fi\":\"Miten haluat muuttaa? Kirjoita vapaasti, esim. \\\"26.12. auki 10–14\\\", tai valitse alta.\",\"sv\":\"Hur vill du ändra? Skriv fritt, t.ex. \\\"26.12 öppet 10–14\\\", eller välj nedan.\",\"nb\":\"Hvordan vil du endre? Skriv fritt, f.eks. \\\"26.12 åpent 10–14\\\", eller velg nedenfor.\",\"en\":\"How would you like to change it? Type freely, e.g. \\\"26 Dec open 10–14\\\", or pick below.\"},\n \"msg_confirm_title\":{\"fi\":\"Tarkista muutokset:\",\"sv\":\"Kontrollera ändringarna:\",\"nb\":\"Sjekk endringene:\",\"en\":\"Please check the changes:\"},\n \"msg_clarify\":{\"fi\":\"En ollut varma, mitä tarkoitit. Kirjoita päivä ja aika, esim. \\\"26.12. kiinni\\\" tai \\\"31.12. 10–14\\\".\",\"sv\":\"Jag förstod inte riktigt. Skriv datum och tid, t.ex. \\\"26.12 stängt\\\" eller \\\"31.12 10–14\\\".\",\"nb\":\"Jeg forsto ikke helt. Skriv dato og tid, f.eks. \\\"26.12 stengt\\\" eller \\\"31.12 10–14\\\".\",\"en\":\"I wasn't sure what you meant. Write the date and time, e.g. \\\"26 Dec closed\\\" or \\\"31 Dec 10–14\\\".\"},\n \"msg_bad_time\":{\"fi\":\"Sulkemisajan pitää olla avaamisen jälkeen. Kokeile uudelleen.\",\"sv\":\"Stängningstiden måste vara efter öppningstiden. Försök igen.\",\"nb\":\"Stengetiden må være etter åpningstiden. Prøv igjen.\",\"en\":\"The closing time must be after the opening time. Please try again.\"},\n \"msg_bad_date\":{\"fi\":\"Päivä ei kuulu tähän ehdotukseen ({dates}).\",\"sv\":\"Datumet ingår inte i förslaget ({dates}).\",\"nb\":\"Datoen er ikke med i forslaget ({dates}).\",\"en\":\"That date is not part of this suggestion ({dates}).\"},\n \"msg_applied\":{\"fi\":\"✅ Päivitetty! Uudet ajat näkyvät pian:\",\"sv\":\"✅ Uppdaterat! De nya tiderna syns snart på:\",\"nb\":\"✅ Oppdatert! De nye tidene vises snart på:\",\"en\":\"✅ Updated! Your new hours will show on:\"},\n \"msg_auto_applied\":{\"fi\":\"🤖 Päivitimme juhlapyhien aukioloajat luvallasi:\",\"sv\":\"🤖 Vi uppdaterade öppettiderna för helgdagar med ditt tillstånd:\",\"nb\":\"🤖 Vi oppdaterte åpningstidene for helligdager med din tillatelse:\",\"en\":\"🤖 We updated your holiday hours with your permission:\"},\n \"msg_apply_failed\":{\"fi\":\"⚠️ Päivitys ei onnistunut. Mitään ei muutettu. Tiimimme on saanut tiedon.\",\"sv\":\"⚠️ Uppdateringen gick inte igenom. Inget har ändrats. Vårt team har informerats.\",\"nb\":\"⚠️ Oppdateringen gikk ikke gjennom. Ingenting er endret. Teamet vårt er varslet.\",\"en\":\"⚠️ The update didn't go through. Nothing was changed. Our team has been notified.\"},\n \"msg_undone\":{\"fi\":\"↩️ Muutos peruttu. Aiemmat ajat ovat taas voimassa.\",\"sv\":\"↩️ Ändringen är ångrad. De tidigare tiderna gäller igen.\",\"nb\":\"↩️ Endringen er angret. De tidligere tidene gjelder igjen.\",\"en\":\"↩️ Change undone. Your previous hours are back.\"},\n \"msg_declined\":{\"fi\":\"Selvä, emme muuta mitään. Oletteko silloin auki normaalisti?\",\"sv\":\"Okej, vi ändrar ingenting. Har ni öppet som vanligt då?\",\"nb\":\"Greit, vi endrer ingenting. Har dere åpent som vanlig da?\",\"en\":\"OK, we won't change anything. Will you be open as usual on those days?\"},\n \"msg_permission_offer\":{\"fi\":\"Hoidetaanko juhlapyhät jatkossa puolestasi? Saat aina ilmoituksen ja voit perua.\",\"sv\":\"Ska vi sköta helgdagarna åt dig framöver? Du får alltid besked och kan ångra.\",\"nb\":\"Skal vi ordne helligdagene for deg fremover? Du får alltid beskjed og kan angre.\",\"en\":\"Shall we handle holidays for you from now on? You'll always be notified and can undo.\"},\n \"msg_permission_granted\":{\"fi\":\"🤝 Kiitos! Hoidamme juhlapyhät jatkossa ja ilmoitamme aina.\",\"sv\":\"🤝 Tack! Vi sköter helgdagarna framöver och meddelar dig alltid.\",\"nb\":\"🤝 Takk! Vi ordner helligdagene fremover og gir deg alltid beskjed.\",\"en\":\"🤝 Thanks! We'll handle holidays from now on and always let you know.\"},\n \"msg_already_handled\":{\"fi\":\"Tämä ehdotus on jo käsitelty.\",\"sv\":\"Det här förslaget är redan hanterat.\",\"nb\":\"Dette forslaget er allerede behandlet.\",\"en\":\"This suggestion has already been handled.\"},\n \"msg_cancelled\":{\"fi\":\"Muokkaus peruttu. Alkuperäinen ehdotus on yhä voimassa.\",\"sv\":\"Ändringen avbröts. Det ursprungliga förslaget gäller.\",\"nb\":\"Endringen ble avbrutt. Det opprinnelige forslaget gjelder.\",\"en\":\"Edit cancelled. The original suggestion still stands.\"},\n \"msg_help\":{\"fi\":\"Hei! Lähetän ehdotuksia aukioloajoistasi. Vastaa napeilla tai kirjoittamalla.\",\"sv\":\"Hej! Jag skickar förslag om dina öppettider. Svara med knapparna eller skriv.\",\"nb\":\"Hei! Jeg sender forslag om åpningstidene dine. Svar med knappene eller skriv.\",\"en\":\"Hi! I send suggestions about your opening hours. Answer with the buttons or by typing.\"},\n \"msg_staff_flag\":{\"en\":\"🚩 Needs review: {business_name} ({entity_id}). {text}\"},\n \"msg_staff_error\":{\"en\":\"⚠️ Yext write failed for {business_name} ({entity_id}), bundle {bundle_id}: {error}\"}\n};\n\nconst inp = $json;\nconst lang = [\"fi\", \"sv\", \"nb\", \"en\"].includes(inp.language) ? inp.language : \"en\";\nconst params = (inp.params && typeof inp.params === \"object\") ? inp.params : {};\n\nfunction pick(key) {\n  const entry = key ? DICT[key] : null;\n  if (!entry) return null;\n  return entry[lang] ?? entry.en ?? null;\n}\n\nfunction fill(s) {\n  return String(s).replace(/\\{(@?\\w+)\\}/g, (m, k) => {\n    if (k.charAt(0) === \"@\") { const t = pick(k.slice(1)); return t === null ? m : fill(t); }\n    return (params[k] !== undefined && params[k] !== null) ? String(params[k]) : m;\n  });\n}\n\nfunction esc(s) {\n  return String(s)\n    .replace(/&/g, \"&amp;\").replace(/</g, \"&lt;\").replace(/>/g, \"&gt;\")\n    .replace(/&lt;(\\/?)b&gt;/g, \"<$1b>\");\n}\n\nlet main = pick(inp.key);\nif (main === null) main = (inp.text !== null && inp.text !== undefined) ? String(inp.text) : \"\";\nmain = fill(main);\n\nlet lines = Array.isArray(inp.lines) ? inp.lines.filter(l => l !== null && l !== undefined && String(l) !== \"\") : [];\nif (typeof inp.lines === \"string\" && inp.lines) lines = [inp.lines];\nlet html = esc(main);\nif (lines.length) html += (html ? \"\\n\\n\" : \"\") + lines.map(l => esc(fill(l))).join(\"\\n\");\nif (!html) html = esc(pick(\"msg_help\") || \"\");\n\nconst buttons = (Array.isArray(inp.buttons) ? inp.buttons : []).filter(b => b && b.key && b.data).slice(0, 3);\nconst hasButtons = buttons.length > 0;\nconst out = {\n  chat_id: String(inp.chat_id ?? \"\"),\n  html,\n  has_buttons: hasButtons,\n  n_buttons: buttons.length,\n  edit_message_id: (inp.edit_message_id === null || inp.edit_message_id === undefined || inp.edit_message_id === \"\") ? \"\" : String(inp.edit_message_id),\n};\nfor (let i = 0; i < 3; i++) {\n  const b = hasButtons ? buttons[i] : null;\n  out[\"b\" + (i + 1) + \"_text\"] = b ? (pick(b.key) || String(b.key)) : \"\";\n  out[\"b\" + (i + 1) + \"_data\"] = b ? String(b.data) : \"\";\n}\nreturn { json: out };"
+      },
+      "id": "e3ab1c26-ed28-4f11-b20b-421a514db23d",
+      "name": "Render",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-edit-id",
+              "leftValue": "={{ $json.edit_message_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5027a5b1-706a-42f1-8f5b-331dbdc5c40d",
+      "name": "Edit existing message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "one",
+                    "leftValue": "={{ $json.n_buttons }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "1 button"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "two",
+                    "leftValue": "={{ $json.n_buttons }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "2 buttons"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "0 or 3 buttons"
+        }
+      },
+      "id": "b72c835e-d1fd-404e-b857-9012b3e9f7df",
+      "name": "Edit: button count",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "one",
+                    "leftValue": "={{ $json.n_buttons }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "1 button"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "two",
+                    "leftValue": "={{ $json.n_buttons }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "2 buttons"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "0 or 3 buttons"
+        }
+      },
+      "id": "c32e9235-97b4-47cb-9a5e-d7256ca7c75f",
+      "name": "Send: button count",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $json.chat_id }}",
+        "messageId": "={{ $json.edit_message_id }}",
+        "replyMarkup": "inlineKeyboard",
+        "text": "={{ $json.html }}",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.b1_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b1_data }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "f18fdbb2-92da-49f3-b9f1-6a2d5f82e47b",
+      "name": "Edit Message (1 button)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        480
+      ],
+      "webhookId": "d53805c3-2364-4970-87cd-de09a7c03be5",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "id": "mid",
+              "name": "telegram_message_id",
+              "type": "string",
+              "value": "={{ $json.result?.message_id !== undefined ? String($json.result.message_id) : null }}"
+            },
+            {
+              "id": "err",
+              "name": "error",
+              "type": "string",
+              "value": "={{ null }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c4eb581f-b8ac-46dc-98ef-838410b4e64d",
+      "name": "Return OK",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ok",
+              "name": "ok",
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "id": "mid",
+              "name": "telegram_message_id",
+              "type": "string",
+              "value": "={{ null }}"
+            },
+            {
+              "id": "err",
+              "name": "error",
+              "type": "string",
+              "value": "={{ (() => { const e = $input.item.json['error']; return e ? (typeof e === 'object' ? (e.message || JSON.stringify(e)) : String(e)) : 'Telegram request failed'; })() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c0ca686e-80d6-4a6b-83cb-4153e8355fe4",
+      "name": "Return Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $json.chat_id }}",
+        "messageId": "={{ $json.edit_message_id }}",
+        "replyMarkup": "inlineKeyboard",
+        "text": "={{ $json.html }}",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.b1_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b1_data }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.b2_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b2_data }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "d264e8ef-de01-4d10-8c72-36b2876f3d08",
+      "name": "Edit Message (2 buttons)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        720
+      ],
+      "webhookId": "efb5d2a1-e765-4dab-9cf4-56f4b240a673",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $json.chat_id }}",
+        "messageId": "={{ $json.edit_message_id }}",
+        "replyMarkup": "={{ $json.has_buttons ? 'inlineKeyboard' : 'none' }}",
+        "text": "={{ $json.html }}",
+        "forceReply": {},
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.b1_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b1_data }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.b2_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b2_data }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.b3_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b3_data }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "78a470da-e784-43ef-aae6-9c1ed766c066",
+      "name": "Edit Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        0
+      ],
+      "webhookId": "290d8b85-c3e8-45ef-b58b-e031a39c8c2e",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.html }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.b1_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b1_data }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "4adad98b-8fda-4350-8745-04e32e3ab88a",
+      "name": "Send Message (1 button)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        1104
+      ],
+      "webhookId": "5b8e641c-d411-4d23-85d2-d5ad1eb38680",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.html }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.b1_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b1_data }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.b2_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b2_data }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "a7c528f3-8e75-4985-8fc8-aee10f525cd9",
+      "name": "Send Message (2 buttons)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        1296
+      ],
+      "webhookId": "1662b6d2-a689-409a-90d6-ae31e595274d",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.html }}",
+        "replyMarkup": "={{ $json.has_buttons ? 'inlineKeyboard' : 'none' }}",
+        "forceReply": {},
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "={{ $json.b1_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b1_data }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.b2_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b2_data }}"
+                    }
+                  },
+                  {
+                    "text": "={{ $json.b3_text }}",
+                    "additionalFields": {
+                      "callback_data": "={{ $json.b3_data }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "904668dc-b127-4549-bafc-9ee69796f702",
+      "name": "Send Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        288
+      ],
+      "webhookId": "7898d02c-da27-46c4-8133-6d751d2a0509",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## All texts live here\nThe Render Code node holds the full fi/sv/nb/en dictionary, fills {placeholders}, appends lines, escapes HTML (keeps <b>) and builds up to 3 button labels. This is the only place with bot texts.",
+        "height": 320,
+        "color": 5
+      },
+      "id": "fb8bde74-ff70-4bfd-92e9-5fa6e84c8fe6",
+      "name": "All texts live here",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        144,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Send or edit\nIf edit_message_id is set the existing message is edited, otherwise a new message is sent (HTML, one row of 1–3 buttons when given). Errors never stop the caller: they return { ok: false, error }.",
+        "height": 512,
+        "width": 608,
+        "color": 4
+      },
+      "id": "359bc711-8da0-4c1b-ab32-41df2ca93ef7",
+      "name": "Send or edit",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -96
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Reply Input": {
+      "main": [
+        [
+          {
+            "node": "Render",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render": {
+      "main": [
+        [
+          {
+            "node": "Edit existing message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit existing message?": {
+      "main": [
+        [
+          {
+            "node": "Edit: button count",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send: button count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit: button count": {
+      "main": [
+        [
+          {
+            "node": "Edit Message (1 button)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Message (2 buttons)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send: button count": {
+      "main": [
+        [
+          {
+            "node": "Send Message (1 button)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Message (2 buttons)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Message (1 button)": {
+      "main": [
+        [
+          {
+            "node": "Return OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Message (2 buttons)": {
+      "main": [
+        [
+          {
+            "node": "Return OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Message": {
+      "main": [
+        [
+          {
+            "node": "Return OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message (1 button)": {
+      "main": [
+        [
+          {
+            "node": "Return OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message (2 buttons)": {
+      "main": [
+        [
+          {
+            "node": "Return OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message": {
+      "main": [
+        [
+          {
+            "node": "Return OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "3b8fdc15-ca2e-404d-8224-b2c26982c65e",
+  "meta": {
+    "instanceId": "07d184b165c6174ff8adbaf572afc94b95591c0d70b03269a37660687ca9f7c3"
+  },
+  "nodeGroups": [
+    {
+      "id": "a0514199-8783-4b68-9039-6ee64c1bc482",
+      "name": "Deliver to Telegram",
+      "nodeIds": [
+        "5027a5b1-706a-42f1-8f5b-331dbdc5c40d",
+        "b72c835e-d1fd-404e-b857-9012b3e9f7df",
+        "c32e9235-97b4-47cb-9a5e-d7256ca7c75f",
+        "78a470da-e784-43ef-aae6-9c1ed766c066",
+        "f18fdbb2-92da-49f3-b9f1-6a2d5f82e47b",
+        "d264e8ef-de01-4d10-8c72-36b2876f3d08",
+        "904668dc-b127-4549-bafc-9ee69796f702",
+        "4adad98b-8fda-4350-8745-04e32e3ab88a",
+        "a7c528f3-8e75-4985-8fc8-aee10f525cd9",
+        "c4eb581f-b8ac-46dc-98ef-838410b4e64d",
+        "c0ca686e-80d6-4a6b-83cb-4153e8355fe4"
+      ],
+      "description": "Edits the old message or sends a new one with 0–3 buttons; a Telegram error is returned to the caller, never thrown"
+    }
+  ],
+  "id": "3TQmfWp5iP706Ax7",
+  "tags": []
+}

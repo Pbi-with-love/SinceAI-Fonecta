@@ -68,7 +68,21 @@ unique `bundle_id`; every bundle has items and every item a bundle; routes in `S
 `HH:MM-HH:MM[,HH:MM-HH:MM]`; `final_hours` null; `proposed_hours` null only for STAFF; intro text ≤ 12 lines and every item's
 date, shown and proposed hours appear in a matching line (no time in the text that is not in an item).
 
-## Fit with the n8n workflow `Connect · Step 3 Contact` (read-only check)
+## The n8n workflows (`result/n8n/`, final version)
+
+The bundles are consumed by seven n8n workflows (exports, inactive; credentials stay in n8n, not in the files):
+
+| Workflow | What it does with the bundles |
+|---|---|
+| `Connect · Scheduler` | Daily 10:00 Helsinki (or webhook with `as_of` for the demo). Per bundle: deadline = next holiday − slowest main channel − 1 day; first message from deadline − 14 days (via Step 3); STAFF at once, once; one reminder 4 days after sending, at the latest deadline − 2 days (logged as `REMIND_1` in `decisions`) |
+| `Connect · Step 3 Contact` | Sends `QUEUED` bundles: SKIP (opt-out / no chat), STAFF (posted once, `STAFF_FLAGGED` in `decisions`), AUTO_APPLY (final = proposed, `APPROVED`, Apply to Yext), SUGGEST / ASK (`intro_text` + 3 buttons, `SENT` when Telegram confirms) |
+| `Connect · Step 4 Telegram router` | Every button press and reply; only the bundle's own chat counts; state guard; free text → Parse edit → confirm card; writes `final_hours`, `decisions`, `chat_sessions`, can grant `has_permission` |
+| `Connect · Parse edit` | Gemini 2.5 Flash (temperature 0, structured output) reads the owner's free text, then a validator keeps only dates of the bundle and valid hours; otherwise `UNCLEAR` |
+| `Connect · Apply to Yext` | GET entity → replace only this bundle's holiday dates → PUT → GET and compare; `apply_log` with hours before/after; Undo writes back the exact previous hours; tells the owner where the new hours show from `publishers` (`typicalUpdateSpeedSeconds`) |
+| `Connect · Reply` | All bot texts (fi/sv/nb/en), send or edit a Telegram message with 1–3 buttons |
+| `Connect · Eval harness` | Tests the parser and guards without Yext or Telegram |
+
+### Columns used by `Connect · Step 3 Contact`
 
 - Reads `bundles` where `status = QUEUED`, then `bundle_items` by `bundle_id`; uses `route`, `opted_out`, `telegram_chat_id`,
   `language`, `intro_text`, `entity_id`, `business_name`, `bundle_id`, and item `id`, `proposed_hours`. All present. `id` is
@@ -97,11 +111,8 @@ Without `--reset`, loading a `bundle_id` that already exists fails (HTTP 409). T
 - **Seasonal closures are not covered.** `FI-D0006` (summer terrace that forgot its winter closure) gets no bundle: Part A
   has no rule for seasonal closures, and the organisers list them as signals, not scored targets
   (`docs/ASSUMPTIONS_AND_LIMITATIONS.md`). A separate "reopen date" message would be needed.
-- **STAFF bundles are re-posted on every run.** The bundle builder only creates `QUEUED` rows; the status after posting is
-  set by n8n. In `Connect · Step 3 Contact`, the STAFF lane goes `Send Staff Flag → Done STAFF` without a status update
-  (only the SUGGEST/ASK lane has `Set SENT`). **Fix in n8n, not here:** add a Supabase `update` node on `bundles`
-  (filter `bundle_id = {{ $('Route Guard').item.json.bundle_id }}`, set `status = SENT`, `updated_at = now`) between
-  `Send Staff Flag` (success output) and `Done STAFF`.
+- **AUTO_APPLY `intro_text` is not sent as such.** After applying, n8n tells the owner with its own `msg_auto_applied`
+  template (in `Connect · Reply`) plus the item lines and an Undo button. Our AUTO text stays in the row for staff review.
 
 ## Wording for a native-speaker check
 
@@ -121,9 +132,9 @@ The ASK opening was changed from a "guess" to "we'd like to double-check" (fi/sv
 
 ## Open questions
 
-1. ~~STAFF bundles stay `QUEUED`~~: decided, set `SENT` after posting; needs the n8n change in Known limitations.
-2. **AUTO_APPLY `intro_text` is not sent** by this workflow (the AUTO lane goes straight to "Apply to Yext", which tells the owner with an Undo button). Our AUTO text is written for that follow-up message; confirm that workflow uses it or ignore it.
-3. The STAFF payload uses key `msg_staff_flag` with `params.text = intro_text`; that template lives in the `Connect · Reply` workflow, which we have not seen.
+1. ~~STAFF bundles are re-posted~~: resolved in n8n. STAFF stays `QUEUED`, and a `STAFF_FLAGGED` row in `decisions` stops repeat alerts.
+2. ~~AUTO_APPLY `intro_text`~~: resolved, n8n uses its own `msg_auto_applied` template (see Known limitations).
+3. ~~`msg_staff_flag` template not seen~~: it lives in `Connect · Reply` (`result/n8n/`).
 4. ~~FI-D0013 gets a SUGGEST bundle~~: resolved, OLDER_SEASON items are now asked; FI-D0013 gets one ASK bundle (3 INTERDAY dates).
 5. FI-D0010 has 16 items (event nights dominate); the message shows 8 lines and "… and 2 more days". Should event nights be a separate bundle, or limited to the next N days?
 6. A permission holder (FI-D0003) gets an AUTO_APPLY bundle for its HIGH items and a separate ASK bundle for LOW ones, so the owner receives two messages. Acceptable?

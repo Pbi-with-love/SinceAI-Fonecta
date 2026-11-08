@@ -1,0 +1,1194 @@
+{
+  "name": "Connect · Apply to Yext",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "bundle_id"
+            },
+            {
+              "name": "mode"
+            },
+            {
+              "name": "notify"
+            },
+            {
+              "name": "YEXT_BASE_URL"
+            },
+            {
+              "name": "YEXT_VERSION"
+            },
+            {
+              "name": "TELEGRAM_STAFF_CHAT_ID"
+            },
+            {
+              "name": "UNDO_WINDOW_HOURS",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "c53f452b-19c1-41bd-ba86-913e1ee1a412",
+      "name": "Apply Input",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.bundle_id }}"
+            }
+          ]
+        }
+      },
+      "id": "824a8bb3-cb9a-447d-8906-030535bbf7f8",
+      "name": "Get Bundle",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        400,
+        256
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inp = $('Apply Input').first().json;\nlet b = {};\ntry { b = $('Get Bundle').first(0).json || {}; } catch (e) { b = {}; }\nconst e = $input.first().json.error;\nconst msg = e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : \"Supabase read failed\";\nreturn [{ json: {\n  chat_id: String(inp.TELEGRAM_STAFF_CHAT_ID || \"\"),\n  language: \"en\",\n  text: null,\n  key: \"msg_staff_error\",\n  params: { business_name: b.business_name || \"?\", entity_id: b.entity_id || \"?\", bundle_id: inp.bundle_id, error: \"Before write, nothing changed in Yext: \" + msg },\n  lines: [],\n  buttons: [],\n  edit_message_id: null,\n} }];"
+      },
+      "id": "b845208d-beb2-428c-83f4-47c68a3f6a00",
+      "name": "Pre-write Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3TQmfWp5iP706Ax7",
+          "cachedResultName": "Connect · Reply"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $json.chat_id }}",
+            "language": "={{ $json.language }}",
+            "text": "={{ $json.text }}",
+            "key": "={{ $json.key }}",
+            "params": "={{ $json.params }}",
+            "lines": "={{ $json.lines }}",
+            "buttons": "={{ $json.buttons }}",
+            "edit_message_id": "={{ $json.edit_message_id }}"
+          },
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "params",
+              "displayName": "params",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "lines",
+              "displayName": "lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "buttons",
+              "displayName": "buttons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "edit_message_id",
+              "displayName": "edit_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "6256ccf1-bd8d-4864-ae6d-3dd0c8c4ae81",
+      "name": "Notify Staff (pre-write)",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "returnAll": true,
+        "orderBy": "date",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Apply Input').first().json.bundle_id }}"
+            }
+          ]
+        }
+      },
+      "id": "7360e2ac-2196-4527-8ea6-a781f0436150",
+      "name": "Get Items",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        640,
+        256
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "apply_log",
+        "limit": 1,
+        "orderBy": "created_at.desc",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Apply Input').first().json.bundle_id }}"
+            },
+            {
+              "keyName": "mode",
+              "condition": "eq",
+              "keyValue": "APPLY"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "SUCCESS"
+            }
+          ]
+        }
+      },
+      "id": "100eb1f4-3b26-4c38-bcd9-8fd87c3f0a2f",
+      "name": "Get Last Apply",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        256
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inp = $('Apply Input').first().json;\nconst bundle = $('Get Bundle').first().json || {};\nconst items = $('Get Items').all().map(i => i.json).filter(r => r && r.bundle_id !== undefined);\nconst lastRows = $input.all().map(i => i.json).filter(r => r && r.bundle_id !== undefined);\nconst last = lastRows[0] || null;\nconst mode = String(inp.mode || \"\").toUpperCase();\nlet ok = false;\nlet reason = null;\nif (!bundle.bundle_id) reason = \"BUNDLE_NOT_FOUND\";\nelse if (!bundle.yext_entity_id) reason = \"NO_YEXT_ENTITY\";\nelse if (mode === \"APPLY\") {\n  ok = bundle.status === \"APPROVED\";\n  if (!ok) reason = \"STATUS_\" + bundle.status;\n} else if (mode === \"UNDO\") {\n  const hrs = Number(inp.UNDO_WINDOW_HOURS || 24);\n  const young = !!(last && last.created_at && (Date.now() - new Date(last.created_at).getTime()) <= hrs * 3600 * 1000);\n  // Undo is also the way out of APPLY_FAILED (or an APPLYING run that died >10 min ago), as long as a successful apply exists in the window.\n  const staleApplying = bundle.status === \"APPLYING\" && (!bundle.updated_at || Date.now() - new Date(bundle.updated_at).getTime() > 10 * 60000);\n  const undoable = [\"APPLIED\", \"APPLY_FAILED\"].includes(bundle.status) || staleApplying;\n  ok = undoable && young;\n  if (!ok) reason = !undoable ? \"STATUS_\" + bundle.status : \"UNDO_WINDOW_EXPIRED\";\n} else reason = \"BAD_MODE\";\nlet pubs = bundle.publishers;\nif (typeof pubs === \"string\") { try { pubs = JSON.parse(pubs); } catch (e) { pubs = []; } }\nbundle.publishers = Array.isArray(pubs) ? pubs : [];\nreturn [{ json: {\n  guard_ok: ok,\n  guard_reason: reason,\n  status: ok ? \"PASSED\" : \"SKIPPED_GUARD\",\n  bundle_id: inp.bundle_id,\n  mode,\n  notify: String(inp.notify || \"OWNER\").toUpperCase(),\n  cfg: {\n    YEXT_BASE_URL: String(inp.YEXT_BASE_URL || \"https://sbx-api.yextapis.com/v2/accounts/me\").replace(/\\/+$/, \"\"),\n    YEXT_VERSION: String(inp.YEXT_VERSION || \"20261106\"),\n    TELEGRAM_STAFF_CHAT_ID: String(inp.TELEGRAM_STAFF_CHAT_ID || \"\"),\n    UNDO_WINDOW_HOURS: Number(inp.UNDO_WINDOW_HOURS || 24),\n  },\n  bundle,\n  items,\n  last_apply: last,\n} }];"
+      },
+      "id": "578c330a-36fd-4c3f-9eab-63772c42e637",
+      "name": "Guard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "guard-ok",
+              "leftValue": "={{ $json.guard_ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2026a87e-f0e4-47b4-a911-d83fdc29c7b5",
+      "name": "Guard passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Guard').first().json.bundle_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "APPLYING"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "c0aa6970-945b-466f-870d-5a9562000591",
+      "name": "Set APPLYING",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        400,
+        928
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Guard').first().json.cfg.YEXT_BASE_URL }}/entities/{{ encodeURIComponent($('Guard').first().json.bundle.yext_entity_id) }}?v={{ $('Guard').first().json.cfg.YEXT_VERSION }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "55c881ca-3870-40f7-8652-d04e37f7de53",
+      "name": "Yext Get Before",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        928
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "I0F8zdyD4IKk5YIY",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const g = $('Guard').first().json;\nconst r = $input.first().json;\nconst errText = x => x ? (typeof x === \"object\" ? (x.message || JSON.stringify(x)) : String(x)) : \"\";\nconst sc = Number(r.statusCode || 0);\nif (r.error || sc < 200 || sc >= 300) {\n  return [{ json: { proceed: false, error: \"YEXT_GET_FAILED \" + (sc || \"\") + \" \" + (errText(r.error) || errText(r.body && r.body.meta && r.body.meta.errors)) } }];\n}\nconst resp = (r.body && r.body.response) || {};\nconst hoursBefore = resp.hours ? JSON.parse(JSON.stringify(resp.hours)) : null;\nconst metaErrors = (r.body && r.body.meta && r.body.meta.errors) || [];\nif (metaErrors.length) return [{ json: { proceed: false, error: \"YEXT_GET_FAILED \" + JSON.stringify(metaErrors), hours_before: hoursBefore } }];\n\nif (g.mode === \"UNDO\") {\n  let prev = g.last_apply ? g.last_apply.hours_before : null;\n  if (typeof prev === \"string\") { try { prev = JSON.parse(prev); } catch (e) { prev = null; } }\n  if (!prev || typeof prev !== \"object\") return [{ json: { proceed: false, error: \"UNDO_NO_PREVIOUS_HOURS\", hours_before: hoursBefore } }];\n  // Yext keeps sub-fields left out of a PUT, so an empty holiday list must be sent explicitly to clear it.\n  const undoHours = JSON.parse(JSON.stringify(prev));\n  if (!Array.isArray(undoHours.holidayHours)) undoHours.holidayHours = [];\n  return [{ json: { proceed: true, hours_before: hoursBefore, new_hours: undoHours, changed: [] } }];\n}\n\nif (!hoursBefore) return [{ json: { proceed: false, error: \"HOURS_MISSING\", hours_before: null } }];\nconst next = JSON.parse(JSON.stringify(hoursBefore));\nif (!Array.isArray(next.holidayHours)) next.holidayHours = [];\nconst changed = [];\nfor (const it of g.items) {\n  const fh = it.final_hours;\n  if (fh === null || fh === undefined || fh === \"\") continue;\n  let entry;\n  if (fh === \"closed\") entry = { date: it.date, isClosed: true };\n  else if (fh === \"regular\") entry = { date: it.date, isRegularHours: true };\n  else {\n    const intervals = String(fh).split(\",\").map(p => { const s = p.trim().split(\"-\"); return { start: s[0], end: s[1] }; });\n    entry = { date: it.date, openIntervals: intervals };\n  }\n  next.holidayHours = next.holidayHours.filter(h => h.date !== it.date);\n  next.holidayHours.push(entry);\n  changed.push({ date: it.date, day_name: it.day_name, hours: fh, entry });\n}\nnext.holidayHours.sort((a, b) => String(a.date).localeCompare(String(b.date)));\nif (!changed.length) return [{ json: { proceed: false, error: \"NO_FINAL_HOURS\", hours_before: hoursBefore } }];\nreturn [{ json: { proceed: true, hours_before: hoursBefore, new_hours: next, changed } }];"
+      },
+      "id": "a2c07687-5852-4c08-b081-a45a194e3c19",
+      "name": "Build New Hours",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "proceed",
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ffdc1586-0765-46eb-adbc-4ff2e75a36dd",
+      "name": "Ready to write?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('Guard').first().json.cfg.YEXT_BASE_URL }}/entities/{{ encodeURIComponent($('Guard').first().json.bundle.yext_entity_id) }}?v={{ $('Guard').first().json.cfg.YEXT_VERSION }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ hours: $json.new_hours }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "0f26116a-c577-4460-b262-8ec82d86df26",
+      "name": "Yext PUT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1360,
+        928
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "I0F8zdyD4IKk5YIY",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Guard').first().json.cfg.YEXT_BASE_URL }}/entities/{{ encodeURIComponent($('Guard').first().json.bundle.yext_entity_id) }}?v={{ $('Guard').first().json.cfg.YEXT_VERSION }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "677726ce-da3c-430a-b6ae-098cb6e0fc05",
+      "name": "Yext Get After",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1600,
+        928
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "I0F8zdyD4IKk5YIY",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const g = $('Guard').first().json;\nconst pick = fn => { try { const r = fn(); return (r && r.json) ? r.json : null; } catch (e) { return null; } };\nconst errText = x => x ? (typeof x === \"object\" ? (x.message || JSON.stringify(x)) : String(x)) : \"\";\nconst ok2xx = r => r && !r.error && Number(r.statusCode) >= 200 && Number(r.statusCode) < 300;\nconst metaErr = r => (r && r.body && r.body.meta && Array.isArray(r.body.meta.errors)) ? r.body.meta.errors : [];\nfunction canon(v) {\n  if (Array.isArray(v)) {\n    const arr = v.map(canon);\n    if (arr.every(x => x && typeof x === \"object\" && \"date\" in x)) arr.sort((a, b) => String(a.date).localeCompare(String(b.date)));\n    return arr;\n  }\n  if (v && typeof v === \"object\") {\n    const o = {};\n    Object.keys(v).sort().forEach(k => { if (v[k] !== null && v[k] !== undefined) o[k] = canon(v[k]); });\n    return o;\n  }\n  return v;\n}\nconst same = (a, b) => JSON.stringify(canon(a)) === JSON.stringify(canon(b));\n// Yext omits holidayHours when the list is empty: treat a missing list as [] when comparing.\nconst withHH = h => { const c = h && typeof h === \"object\" ? JSON.parse(JSON.stringify(h)) : {}; if (!Array.isArray(c.holidayHours)) c.holidayHours = []; return c; };\n\nconst incoming = $input.first().json;\nconst built = pick(() => $('Build New Hours').first(0));\nconst put = pick(() => $('Yext PUT').first(0)) || pick(() => $('Yext PUT').first(1));\nconst after = pick(() => $('Yext Get After').first(0)) || pick(() => $('Yext Get After').first(1));\nlet status = \"FAILED\";\nlet error = null;\nlet hoursBefore = built ? (built.hours_before ?? null) : null;\nlet hoursAfter = null;\n\nif (!built) {\n  error = \"BEFORE_WRITE_FAILED: \" + (errText(incoming.error) || \"status update or Yext read failed\");\n} else if (!built.proceed) {\n  error = built.error || \"NOT_READY\";\n} else if (!put) {\n  error = \"PUT_NOT_EXECUTED: \" + errText(incoming.error);\n} else if (!ok2xx(put) || metaErr(put).length) {\n  error = \"YEXT_PUT_FAILED \" + (put.statusCode || \"\") + \" \" + (errText(put.error) || JSON.stringify(metaErr(put)));\n} else if (!after || !ok2xx(after) || metaErr(after).length) {\n  status = \"VERIFY_MISMATCH\";\n  error = \"VERIFY_READ_FAILED \" + ((after && after.statusCode) || \"\") + \" \" + errText(after && after.error);\n} else {\n  hoursAfter = (after.body && after.body.response && after.body.response.hours) || null;\n  if (g.mode === \"UNDO\") {\n    if (same(withHH(hoursAfter), withHH(built.new_hours))) status = \"SUCCESS\";\n    else { status = \"VERIFY_MISMATCH\"; error = \"UNDO_HOURS_DIFFER\"; }\n  } else {\n    const hh = (hoursAfter && Array.isArray(hoursAfter.holidayHours)) ? hoursAfter.holidayHours : [];\n    const bad = built.changed.filter(c => !same(hh.find(h => h.date === c.date) || null, c.entry)).map(c => c.date);\n    if (!bad.length) status = \"SUCCESS\";\n    else { status = \"VERIFY_MISMATCH\"; error = \"DATES_NOT_VERIFIED: \" + bad.join(\", \"); }\n  }\n}\n// Yext is provably untouched when nothing was written, or Yext rejected the PUT with 4xx.\nconst putSc = put ? Number(put.statusCode || 0) : 0;\nconst yextUntouched = status !== \"SUCCESS\" && (!built || !built.proceed || (!!put && !put.error && putSc >= 400 && putSc < 500));\nlet newBundleStatus;\nif (status === \"SUCCESS\") newBundleStatus = g.mode === \"UNDO\" ? \"UNDONE\" : \"APPLIED\";\nelse if (g.mode === \"UNDO\" && yextUntouched) newBundleStatus = g.bundle.status === \"APPLY_FAILED\" || g.bundle.status === \"APPLYING\" ? \"APPLY_FAILED\" : \"APPLIED\";\nelse newBundleStatus = \"APPLY_FAILED\";\nreturn [{ json: { status, error, mode: g.mode, bundle_id: g.bundle_id, yext_entity_id: g.bundle.yext_entity_id, hours_before: hoursBefore, hours_after: hoursAfter, new_bundle_status: newBundleStatus, yext_untouched: yextUntouched } }];"
+      },
+      "id": "198d35d5-16e3-4e59-bb70-a3398ec32c53",
+      "name": "Verify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        1120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const v = $('Verify').first().json;\nreturn [{ json: {\n  bundle_id: v.bundle_id,\n  yext_entity_id: v.yext_entity_id,\n  mode: v.mode,\n  hours_before: v.hours_before,\n  hours_after: v.hours_after,\n  status: v.status,\n  error: v.error,\n} }];"
+      },
+      "id": "4b3074fe-229c-4297-99ea-7631d70fe9de",
+      "name": "Apply Log Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "apply_log",
+        "dataToSend": "autoMapInputData"
+      },
+      "id": "57e729a9-c647-416b-9d84-205c274bd6ab",
+      "name": "Insert apply_log",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1600
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Verify').first().json.bundle_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $('Verify').first().json.new_bundle_status }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "87d30409-1eb0-4268-a8dd-9fac801d0678",
+      "name": "Update Bundle Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1600
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const g = $('Guard').first().json;\nconst v = $('Verify').first().json;\nconst b = g.bundle;\nconst lang = [\"fi\", \"sv\", \"nb\", \"en\"].includes(b.language) ? b.language : \"en\";\nconst display = h => h === \"closed\" ? \"{@label_closed}\" : h === \"regular\" ? \"{@label_regular}\" : String(h).split(\",\").map(x => x.trim().replace(\"-\", \"–\")).join(\", \");\nconst btn = (key, action) => ({ key, data: action + \":\" + b.bundle_id });\nconst out = [];\nconst owner = (key, lines, buttons) => {\n  if (!b.telegram_chat_id) return;\n  out.push({ json: { chat_id: String(b.telegram_chat_id), language: lang, text: null, key, params: {}, lines, buttons, edit_message_id: null } });\n};\n\nif (v.status === \"SUCCESS\" && v.mode === \"APPLY\") {\n  const lines = g.items.filter(i => i.final_hours).sort((x, y) => String(x.date).localeCompare(String(y.date)))\n    .map(i => \"• \" + (i.day_name || i.date) + \": \" + display(i.final_hours));\n  const secs = p => Number(p.seconds ?? p.typicalUpdateSpeedSeconds) || 0;\n  [...b.publishers].sort((x, y) => secs(x) - secs(y)).forEach(p => {\n    const s = secs(p);\n    lines.push(\"• \" + (p.name || p.publisherName || p.publisherId) + \" ~\" + (s >= 3600 ? Math.round(s / 3600) + \" h\" : Math.max(1, Math.round(s / 60)) + \" min\"));\n  });\n  let buttons;\n  if (!b.has_permission) {\n    lines.push(\"{@msg_permission_offer}\");\n    buttons = [btn(\"btn_undo\", \"u\"), btn(\"btn_permission_yes\", \"p\"), btn(\"btn_not_now\", \"n\")];\n  } else {\n    buttons = [btn(\"btn_undo\", \"u\"), btn(\"btn_edit\", \"e\"), btn(\"btn_not_now\", \"n\")];\n  }\n  owner(g.notify === \"AUTO\" ? \"msg_auto_applied\" : \"msg_applied\", lines, buttons);\n  if (b.telegram_message_id && b.telegram_chat_id) {\n    out.push({ json: { chat_id: String(b.telegram_chat_id), language: lang, text: String(b.intro_text || \"\") + \"\\n✅\", key: null, params: {}, lines: [], buttons: [], edit_message_id: String(b.telegram_message_id) } });\n  }\n} else if (v.status === \"SUCCESS\" && v.mode === \"UNDO\") {\n  owner(\"msg_undone\", [], [btn(\"btn_edit\", \"e\"), btn(\"btn_regular\", \"qr\"), btn(\"btn_not_now\", \"n\")]);\n} else {\n  // Always leave the owner a way forward: retry the same action, or edit (APPLY_FAILED accepts a, e and u).\n  let failButtons;\n  if (v.new_bundle_status === \"APPLIED\") failButtons = [btn(\"btn_undo\", \"u\")];\n  else if (v.mode === \"UNDO\") failButtons = [btn(\"btn_retry\", \"u\"), btn(\"btn_edit\", \"e\")];\n  else failButtons = [btn(\"btn_retry\", \"a\"), btn(\"btn_edit\", \"e\")];\n  owner(\"msg_apply_failed\", [], failButtons);\n  const note = v.yext_untouched ? \" (Yext unchanged; status \" + v.new_bundle_status + \")\" : \" (Yext state uncertain; status \" + v.new_bundle_status + \")\";\n  out.push({ json: {\n    chat_id: g.cfg.TELEGRAM_STAFF_CHAT_ID, language: \"en\", text: null, key: \"msg_staff_error\",\n    params: { business_name: b.business_name || \"?\", entity_id: b.entity_id || \"?\", bundle_id: b.bundle_id, error: v.mode + \" \" + v.status + \": \" + (v.error || \"unknown\") + note },\n    lines: [], buttons: [], edit_message_id: null,\n  } });\n}\nreturn out;"
+      },
+      "id": "fc9084e2-9eaa-4d0f-98f4-842cb3417fcc",
+      "name": "Build Replies",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3TQmfWp5iP706Ax7",
+          "cachedResultName": "Connect · Reply"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $json.chat_id }}",
+            "language": "={{ $json.language }}",
+            "text": "={{ $json.text }}",
+            "key": "={{ $json.key }}",
+            "params": "={{ $json.params }}",
+            "lines": "={{ $json.lines }}",
+            "buttons": "={{ $json.buttons }}",
+            "edit_message_id": "={{ $json.edit_message_id }}"
+          },
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "params",
+              "displayName": "params",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "lines",
+              "displayName": "lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "buttons",
+              "displayName": "buttons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "edit_message_id",
+              "displayName": "edit_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "036d58d7-a475-41ad-8bd1-a044dd356983",
+      "name": "Send Replies",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        1600
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const v = $('Verify').first().json;\nreturn [{ json: { bundle_id: v.bundle_id, mode: v.mode, status: v.status, bundle_status: v.new_bundle_status, error: v.error } }];"
+      },
+      "id": "295c992d-428f-4da3-b55f-0ffb2814a3c2",
+      "name": "Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        1600
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "s",
+              "name": "status",
+              "type": "string",
+              "value": "SKIPPED_GUARD"
+            },
+            {
+              "id": "r",
+              "name": "error",
+              "type": "string",
+              "value": "={{ $json.guard_reason }}"
+            },
+            {
+              "id": "b",
+              "name": "bundle_id",
+              "type": "string",
+              "value": "={{ $json.bundle_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f5cd7e69-b161-4f79-b15f-90b47248734e",
+      "name": "Return Skipped",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Read → merge → write → verify\nGET the entity, replace only the holiday dates of this bundle, PUT, then GET again and compare. Every HTTP / Supabase error goes to Verify as FAILED.",
+        "height": 100,
+        "width": 1648,
+        "color": 5
+      },
+      "id": "be5bb9df-f423-4b07-b567-8c73f3b00319",
+      "name": "Read merge write verify",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Honest result\nSuccess is only reported when the read-back matches. Otherwise the owner gets msg_apply_failed and staff get msg_staff_error. Every write is logged in apply_log with full hours before and after.",
+        "height": 100,
+        "width": 1408,
+        "color": 4
+      },
+      "id": "79fcc399-cea4-4210-b4e8-9eb2c9b1ebc5",
+      "name": "Honest result",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Undo = exact previous hours\nUNDO writes back hours_before of the latest SUCCESS APPLY row (within UNDO_WINDOW_HOURS) and verifies the whole hours object matches.",
+        "height": 100,
+        "width": 928,
+        "color": 6
+      },
+      "id": "13c3ed29-0205-4e5a-b482-f4f3557aab29",
+      "name": "Undo exact previous hours",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Apply Input": {
+      "main": [
+        [
+          {
+            "node": "Get Bundle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Bundle": {
+      "main": [
+        [
+          {
+            "node": "Get Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pre-write Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pre-write Error": {
+      "main": [
+        [
+          {
+            "node": "Notify Staff (pre-write)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Items": {
+      "main": [
+        [
+          {
+            "node": "Get Last Apply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pre-write Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Last Apply": {
+      "main": [
+        [
+          {
+            "node": "Guard",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pre-write Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard": {
+      "main": [
+        [
+          {
+            "node": "Guard passed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guard passed?": {
+      "main": [
+        [
+          {
+            "node": "Set APPLYING",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set APPLYING": {
+      "main": [
+        [
+          {
+            "node": "Yext Get Before",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yext Get Before": {
+      "main": [
+        [
+          {
+            "node": "Build New Hours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build New Hours": {
+      "main": [
+        [
+          {
+            "node": "Ready to write?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ready to write?": {
+      "main": [
+        [
+          {
+            "node": "Yext PUT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yext PUT": {
+      "main": [
+        [
+          {
+            "node": "Yext Get After",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yext Get After": {
+      "main": [
+        [
+          {
+            "node": "Verify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify": {
+      "main": [
+        [
+          {
+            "node": "Apply Log Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Log Row": {
+      "main": [
+        [
+          {
+            "node": "Insert apply_log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert apply_log": {
+      "main": [
+        [
+          {
+            "node": "Update Bundle Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Bundle Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Bundle Status": {
+      "main": [
+        [
+          {
+            "node": "Build Replies",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Replies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Replies": {
+      "main": [
+        [
+          {
+            "node": "Send Replies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Replies": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "5f81fd50-59d9-4d35-ad35-6d5146d53faa",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "07d184b165c6174ff8adbaf572afc94b95591c0d70b03269a37660687ca9f7c3"
+  },
+  "nodeGroups": [
+    {
+      "id": "2e36b5e1-8b02-4534-ba56-e8d1aa6ba30e",
+      "name": "Load and guard bundle",
+      "nodeIds": [
+        "824a8bb3-cb9a-447d-8906-030535bbf7f8",
+        "7360e2ac-2196-4527-8ea6-a781f0436150",
+        "100eb1f4-3b26-4c38-bcd9-8fd87c3f0a2f",
+        "578c330a-36fd-4c3f-9eab-63772c42e637",
+        "b845208d-beb2-428c-83f4-47c68a3f6a00",
+        "6256ccf1-bd8d-4864-ae6d-3dd0c8c4ae81"
+      ],
+      "description": "Reads the bundle, its dates and the last apply; checks the allowed status. Read errors alert staff and stop."
+    },
+    {
+      "id": "7378a7a1-f5e0-4d24-b8b7-06c5d64e03eb",
+      "name": "Write hours to Yext",
+      "nodeIds": [
+        "c0aa6970-945b-466f-870d-5a9562000591",
+        "55c881ca-3870-40f7-8652-d04e37f7de53",
+        "a2c07687-5852-4c08-b081-a45a194e3c19",
+        "ffdc1586-0765-46eb-adbc-4ff2e75a36dd",
+        "0f26116a-c577-4460-b262-8ec82d86df26",
+        "677726ce-da3c-430a-b6ae-098cb6e0fc05",
+        "198d35d5-16e3-4e59-bb70-a3398ec32c53"
+      ],
+      "description": "Locks the bundle, merges the new holiday hours into the live listing, writes it and reads it back to prove the change."
+    },
+    {
+      "id": "9c3f2897-6df6-406d-af24-f1c7a3d7456a",
+      "name": "Log and tell owner",
+      "nodeIds": [
+        "4b3074fe-229c-4297-99ea-7631d70fe9de",
+        "57e729a9-c647-416b-9d84-205c274bd6ab",
+        "87d30409-1eb0-4268-a8dd-9fac801d0678",
+        "fc9084e2-9eaa-4d0f-98f4-842cb3417fcc",
+        "036d58d7-a475-41ad-8bd1-a044dd356983",
+        "295c992d-428f-4da3-b55f-0ffb2814a3c2"
+      ],
+      "description": "Stores before/after hours, sets the final status and tells the owner the honest result; failures also alert staff."
+    }
+  ],
+  "id": "sVqz2sS9rDOZkP5m",
+  "tags": []
+}

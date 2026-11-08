@@ -1,0 +1,1968 @@
+{
+  "name": "Connect · Step 4 Telegram router",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "id": "598afbff-7e57-45ae-afa2-12d90027f279",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        368
+      ],
+      "webhookId": "9d93cd9d-2b71-4d0f-be76-c7be2c681c43",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "TELEGRAM_STAFF_CHAT_ID",
+              "type": "string",
+              "value": "-5485187599"
+            },
+            {
+              "id": "c2",
+              "name": "YEXT_BASE_URL",
+              "type": "string",
+              "value": "https://sbx-api.yextapis.com/v2/accounts/me"
+            },
+            {
+              "id": "c3",
+              "name": "YEXT_VERSION",
+              "type": "string",
+              "value": "20261106"
+            },
+            {
+              "id": "c4",
+              "name": "EDIT_SESSION_MINUTES",
+              "type": "number",
+              "value": 30
+            },
+            {
+              "id": "c5",
+              "name": "UNDO_WINDOW_HOURS",
+              "type": "number",
+              "value": 24
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "78a14514-f8ca-4772-82db-f8a77fcdb4ae",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const u = $json;\nconst ACTIONS = [\"a\", \"e\", \"d\", \"c\", \"x\", \"qc\", \"qr\", \"u\", \"p\", \"n\"];\nlet out = { kind: \"OTHER\", chat_id: null, callback_query_id: null, action: null, bundle_id: null, text: null };\nif (u.callback_query) {\n  const cq = u.callback_query;\n  const data = String(cq.data || \"\");\n  const i = data.indexOf(\":\");\n  const action = i > 0 ? data.slice(0, i) : data;\n  const bundleId = i > 0 ? data.slice(i + 1) : null;\n  out.chat_id = cq.message && cq.message.chat ? String(cq.message.chat.id) : (cq.from ? String(cq.from.id) : null);\n  out.callback_query_id = String(cq.id);\n  if (ACTIONS.includes(action) && bundleId) { out.kind = \"BUTTON\"; out.action = action; out.bundle_id = bundleId; }\n} else if (u.message) {\n  out.chat_id = u.message.chat ? String(u.message.chat.id) : null;\n  if (typeof u.message.text === \"string\" && u.message.text.trim()) { out.kind = \"TEXT\"; out.text = u.message.text.trim().slice(0, 1000); }\n}\nreturn { json: out };"
+      },
+      "id": "4e26c6b7-aca0-4112-8115-6c62c45a38b1",
+      "name": "Normalise",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "chat_sessions",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telegram_chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalise').first().json.chat_id || '__none__' }}"
+            }
+          ]
+        }
+      },
+      "id": "22f569cc-6892-4c59-bbfe-5cb64947b9ad",
+      "name": "Get Session",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        368
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config').first().json;\nconst n = $('Normalise').first().json;\nconst errText = e => e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : null;\nconst inErr = $input.first() && $input.first().json && $input.first().json.error;\nconst safeAll = name => { try { return $(name).all(0).map(i => i.json); } catch (e) { return []; } };\nconst sessRows = safeAll(\"Get Session\").filter(r => r && r.telegram_chat_id);\nconst session = sessRows[0] || null;\nconst bRows = safeAll(\"Get Bundle\").filter(r => r && r.bundle_id);\nconst bundle = bRows[0] || null;\nconst items = safeAll(\"Get Items\").filter(r => r && r.bundle_id && r.date).sort((a, b) => String(a.date).localeCompare(String(b.date)));\n\nconst ALLOWED = {\n  a: [\"SENT\", \"APPLY_FAILED\"],\n  e: [\"SENT\", \"AWAITING_CONFIRM\", \"DECLINED\", \"APPLIED\", \"UNDONE\", \"APPLY_FAILED\"],\n  d: [\"SENT\"],\n  c: [\"AWAITING_CONFIRM\"],\n  x: [\"EDITING\", \"AWAITING_CONFIRM\"],\n  qc: [\"SENT\", \"EDITING\"],\n  qr: [\"SENT\", \"EDITING\", \"DECLINED\", \"UNDONE\"],\n  u: [\"APPLIED\", \"APPLY_FAILED\"],\n  p: [\"APPLIED\", \"UNDONE\"],\n  n: [\"DECLINED\", \"APPLIED\", \"UNDONE\"],\n  PARSE: [\"EDITING\", \"AWAITING_CONFIRM\"],\n};\n\n// Edit session for this bundle, and the status the bundle had before the edit started.\nconst sessFor = (session && bundle && String(session.bundle_id) === String(bundle.bundle_id)) ? session : null;\nconst sessActive = !!(sessFor && [\"AWAITING_EDIT_TEXT\", \"AWAITING_CONFIRM\"].includes(sessFor.state) && sessFor.expires_at && new Date(sessFor.expires_at).getTime() > Date.now());\nlet pc = sessFor ? sessFor.pending_changes : null;\nif (typeof pc === \"string\") { try { pc = JSON.parse(pc); } catch (e) { pc = null; } }\nconst heuristic = items.length && items.every(i => i.final_hours !== null && i.final_hours !== undefined && i.final_hours !== \"\") ? \"APPLIED\" : \"SENT\";\nconst storedFrom = (pc && !Array.isArray(pc) && typeof pc === \"object\") ? pc.from_status : null;\nconst fromStatus = (storedFrom && ![\"EDITING\", \"AWAITING_CONFIRM\"].includes(storedFrom)) ? storedFrom : heuristic;\nconst EDIT_STATES = [\"EDITING\", \"AWAITING_CONFIRM\"];\nlet effStatus = bundle ? bundle.status : null;\nlet restoreStatus = null;\n// APPLYING older than 10 minutes means the Apply run died mid-way: treat it as APPLY_FAILED so the owner can retry.\nconst STALE_APPLYING_MS = 10 * 60000;\nif (bundle && bundle.status === \"APPLYING\" && (!bundle.updated_at || Date.now() - new Date(bundle.updated_at).getTime() > STALE_APPLYING_MS)) effStatus = \"APPLY_FAILED\";\nif (bundle && EDIT_STATES.includes(bundle.status) && !sessActive) { effStatus = fromStatus; restoreStatus = fromStatus; }\nconst originStatus = sessActive ? fromStatus : effStatus;\n\nlet route;\nlet readError = null;\nif (inErr && typeof inErr === \"object\") { route = \"READ_ERROR\"; readError = errText(inErr); }\nelse if (n.kind === \"BUTTON\") {\n  route = (!bundle || String(bundle.telegram_chat_id) !== String(n.chat_id)) ? \"UNKNOWN\" : n.action;\n} else if (n.kind === \"TEXT\") {\n  route = (sessActive && String(bundle.telegram_chat_id) === String(n.chat_id)) ? \"PARSE\" : \"HELP\";\n} else route = \"HELP\";\n\nlet allowed = true;\nlet abandonEdit = false;\nif (ALLOWED[route]) {\n  allowed = !!bundle && ALLOWED[route].includes(effStatus);\n  if (!allowed && bundle && sessActive && [\"u\", \"p\", \"n\"].includes(route) && ALLOWED[route].includes(fromStatus)) { allowed = true; abandonEdit = true; }\n}\n\nreturn [{ json: {\n  route,\n  allowed,\n  abandon_edit: abandonEdit,\n  origin_status: originStatus,\n  restore_status: route === \"READ_ERROR\" ? null : restoreStatus,\n  read_error: readError,\n  kind: n.kind,\n  action: n.action,\n  chat_id: n.chat_id,\n  text: n.text,\n  bundle,\n  items,\n  session,\n  cfg: {\n    TELEGRAM_STAFF_CHAT_ID: String(cfg.TELEGRAM_STAFF_CHAT_ID || \"\"),\n    YEXT_BASE_URL: cfg.YEXT_BASE_URL,\n    YEXT_VERSION: cfg.YEXT_VERSION,\n    EDIT_SESSION_MINUTES: Number(cfg.EDIT_SESSION_MINUTES || 30),\n    UNDO_WINDOW_HOURS: Number(cfg.UNDO_WINDOW_HOURS || 24),\n  },\n  today: $now.toISODate(),\n} }];"
+      },
+      "id": "9067b1d2-999a-4927-8af3-813cf6a1fc87",
+      "name": "Resolve + State Guard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "p",
+              "leftValue": "={{ $json.route === 'PARSE' && $json.allowed === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "936786ae-6387-4661-bc1c-237b6283cd95",
+      "name": "Free text to parse?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "NojyTR18S3RqVzGK",
+          "cachedResultName": "Connect · Parse edit"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "text": "={{ $json.text }}",
+            "today": "={{ $json.today }}",
+            "items": "={{ $json.items.map(i => ({ date: i.date, day_name: i.day_name, shown_hours: i.shown_hours, proposed_hours: i.proposed_hours })) }}"
+          },
+          "schema": [
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "today",
+              "displayName": "today",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "items",
+              "displayName": "items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "ae854f3b-a169-412e-858d-00c195d621ad",
+      "name": "Parse Edit",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        848
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ctx = $('Resolve + State Guard').first().json;\nlet parsed = null;\ntry {\n  if ($('Parse Edit').isExecuted) {\n    let pi = null;\n    try { pi = $('Parse Edit').first(0); } catch (e2) { pi = null; }\n    const p = pi && pi.json;\n    parsed = (p && p.intent) ? p : { intent: \"UNCLEAR\", changes: [], reason: \"LLM_ERROR\", parser: \"LLM\" };\n  }\n} catch (e) { parsed = null; }\n\nconst b = ctx.bundle || null;\nconst items = ctx.items || [];\nconst id = b ? b.bundle_id : null;\nconst lang = b && [\"fi\", \"sv\", \"nb\", \"en\"].includes(b.language) ? b.language : \"en\";\nconst chat = ctx.chat_id ? String(ctx.chat_id) : null;\nconst btn = (k, a) => ({ key: k, data: a + \":\" + id });\nconst reply = (key, o) => ({ chat_id: chat, language: (o && o.language) || lang, text: null, key, params: (o && o.params) || {}, lines: (o && o.lines) || [], buttons: (o && o.buttons) || [], edit_message_id: null });\nconst display = h => h === null || h === undefined || h === \"\" ? \"–\" : h === \"closed\" ? \"{@label_closed}\" : h === \"regular\" ? \"{@label_regular}\" : String(h).split(\",\").map(x => x.trim().replace(\"-\", \"–\")).join(\", \");\nconst ddmm = d => { const p = String(d).split(\"-\"); return Number(p[2]) + \".\" + Number(p[1]) + \".\"; };\nconst expires = new Date(Date.now() + ctx.cfg.EDIT_SESSION_MINUTES * 60000).toISOString();\nconst rawText = ctx.kind === \"TEXT\" ? ctx.text : (ctx.action ? ctx.action + \":\" + (id || \"\") : null);\n\nconst plan = { bundle_id: id, chat_id: chat, item_updates: [], status: null, session: { op: \"NONE\" }, permission_entity: null, decision: null, replies: [], apply: null };\nconst decide = (action, parsedObj, parser) => {\n  if (!id) return null;\n  return { bundle_id: id, action, raw_text: rawText, parsed: parsedObj || null, parser: parser || (ctx.kind === \"BUTTON\" ? \"BUTTON\" : \"SYSTEM\") };\n};\n\nconst origin = (!ctx.origin_status || [\"EDITING\", \"AWAITING_CONFIRM\"].includes(ctx.origin_status)) ? \"SENT\" : ctx.origin_status;\n\nfunction confirmCard(changes, parser, action) {\n  const map = {};\n  changes.forEach(c => { map[c.date] = c.hours; });\n  const lines = items.filter(i => map[i.date] !== undefined).map(i => \"• \" + (i.day_name || i.date) + \": \" + display(i.shown_hours) + \" → \" + display(map[i.date]));\n  plan.session = { op: \"UPSERT\", state: \"AWAITING_CONFIRM\", pending_changes: { from_status: origin, changes }, expires_at: expires };\n  if (b.status !== \"AWAITING_CONFIRM\") plan.status = \"AWAITING_CONFIRM\";\n  plan.replies.push(reply(\"msg_confirm_title\", { lines, buttons: [btn(\"btn_confirm\", \"c\"), btn(\"btn_edit\", \"e\"), btn(\"btn_cancel\", \"x\")] }));\n  plan.decision = decide(action, { changes }, parser);\n}\n\nfunction cancelEdit() {\n  plan.session = { op: \"IDLE\" };\n  plan.status = origin;\n  plan.replies.push(reply(\"msg_cancelled\"));\n  plan.decision = decide(\"CANCEL\");\n}\n\nfunction decline(parser, parsedObj, fromText) {\n  if (fromText && [\"APPLIED\", \"UNDONE\"].includes(origin)) { cancelEdit(); return; }\n  plan.status = \"DECLINED\";\n  if (ctx.session && String(ctx.session.bundle_id) === String(id)) plan.session = { op: \"IDLE\" };\n  plan.replies.push(reply(\"msg_declined\", { buttons: [btn(\"btn_regular\", \"qr\"), btn(\"btn_edit\", \"e\"), btn(\"btn_not_now\", \"n\")] }));\n  plan.decision = decide(\"DECLINE\", parsedObj, parser);\n}\n\nif (ctx.route === \"READ_ERROR\") {\n  if (chat) plan.replies.push(reply(\"msg_apply_failed\"));\n  plan.replies.push({ chat_id: ctx.cfg.TELEGRAM_STAFF_CHAT_ID, language: \"en\", text: null, key: \"msg_staff_error\",\n    params: { business_name: b ? b.business_name : \"?\", entity_id: b ? b.entity_id : \"?\", bundle_id: id || \"?\", error: \"Router read failed (nothing changed): \" + ctx.read_error }, lines: [], buttons: [], edit_message_id: null });\n} else if (!ctx.allowed) {\n  plan.replies.push(reply(\"msg_already_handled\"));\n  plan.decision = decide(\"ALREADY_HANDLED\", { route: ctx.route, status: b ? b.status : null });\n} else {\n  switch (ctx.route) {\n    case \"a\":\n      // Retry after a failed apply keeps the hours the owner already confirmed.\n      plan.item_updates = items.map(i => ({ id: i.id, final_hours: (ctx.origin_status === \"APPLY_FAILED\" && i.final_hours) ? i.final_hours : i.proposed_hours }));\n      plan.status = \"APPROVED\";\n      plan.decision = decide(\"APPROVE\", ctx.origin_status === \"APPLY_FAILED\" ? { retry_after: \"APPLY_FAILED\" } : null);\n      plan.apply = { mode: \"APPLY\" };\n      break;\n    case \"e\":\n      plan.status = \"EDITING\";\n      plan.session = { op: \"UPSERT\", state: \"AWAITING_EDIT_TEXT\", pending_changes: { from_status: origin, changes: [] }, expires_at: expires };\n      plan.replies.push(reply(\"msg_edit_prompt\", { buttons: [btn(\"btn_closed\", \"qc\"), btn(\"btn_regular\", \"qr\"), btn(\"btn_cancel\", \"x\")] }));\n      plan.decision = decide(\"EDIT\");\n      break;\n    case \"qc\":\n      confirmCard(items.map(i => ({ date: i.date, hours: \"closed\" })), \"BUTTON\", \"QUICK_CLOSED\");\n      break;\n    case \"qr\":\n      confirmCard(items.map(i => ({ date: i.date, hours: \"regular\" })), \"BUTTON\", \"QUICK_REGULAR\");\n      break;\n    case \"PARSE\":\n      if (parsed && parsed.intent === \"SET_CHANGES\") confirmCard(parsed.changes, parsed.parser, \"EDIT_TEXT\");\n      else if (parsed && parsed.intent === \"DECLINE\") decline(parsed.parser, parsed, true);\n      else {\n        const reason = parsed ? parsed.reason : \"LLM_ERROR\";\n        const key = reason === \"BAD_TIME\" ? \"msg_bad_time\" : reason === \"BAD_DATE\" ? \"msg_bad_date\" : \"msg_clarify\";\n        plan.replies.push(reply(key, { params: { dates: items.map(i => ddmm(i.date)).join(\", \") }, buttons: [btn(\"btn_closed\", \"qc\"), btn(\"btn_regular\", \"qr\"), btn(\"btn_cancel\", \"x\")] }));\n        plan.decision = decide(\"UNCLEAR\", parsed, parsed ? parsed.parser : \"LLM\");\n      }\n      break;\n    case \"c\": {\n      const s = ctx.session;\n      let pending = s && String(s.bundle_id) === String(id) ? s.pending_changes : null;\n      if (typeof pending === \"string\") { try { pending = JSON.parse(pending); } catch (e) { pending = null; } }\n      if (pending && !Array.isArray(pending) && typeof pending === \"object\") pending = pending.changes;\n      if (!Array.isArray(pending) || !pending.length) {\n        plan.replies.push(reply(\"msg_already_handled\"));\n        plan.decision = decide(\"ALREADY_HANDLED\", { reason: \"NO_PENDING_CHANGES\" });\n        break;\n      }\n      const map = {};\n      pending.forEach(p => { map[p.date] = p.hours; });\n      plan.item_updates = items.map(i => ({ id: i.id, final_hours: map[i.date] !== undefined ? map[i.date] : i.proposed_hours }));\n      plan.status = \"APPROVED\";\n      plan.session = { op: \"IDLE\" };\n      plan.decision = decide(\"CONFIRM\", { changes: pending });\n      plan.apply = { mode: \"APPLY\" };\n      break;\n    }\n    case \"x\":\n      cancelEdit();\n      break;\n    case \"d\":\n      decline(\"BUTTON\", null, false);\n      break;\n    case \"u\":\n      plan.decision = decide(\"UNDO\");\n      plan.apply = { mode: \"UNDO\" };\n      break;\n    case \"p\":\n      plan.permission_entity = b.entity_id;\n      plan.replies.push(reply(\"msg_permission_granted\"));\n      plan.decision = decide(\"GRANT_PERMISSION\");\n      break;\n    case \"n\":\n      plan.decision = decide(\"NOT_NOW\");\n      break;\n    case \"UNKNOWN\":\n      if (chat) plan.replies.push(reply(\"msg_help\", { language: \"en\" }));\n      break;\n    default:\n      if (chat) plan.replies.push(reply(\"msg_help\"));\n      if (ctx.kind === \"TEXT\" && ctx.session && b) plan.decision = decide(\"HELP\", null, \"SYSTEM\");\n  }\n  // Undo / permission / not now tapped during an open edit: close the edit, go back to the pre-edit status.\n  if (ctx.abandon_edit) { plan.session = { op: \"IDLE\" }; if (!plan.status) plan.status = origin; }\n}\n// Edit session expired: put the bundle back to its pre-edit status instead of leaving it in EDITING.\nif (ctx.restore_status && !plan.status && id) plan.status = ctx.restore_status;\nreturn [{ json: plan }];"
+      },
+      "id": "1bdf637b-c3e8-4983-9d62-81d0b8466953",
+      "name": "Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g",
+              "leftValue": "={{ $('Plan').first().json.item_updates.length > 0 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fbb59702-334e-4332-b600-3decffbd5462",
+      "name": "Items to update?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        1424
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return $('Plan').first().json.item_updates.map(u => ({ json: u }));"
+      },
+      "id": "edda8da8-6349-48b7-9883-bf7fa1e2264d",
+      "name": "Item Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "final_hours",
+              "fieldValue": "={{ $json.final_hours }}"
+            }
+          ]
+        }
+      },
+      "id": "0a12b12f-6dbc-40bb-868f-54fdbc4a5d9c",
+      "name": "Update final_hours",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1312
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const expected = $('Plan').first().json.item_updates.length;\nconst rows = $input.all().map(i => i.json);\nconst errs = rows.filter(r => r && r.error).map(r => typeof r.error === \"object\" ? (r.error.message || JSON.stringify(r.error)) : String(r.error));\nconst done = rows.filter(r => r && r.id !== undefined && r.id !== null && !r.error).length;\nreturn [{ json: { ok: done === expected && errs.length === 0, updated: done, expected, error: errs.length ? errs.join(\"; \") : (done === expected ? null : \"updated \" + done + \" of \" + expected + \" items\") } }];"
+      },
+      "id": "d428bef0-f9a7-4cbe-8043-8a9574e15884",
+      "name": "All items saved?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ok",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1e9ecf0-22cc-4e51-84be-66d4d8cb5819",
+      "name": "Items OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g",
+              "leftValue": "={{ !!$('Plan').first().json.status }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "19c1ecae-f51f-42e5-9c4f-57bef4219f7a",
+      "name": "Status change?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1600,
+        1424
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Plan').first().json.bundle_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $('Plan').first().json.status }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "512bc909-55fb-4987-919a-187e6d17e8c8",
+      "name": "Update Bundle Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        1424
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Plan').first().json.session.op }}",
+                    "rightValue": "UPSERT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "UPSERT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Plan').first().json.session.op }}",
+                    "rightValue": "IDLE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "IDLE"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "NONE"
+        }
+      },
+      "id": "769de75c-3a2d-4975-9fb1-e2cda0e584d5",
+      "name": "Session change",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        400,
+        1728
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "delete",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "chat_sessions",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telegram_chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Plan').first().json.chat_id }}"
+            }
+          ]
+        }
+      },
+      "id": "47718c8c-3287-4328-b517-40530e29b430",
+      "name": "Clear Old Session",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1616
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const p = $('Plan').first().json;\nreturn [{ json: {\n  telegram_chat_id: String(p.chat_id),\n  bundle_id: p.bundle_id,\n  state: p.session.state,\n  pending_changes: p.session.pending_changes || [],\n  expires_at: p.session.expires_at,\n  updated_at: new Date().toISOString(),\n} }];"
+      },
+      "id": "4aa6d77d-8ebb-4484-90a2-79a39b460a75",
+      "name": "Session Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        1616
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "chat_sessions",
+        "dataToSend": "autoMapInputData"
+      },
+      "id": "44a5d837-4542-44d8-b164-866e1fb55f25",
+      "name": "Save Session",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        1616
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g",
+              "leftValue": "={{ !!$('Plan').first().json.permission_entity }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "71a6c8aa-4da9-46d2-ada5-94a3236fc475",
+      "name": "Grant permission?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        1728
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "entity_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Plan').first().json.permission_entity }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "has_permission",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "3181eb3f-c3f7-459d-8725-bc7a7cc3992d",
+      "name": "Set has_permission",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        1616
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g",
+              "leftValue": "={{ !!$('Plan').first().json.decision }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "238fdda9-eafe-4b21-b793-b3d0605c8e4f",
+      "name": "Log decision?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        1728
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: $('Plan').first().json.decision }];"
+      },
+      "id": "212070ce-3628-4017-a7bc-efcd535053f4",
+      "name": "Decision Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "decisions",
+        "dataToSend": "autoMapInputData"
+      },
+      "id": "2d5bfb0f-dc9c-4fa1-adbd-478d6fef7b2d",
+      "name": "Insert decision",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        1728
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "id": "9f5f3d32-ce2d-48e3-b011-85980d01550f",
+      "name": "Writes Done",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        1904
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g",
+              "leftValue": "={{ !!$('Plan').first().json.apply && !$('Write Failed').isExecuted }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7c9bca73-c1e3-4443-8f0a-ba8580b29dc4",
+      "name": "Apply to Yext?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        2496
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "sVqz2sS9rDOZkP5m",
+          "cachedResultName": "Connect · Apply to Yext"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "bundle_id": "={{ $('Plan').first().json.bundle_id }}",
+            "mode": "={{ $('Plan').first().json.apply.mode }}",
+            "notify": "OWNER",
+            "YEXT_BASE_URL": "={{ $('Config').first().json.YEXT_BASE_URL }}",
+            "YEXT_VERSION": "={{ $('Config').first().json.YEXT_VERSION }}",
+            "TELEGRAM_STAFF_CHAT_ID": "={{ $('Config').first().json.TELEGRAM_STAFF_CHAT_ID }}",
+            "UNDO_WINDOW_HOURS": "={{ $('Config').first().json.UNDO_WINDOW_HOURS }}"
+          },
+          "schema": [
+            {
+              "id": "bundle_id",
+              "displayName": "bundle_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "notify",
+              "displayName": "notify",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_BASE_URL",
+              "displayName": "YEXT_BASE_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_VERSION",
+              "displayName": "YEXT_VERSION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "TELEGRAM_STAFF_CHAT_ID",
+              "displayName": "TELEGRAM_STAFF_CHAT_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "UNDO_WINDOW_HOURS",
+              "displayName": "UNDO_WINDOW_HOURS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "36c1b94a-a10c-42a3-af97-f95c5db93eb3",
+      "name": "Run Apply",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        2384
+      ],
+      "executeOnce": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const p = $('Plan').first().json;\nconst ctx = $('Resolve + State Guard').first().json;\nconst b = ctx.bundle || {};\nconst errText = e => e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : null;\nlet failure = null;\ntry { if ($('Write Failed').isExecuted) failure = \"Database write failed (Yext untouched): \" + $('Write Failed').first().json.error; } catch (e) {}\nlet ownerKey = \"msg_apply_failed\";\nlet notifyStaff = true;\nlet applyRan = false;\ntry { applyRan = !failure && $('Run Apply').isExecuted; } catch (e) { applyRan = false; }\nif (applyRan) {\n  const r = $input.first().json || {};\n  if (!r.status) failure = \"Apply sub-workflow error: \" + (errText(r.error) || \"no result\");\n  else if (r.status === \"SKIPPED_GUARD\") {\n    const reason = String(r.error || \"UNKNOWN\");\n    if (reason.startsWith(\"STATUS_\") || reason === \"UNDO_WINDOW_EXPIRED\") { ownerKey = \"msg_already_handled\"; notifyStaff = false; }\n    failure = \"Apply skipped by guard (Yext untouched): \" + reason;\n  } else {\n    return [];\n  }\n}\nif (failure) {\n  const out = [];\n  if (p.chat_id) out.push({ json: { chat_id: p.chat_id, language: b.language || \"en\", text: null, key: ownerKey, params: {}, lines: [], buttons: [], edit_message_id: null } });\n  if (notifyStaff) out.push({ json: { chat_id: ctx.cfg.TELEGRAM_STAFF_CHAT_ID, language: \"en\", text: null, key: \"msg_staff_error\",\n    params: { business_name: b.business_name || \"?\", entity_id: b.entity_id || \"?\", bundle_id: p.bundle_id || \"?\", error: failure }, lines: [], buttons: [], edit_message_id: null } });\n  return out;\n}\nreturn p.replies.map(r => ({ json: r }));"
+      },
+      "id": "a031edf6-0121-4397-9a92-d36670ef7258",
+      "name": "Reply Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        2496
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3TQmfWp5iP706Ax7",
+          "cachedResultName": "Connect · Reply"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $json.chat_id }}",
+            "language": "={{ $json.language }}",
+            "text": "={{ $json.text }}",
+            "key": "={{ $json.key }}",
+            "params": "={{ $json.params }}",
+            "lines": "={{ $json.lines }}",
+            "buttons": "={{ $json.buttons }}",
+            "edit_message_id": "={{ $json.edit_message_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "params",
+              "displayName": "params",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object",
+              "removed": false
+            },
+            {
+              "id": "lines",
+              "displayName": "lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "buttons",
+              "displayName": "buttons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "edit_message_id",
+              "displayName": "edit_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "18e00085-4896-4dc8-ad65-d5d9f1ad3f7d",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        2496
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "g",
+              "leftValue": "={{ $('Plan').first().json.replies.length > 0 || $('Write Failed').isExecuted }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8d8d2db0-647a-4f19-9748-4b74733f3ac9",
+      "name": "Reply needed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        2608
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const e = $input.first().json.error;\nconst msg = e ? (typeof e === \"object\" ? (e.message || JSON.stringify(e)) : String(e)) : \"database write failed\";\nreturn [{ json: { write_failed: true, error: msg } }];"
+      },
+      "id": "ad2b9285-9a26-4255-a890-40db846cb91e",
+      "name": "Write Failed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        1904
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "chat_sessions",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "telegram_chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Plan').first().json.chat_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "state",
+              "fieldValue": "IDLE"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "179f4805-b0d4-4e93-9977-1d037807fbd2",
+      "name": "Session IDLE",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1840
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b",
+              "leftValue": "={{ $('Normalise').first().json.kind }}",
+              "rightValue": "BUTTON",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "40cc15e5-e104-4af2-9c2f-745132e7b2cd",
+      "name": "Button?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $('Normalise').first().json.callback_query_id }}",
+        "additionalFields": {}
+      },
+      "id": "e869bdd9-c707-4075-91fa-61ec45375473",
+      "name": "Answer Query",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        256
+      ],
+      "webhookId": "04e789c7-4674-4748-a2fb-f7449821ade8",
+      "credentials": {
+        "telegramApi": {
+          "id": "2F857zZUh12HTNjc",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalise').first().json.kind === 'BUTTON' ? $('Normalise').first().json.bundle_id : ($('Get Session').first().json.bundle_id || '__none__') }}"
+            }
+          ]
+        }
+      },
+      "id": "f0557a0b-10f1-4c85-9963-cceefecaa686",
+      "name": "Get Bundle",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        368
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "returnAll": true,
+        "orderBy": "date",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.bundle_id || '__none__' }}"
+            }
+          ]
+        }
+      },
+      "id": "4be0ad66-a8db-493a-a015-b1d302091f00",
+      "name": "Get Items",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        256
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## One entry point\nThe only Telegram Trigger for this bot. Every tap and message enters here, is normalised and answered (Answer Query) first.",
+        "height": 100,
+        "width": 616,
+        "color": 5
+      },
+      "id": "984e6ac0-0085-497a-a391-e53d2be0724b",
+      "name": "One entry point",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Only the owner's chat\nA button only counts when bundle.telegram_chat_id equals the chat that pressed it. Anything else gets the help text.",
+        "height": 100,
+        "width": 616,
+        "color": 6
+      },
+      "id": "07dcfc3a-253a-40e0-9088-dabc95f2f29e",
+      "name": "Only the owners chat",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## State guard\nResolve + State Guard checks (bundle.status, action) against the state machine. Not allowed → msg_already_handled, nothing changes.",
+        "height": 100,
+        "width": 616,
+        "color": 3
+      },
+      "id": "feb477df-1ed0-4a04-b385-a6330b694e0c",
+      "name": "State guard",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Edit → parse → confirm card → confirm\nFree text → Parse edit (regex, Gemini, validation). Valid changes become a confirm card; only Confirm writes to Yext.",
+        "height": 100,
+        "width": 688,
+        "color": 4
+      },
+      "id": "9dd828c5-6e67-40a7-9d4b-39943fd74407",
+      "name": "Edit parse confirm",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Fallback\nUnknown chats, expired sessions and plain messages get msg_help. Database errors stop before Yext and notify owner + staff.",
+        "height": 100,
+        "width": 928,
+        "color": 7
+      },
+      "id": "acd61fef-2f97-4898-838e-e67184e66b84",
+      "name": "Fallback",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        2144
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Normalise",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalise": {
+      "main": [
+        [
+          {
+            "node": "Get Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Session": {
+      "main": [
+        [
+          {
+            "node": "Button?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve + State Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve + State Guard": {
+      "main": [
+        [
+          {
+            "node": "Free text to parse?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Free text to parse?": {
+      "main": [
+        [
+          {
+            "node": "Parse Edit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Edit": {
+      "main": [
+        [
+          {
+            "node": "Plan",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan": {
+      "main": [
+        [
+          {
+            "node": "Items to update?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Items to update?": {
+      "main": [
+        [
+          {
+            "node": "Item Rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status change?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item Rows": {
+      "main": [
+        [
+          {
+            "node": "Update final_hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update final_hours": {
+      "main": [
+        [
+          {
+            "node": "All items saved?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "All items saved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All items saved?": {
+      "main": [
+        [
+          {
+            "node": "Items OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Items OK?": {
+      "main": [
+        [
+          {
+            "node": "Status change?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status change?": {
+      "main": [
+        [
+          {
+            "node": "Update Bundle Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Session change",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Bundle Status": {
+      "main": [
+        [
+          {
+            "node": "Session change",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session change": {
+      "main": [
+        [
+          {
+            "node": "Clear Old Session",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Session IDLE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Grant permission?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Old Session": {
+      "main": [
+        [
+          {
+            "node": "Session Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session Row": {
+      "main": [
+        [
+          {
+            "node": "Save Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Session": {
+      "main": [
+        [
+          {
+            "node": "Grant permission?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grant permission?": {
+      "main": [
+        [
+          {
+            "node": "Set has_permission",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log decision?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set has_permission": {
+      "main": [
+        [
+          {
+            "node": "Log decision?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log decision?": {
+      "main": [
+        [
+          {
+            "node": "Decision Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Writes Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decision Row": {
+      "main": [
+        [
+          {
+            "node": "Insert decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert decision": {
+      "main": [
+        [
+          {
+            "node": "Writes Done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Writes Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writes Done": {
+      "main": [
+        [
+          {
+            "node": "Apply to Yext?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply to Yext?": {
+      "main": [
+        [
+          {
+            "node": "Run Apply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply needed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Apply": {
+      "main": [
+        [
+          {
+            "node": "Reply Payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Payload": {
+      "main": [
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply needed?": {
+      "main": [
+        [
+          {
+            "node": "Reply Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Failed": {
+      "main": [
+        [
+          {
+            "node": "Writes Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session IDLE": {
+      "main": [
+        [
+          {
+            "node": "Grant permission?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Button?": {
+      "main": [
+        [
+          {
+            "node": "Answer Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Bundle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Query": {
+      "main": [
+        [
+          {
+            "node": "Get Bundle",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Bundle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Bundle": {
+      "main": [
+        [
+          {
+            "node": "Get Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve + State Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Items": {
+      "main": [
+        [
+          {
+            "node": "Resolve + State Guard",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve + State Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "f1e07661-bf0a-4704-a34d-963819694325",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "07d184b165c6174ff8adbaf572afc94b95591c0d70b03269a37660687ca9f7c3"
+  },
+  "nodeGroups": [
+    {
+      "id": "1f966be0-a1f4-4738-8603-23748300943d",
+      "name": "Read update and bundle",
+      "nodeIds": [
+        "78a14514-f8ca-4772-82db-f8a77fcdb4ae",
+        "4e26c6b7-aca0-4112-8115-6c62c45a38b1",
+        "40cc15e5-e104-4af2-9c2f-745132e7b2cd",
+        "e869bdd9-c707-4075-91fa-61ec45375473",
+        "22f569cc-6892-4c59-bbfe-5cb64947b9ad",
+        "f0557a0b-10f1-4c85-9963-cceefecaa686",
+        "4be0ad66-a8db-493a-a015-b1d302091f00",
+        "9067b1d2-999a-4927-8af3-813cf6a1fc87"
+      ],
+      "description": "Answers the button tap, loads the bundle and open chat session, and checks the status transition is allowed."
+    },
+    {
+      "id": "94c17399-aaa0-4553-9551-45f0eed70430",
+      "name": "Understand owner reply",
+      "nodeIds": [
+        "936786ae-6387-4661-bc1c-237b6283cd95",
+        "ae854f3b-a169-412e-858d-00c195d621ad",
+        "1bdf637b-c3e8-4983-9d62-81d0b8466953"
+      ],
+      "description": "Free text in an open edit session goes to the parser; every tap or text becomes one fixed plan of changes."
+    },
+    {
+      "id": "7e872171-d499-4dc0-a016-7586ec007097",
+      "name": "Save changes",
+      "nodeIds": [
+        "fbb59702-334e-4332-b600-3decffbd5462",
+        "edda8da8-6349-48b7-9883-bf7fa1e2264d",
+        "0a12b12f-6dbc-40bb-868f-54fdbc4a5d9c",
+        "d428bef0-f9a7-4cbe-8043-8a9574e15884",
+        "b1e9ecf0-22cc-4e51-84be-66d4d8cb5819",
+        "19c1ecae-f51f-42e5-9c4f-57bef4219f7a",
+        "512bc909-55fb-4987-919a-187e6d17e8c8",
+        "769de75c-3a2d-4975-9fb1-e2cda0e584d5",
+        "47718c8c-3287-4328-b517-40530e29b430",
+        "4aa6d77d-8ebb-4484-90a2-79a39b460a75",
+        "44a5d837-4542-44d8-b164-866e1fb55f25",
+        "179f4805-b0d4-4e93-9977-1d037807fbd2",
+        "71a6c8aa-4da9-46d2-ada5-94a3236fc475",
+        "3181eb3f-c3f7-459d-8725-bc7a7cc3992d",
+        "238fdda9-eafe-4b21-b793-b3d0605c8e4f",
+        "212070ce-3628-4017-a7bc-efcd535053f4",
+        "2d5bfb0f-dc9c-4fa1-adbd-478d6fef7b2d",
+        "ad2b9285-9a26-4255-a890-40db846cb91e",
+        "9f5f3d32-ce2d-48e3-b011-85980d01550f"
+      ],
+      "description": "Writes final hours, bundle status, chat session and permission, logs the decision; any write error stops before Yext."
+    },
+    {
+      "id": "f0bdfa44-cd88-4b3e-9096-dd8e178de2e3",
+      "name": "Apply or reply",
+      "nodeIds": [
+        "7c9bca73-c1e3-4443-8f0a-ba8580b29dc4",
+        "36c1b94a-a10c-42a3-af97-f95c5db93eb3",
+        "8d8d2db0-647a-4f19-9748-4b74733f3ac9",
+        "a031edf6-0121-4397-9a92-d36670ef7258",
+        "18e00085-4896-4dc8-ad65-d5d9f1ad3f7d"
+      ],
+      "description": "Approved bundles go to the Yext apply step; everything else gets its reply in the owner language."
+    }
+  ],
+  "id": "ez5B3supM3PwBmmx",
+  "tags": []
+}

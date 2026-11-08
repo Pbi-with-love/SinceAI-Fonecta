@@ -1,0 +1,847 @@
+{
+  "name": "Connect · Scheduler",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "id": "d0885a71-bec1-4042-b205-f2a182a40aa5",
+      "name": "Daily 10:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "as_of",
+              "name": "as_of",
+              "type": "string",
+              "value": "={{ $json.body?.as_of || $now.toISO() }}"
+            },
+            {
+              "id": "dry_run",
+              "name": "dry_run",
+              "type": "boolean",
+              "value": "={{ $json.body ? ($json.body.dry_run === true || $json.body.dry_run === 'true') : $('Run manually').isExecuted }}"
+            },
+            {
+              "id": "bundle_ids",
+              "name": "bundle_ids",
+              "type": "array",
+              "value": "={{ Array.isArray($json.body?.bundle_ids) ? $json.body.bundle_ids : [] }}"
+            },
+            {
+              "id": "step3",
+              "name": "STEP3_WEBHOOK_URL",
+              "type": "string",
+              "value": "https://pbiwithlove.app.n8n.cloud/webhook/connect-contact"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "78b663c5-38a8-412a-9e47-b07171ee8eaa",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        304,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "returnAll": true,
+        "orderBy": "created_at",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "QUEUED"
+            },
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "SENT"
+            }
+          ]
+        }
+      },
+      "id": "ffd82cf6-8e0e-4ca4-b035-ca17255282b4",
+      "name": "Get Bundles",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        544,
+        384
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "returnAll": true,
+        "orderBy": "date",
+        "filterType": "none"
+      },
+      "id": "9d952fd0-cc38-44ef-be4d-47d38b54c732",
+      "name": "Get Items",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        784,
+        384
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "decisions",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "raw_text",
+              "condition": "eq",
+              "keyValue": "REMIND_1"
+            },
+            {
+              "keyName": "raw_text",
+              "condition": "eq",
+              "keyValue": "STAFF_FLAGGED"
+            }
+          ]
+        }
+      },
+      "id": "576eb091-3b3e-497a-a60c-e6b9104463aa",
+      "name": "Get Contact Log",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        384
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config').first().json;\nconst asOf = new Date(cfg.as_of);\nif (isNaN(asOf.getTime())) throw new Error(\"as_of is not a valid date: \" + cfg.as_of);\nconst DAY = 86400000;\n// Channels that take about a week are best effort: we do not wait for them.\nconst BEST_EFFORT = [\"CHATGPT_SEARCH\", \"FOURSQUARE\"];\nconst BUFFER_DAYS = 1;          // safety day on top of the slowest main channel\nconst FIRST_CONTACT_DAYS = 14;  // first message this many days before the deadline\nconst REMIND_AFTER_DAYS = 4;    // one reminder this many days after the first message...\nconst REMIND_LATEST_DAYS = 2;   // ...but at the latest this many days before the deadline\nconst rows = name => $(name).all().map(i => i.json).filter(r => r && r.bundle_id);\nconst only = (Array.isArray(cfg.bundle_ids) ? cfg.bundle_ids : []).map(String);\nconst itemsBy = {};\nrows('Get Items').forEach(i => { (itemsBy[i.bundle_id] = itemsBy[i.bundle_id] || []).push(i); });\nconst reminded = new Set();\nconst flagged = new Set();\nrows('Get Contact Log').forEach(d => {\n  if (d.raw_text === \"REMIND_1\") reminded.add(d.bundle_id);\n  if (d.raw_text === \"STAFF_FLAGGED\") flagged.add(d.bundle_id);\n});\nconst dayStart = iso => new Date(String(iso).slice(0, 10) + \"T00:00:00+02:00\");\nconst ymd = d => new Date(d.getTime() + 2 * 3600000).toISOString().slice(0, 10);\nconst out = [];\nfor (const b of rows('Get Bundles')) {\n  if (only.length && !only.includes(String(b.bundle_id))) continue;\n  if (![\"QUEUED\", \"SENT\"].includes(b.status)) continue;\n  const route = String(b.route || \"\").toUpperCase();\n  let pubs = b.publishers;\n  if (typeof pubs === \"string\") { try { pubs = JSON.parse(pubs); } catch (e) { pubs = []; } }\n  pubs = Array.isArray(pubs) ? pubs : [];\n  const main = pubs.filter(p => !BEST_EFFORT.includes(p.publisherId));\n  const slowestSec = Math.max(0, ...main.map(p => Number(p.typicalUpdateSpeedSeconds) || 0));\n  const leadDays = Math.ceil(slowestSec / 86400) + BUFFER_DAYS;\n  const upcoming = (itemsBy[b.bundle_id] || []).map(i => i.date).filter(d => d && dayStart(d) > asOf).sort();\n  let action = \"NONE\";\n  let reason = null;\n  let holiday = null, deadline = null, firstContact = null, remindAt = null;\n  if (upcoming.length) {\n    holiday = dayStart(upcoming[0]);\n    deadline = new Date(holiday.getTime() - leadDays * DAY);\n    firstContact = new Date(deadline.getTime() - FIRST_CONTACT_DAYS * DAY);\n  }\n  if (b.status === \"QUEUED\") {\n    if (route === \"STAFF\") {\n      // A business that looks closed for good goes to Connect staff at once, once.\n      if (flagged.has(b.bundle_id)) reason = \"STAFF_ALREADY_FLAGGED\";\n      else { action = \"INITIAL\"; reason = \"STAFF_NOW\"; }\n    } else if (!holiday) reason = \"NO_UPCOMING_DATES\";\n    else if (asOf >= firstContact) { action = \"INITIAL\"; reason = asOf > deadline ? \"LATE_FIRST_CONTACT\" : \"FIRST_CONTACT_DUE\"; }\n    else reason = \"WAIT_UNTIL \" + ymd(firstContact);\n  } else {\n    const sentAt = new Date(b.updated_at || b.created_at);\n    if (![\"SUGGEST\", \"ASK\"].includes(route)) reason = \"NO_REMINDER_FOR_\" + route;\n    else if (reminded.has(b.bundle_id)) reason = \"ALREADY_REMINDED\";\n    else if (b.opted_out === true || !b.telegram_chat_id) reason = \"NOT_CONTACTABLE\";\n    else if (!holiday) reason = \"NO_UPCOMING_DATES\";\n    else {\n      // Whole days: the scheduler runs once a day, so the reminder is due from the start of that day.\n      remindAt = dayStart(ymd(new Date(Math.max(sentAt.getTime() + DAY,\n        Math.min(sentAt.getTime() + REMIND_AFTER_DAYS * DAY, deadline.getTime() - REMIND_LATEST_DAYS * DAY)))));\n      if (asOf >= remindAt) { action = \"REMIND\"; reason = \"NO_REPLY_SINCE \" + ymd(sentAt); }\n      else reason = \"REMIND_FROM \" + ymd(remindAt);\n    }\n  }\n  out.push({ json: {\n    bundle_id: b.bundle_id, business_name: b.business_name, route, status: b.status, action, reason,\n    next_holiday: holiday ? upcoming[0] : null, deadline: deadline ? ymd(deadline) : null,\n    first_contact: firstContact ? ymd(firstContact) : null, remind_at: remindAt ? ymd(remindAt) : null,\n    lead_days: leadDays, language: b.language, telegram_chat_id: b.telegram_chat_id,\n    opted_out: b.opted_out === true, intro_text: b.intro_text || \"\",\n  } });\n}\nreturn out;"
+      },
+      "id": "ce7da727-1d93-4bd8-857a-6f39d4e842f8",
+      "name": "Decide",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        400
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Config').first().json.dry_run }}",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Dry run"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "INITIAL"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "First contact"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "REMIND"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reminder"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3b7aa289-8b40-4c79-8cf1-48d765118c1d",
+      "name": "Route action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1696,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cfg = $('Config').first().json;\nconst rows = $input.all().map(i => i.json);\nconst per_action = {};\nrows.forEach(r => { per_action[r.action] = (per_action[r.action] || 0) + 1; });\nreturn [{ json: {\n  dry_run: true,\n  as_of: cfg.as_of,\n  total: rows.length,\n  per_action,\n  planned: rows.filter(r => r.action !== \"NONE\").map(r => ({ bundle_id: r.bundle_id, action: r.action, reason: r.reason, deadline: r.deadline })),\n  bundles: rows.map(r => ({ bundle_id: r.bundle_id, route: r.route, status: r.status, action: r.action, reason: r.reason,\n    next_holiday: r.next_holiday, deadline: r.deadline, first_contact: r.first_contact, remind_at: r.remind_at })),\n} }];"
+      },
+      "id": "71167779-7189-4c76-aa76-a8a5d6579bc8",
+      "name": "Plan only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const ids = $input.all().map(i => i.json.bundle_id);\nreturn [{ json: { bundle_ids: ids, count: ids.length } }];"
+      },
+      "id": "218dfb9c-a902-4974-8b7b-1a05eef1f102",
+      "name": "Collect bundle IDs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Config').first().json.STEP3_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ bundle_ids: $json.bundle_ids }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 300000
+        }
+      },
+      "id": "fb5e044a-4624-4b59-a255-3d2147a3701f",
+      "name": "Send via Step 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2272,
+        480
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const b = $json;\nconst lang = [\"fi\", \"sv\", \"nb\", \"en\"].includes(b.language) ? b.language : \"en\";\nconst d = String(b.deadline || \"\").split(\"-\");\nconst label = d.length === 3\n  ? (lang === \"en\" ? Number(d[2]) + \" \" + [\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"][Number(d[1]) - 1]\n    : lang === \"sv\" ? Number(d[2]) + \"/\" + Number(d[1]) : Number(d[2]) + \".\" + Number(d[1]) + \".\")\n  : \"\";\nconst PREFIX = {\n  fi: \"🔔 Muistutus: vastaathan viimeistään \" + label + \", jotta ajat ehtivät kaikkiin palveluihin.\",\n  sv: \"🔔 Påminnelse: svara senast \" + label + \" så att tiderna hinner ut i alla tjänster.\",\n  nb: \"🔔 Påminnelse: svar innen \" + label + \" så tidene rekker ut i alle tjenester.\",\n  en: \"🔔 Reminder: please reply by \" + label + \" so the hours reach every channel in time.\",\n};\nconst id = b.bundle_id;\n// Same three buttons as the first message (Step 3 Intro Payload), so the router handles them as usual.\nconst buttons = b.route === \"ASK\"\n  ? [{ key: \"btn_closed\", data: \"qc:\" + id }, { key: \"btn_regular\", data: \"qr:\" + id }, { key: \"btn_edit\", data: \"e:\" + id }]\n  : [{ key: \"btn_approve\", data: \"a:\" + id }, { key: \"btn_edit\", data: \"e:\" + id }, { key: \"btn_decline\", data: \"d:\" + id }];\nreturn { json: {\n  bundle_id: id,\n  chat_id: String(b.telegram_chat_id),\n  language: lang,\n  text: PREFIX[lang] + \"\\n\\n\" + b.intro_text,\n  key: null,\n  params: {},\n  lines: [],\n  buttons,\n  edit_message_id: null,\n} };"
+      },
+      "id": "ff542925-88bf-4435-9e98-be5067718e63",
+      "name": "Reminder Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "3TQmfWp5iP706Ax7",
+          "cachedResultName": "Connect · Reply"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $json.chat_id }}",
+            "language": "={{ $json.language }}",
+            "text": "={{ $json.text }}",
+            "key": "={{ $json.key }}",
+            "params": "={{ $json.params }}",
+            "lines": "={{ $json.lines }}",
+            "buttons": "={{ $json.buttons }}",
+            "edit_message_id": "={{ $json.edit_message_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            },
+            {
+              "id": "params",
+              "displayName": "params",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "object"
+            },
+            {
+              "id": "lines",
+              "displayName": "lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "buttons",
+              "displayName": "buttons",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "edit_message_id",
+              "displayName": "edit_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "any"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "95f1ab62-bd1e-4831-85a6-bb23b253d13d",
+      "name": "Send Reminder",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2272,
+        784
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "decisions",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "bundle_id",
+              "fieldValue": "={{ $('Reminder Payload').item.json.bundle_id }}"
+            },
+            {
+              "fieldId": "action",
+              "fieldValue": "SKIP"
+            },
+            {
+              "fieldId": "raw_text",
+              "fieldValue": "REMIND_1"
+            },
+            {
+              "fieldId": "parser",
+              "fieldValue": "SYSTEM"
+            },
+            {
+              "fieldId": "parsed",
+              "fieldValue": "={{ JSON.stringify({ sent: $json.ok === true, error: $json.error || null, telegram_message_id: $json.telegram_message_id || null }) }}"
+            }
+          ]
+        }
+      },
+      "id": "30a489da-6a7e-468d-93ac-16fdf2738724",
+      "name": "Log Reminder",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        784
+      ],
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "b4c8d500-0474-406d-92fd-f4b816106939",
+      "name": "Run manually",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "connect-scheduler",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "9a2a3577-8323-439a-ae7c-70485853d1de",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        608
+      ],
+      "webhookId": "c1259553-3464-4b2a-84e3-78a0e319728d"
+    },
+    {
+      "parameters": {
+        "content": "## Connect · Scheduler\nEvery day at 10:00 (Helsinki) this decides, per bundle, whether today is the day to contact the owner. It only reads bundles and adds reminder rows to decisions: first messages still go through **Step 3**, reminders through **Reply**, button presses through the **router**. No existing workflow was changed.",
+        "width": 2560,
+        "color": 7
+      },
+      "id": "2c543e60-29df-4040-850b-b418aa06879a",
+      "name": "Sticky Note d1f5bc29",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Start\n**Daily 10:00** = real run.\n**Run manually** = dry run (plans, sends nothing).\n**Webhook** POST /webhook/connect-scheduler with { as_of, dry_run, bundle_ids } to demo any date.",
+        "height": 220,
+        "width": 260,
+        "color": 5
+      },
+      "id": "be8249ba-cf51-4525-94f6-befbeedbef76",
+      "name": "Sticky Note 1330d25a",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Load\nConfig: as_of (now, or from the webhook), dry_run, bundle_ids. Then every QUEUED and SENT bundle, all bundle dates, and the contact log in decisions (REMIND_1 and STAFF_FLAGGED rows).",
+        "height": 150,
+        "width": 880,
+        "color": 5
+      },
+      "id": "aba05617-e32b-44ae-97db-cfa4b8621043",
+      "name": "Sticky Note f762f8da",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        256,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Decide: the rules\n**deadline** = next holiday − slowest main channel − 1 day (Tripadvisor 3 d → 4 d; Foursquare and AI assistants ~7 d are best effort)\n**first message** from deadline − 14 d · **STAFF** at once, once\n**one reminder** 4 d after sending, at the latest deadline − 2 d · no reply needed after a button press",
+        "height": 230,
+        "width": 480,
+        "color": 6
+      },
+      "id": "562342ce-d1d4-4349-8c9a-a98fb49dc61e",
+      "name": "Sticky Note 7ead5d8f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Dry run\nReturns the plan (who would get what, and why) and sends nothing.",
+        "height": 150,
+        "width": 300,
+        "color": 3
+      },
+      "id": "0af0387b-85ca-4956-967b-cb5211a7df78",
+      "name": "Sticky Note 2b4a25e7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## First message\nAll due bundle IDs go to the Step 3 webhook in one call. Step 3 keeps its own rules (opt-out, STAFF, AUTO_APPLY, SUGGEST / ASK) and sets SENT.",
+        "height": 130,
+        "width": 520,
+        "color": 4
+      },
+      "id": "2c9c2b67-6e09-43f8-8cbf-5533cbac1b77",
+      "name": "Sticky Note 9d19d52f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## One reminder\nSame text and same 3 buttons as the first message, with a \"reply by\" line in the owner language. A REMIND_1 row is logged even if sending fails, so nobody is reminded twice.",
+        "height": 130,
+        "width": 760,
+        "color": 4
+      },
+      "id": "b76e9cca-d2ab-4a3c-9de9-7273fadafe8a",
+      "name": "Sticky Note 856738a7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        560
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily 10:00": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Get Bundles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Bundles": {
+      "main": [
+        [
+          {
+            "node": "Get Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Items": {
+      "main": [
+        [
+          {
+            "node": "Get Contact Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contact Log": {
+      "main": [
+        [
+          {
+            "node": "Decide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide": {
+      "main": [
+        [
+          {
+            "node": "Route action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route action": {
+      "main": [
+        [
+          {
+            "node": "Plan only",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Collect bundle IDs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reminder Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect bundle IDs": {
+      "main": [
+        [
+          {
+            "node": "Send via Step 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reminder Payload": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder": {
+      "main": [
+        [
+          {
+            "node": "Log Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run manually": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timezone": "Europe/Helsinki"
+  },
+  "versionId": "b7145165-e670-4c44-8621-0ff50dacb638",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "07d184b165c6174ff8adbaf572afc94b95591c0d70b03269a37660687ca9f7c3"
+  },
+  "nodeGroups": [
+    {
+      "id": "e267ac86-6c1f-4732-bdf0-eced5fc5fc21",
+      "name": "Load bundles and contact log",
+      "nodeIds": [
+        "78b663c5-38a8-412a-9e47-b07171ee8eaa",
+        "ffd82cf6-8e0e-4ca4-b035-ca17255282b4",
+        "9d952fd0-cc38-44ef-be4d-47d38b54c732",
+        "576eb091-3b3e-497a-a60c-e6b9104463aa"
+      ],
+      "description": "Reads the run settings, every QUEUED and SENT bundle with its dates, and the reminder / staff-flag log."
+    },
+    {
+      "id": "6341416c-8196-43f7-85f4-cd0a2836ac51",
+      "name": "Decide who to contact today",
+      "nodeIds": [
+        "ce7da727-1d93-4bd8-857a-6f39d4e842f8",
+        "3b7aa289-8b40-4c79-8cf1-48d765118c1d"
+      ],
+      "description": "Per bundle: first message, reminder or nothing today, from holiday dates and publisher update times."
+    },
+    {
+      "id": "f7cf269c-b6c9-4e7f-a8b9-89f3ed699319",
+      "name": "Dry run: plan only",
+      "nodeIds": [
+        "71167779-7189-4c76-aa76-a8a5d6579bc8"
+      ],
+      "description": "Shows the plan for as_of and sends nothing."
+    },
+    {
+      "id": "27fa1301-d4ff-480e-a6a4-b1e2a80230b0",
+      "name": "First message via Step 3",
+      "nodeIds": [
+        "218dfb9c-a902-4974-8b7b-1a05eef1f102",
+        "fb5e044a-4624-4b59-a255-3d2147a3701f"
+      ],
+      "description": "Sends all due bundle IDs to the Step 3 webhook in one call."
+    },
+    {
+      "id": "52b55487-78e2-434f-831c-e89a3fe5c50a",
+      "name": "One reminder via Reply",
+      "nodeIds": [
+        "ff542925-88bf-4435-9e98-be5067718e63",
+        "95f1ab62-bd1e-4831-85a6-bb23b253d13d",
+        "30a489da-6a7e-468d-93ac-16fdf2738724"
+      ],
+      "description": "Re-sends the message with a reply-by line and the same buttons, then logs REMIND_1."
+    }
+  ],
+  "id": "oMEvrxhcOtuJVtfc",
+  "tags": []
+}
