@@ -1,7 +1,7 @@
 // The owner's no-login app: one swipe deck of the holiday hours we suggest, built from the real bundles
 // (Supabase, or the bundled demo sample). Every decision goes to the server function sendAction, which
 // forwards it to the n8n workflow "Connect · Web action" (the same Apply to Yext as the Telegram flow).
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Check, Pencil, Undo2, X, type LucideIcon } from "lucide-react";
 import {
   AnimatePresence,
@@ -66,16 +66,55 @@ export function OwnerApp({
     setTimeout(() => setToast(null), 2400);
   };
 
-  const post = async (bundle_id: string, action: WebAction, date?: string, hours?: string) => {
-    try {
-      const r = await sendAction({
-        data: { entity: deck.entity_id, t: token, bundle_id, action, date, hours },
-      });
-      return r.ok ? (r.demo ? "demo" : "ok") : "fail";
-    } catch {
-      return "fail";
-    }
+  // One request at a time, in swipe order: Apply to Yext takes a few seconds per call and n8n answers BUSY while a
+  // write for the bundle is running. The card leaves the deck at once; only a failed save puts it back.
+  const chain = useRef<Promise<unknown>>(Promise.resolve());
+  const [pending, setPending] = useState(0);
+  const enqueue = <T,>(job: () => Promise<T>): Promise<T> => {
+    setPending((n) => n + 1);
+    const run = chain.current.then(job, job);
+    chain.current = run.catch(() => undefined);
+    return run.finally(() =>
+      setPending((n) => {
+        if (n === 1) setTimeout(onChanged, 0); // refresh from the server once the queue is empty
+        return n - 1;
+      }),
+    );
   };
+
+  type Sent = "ok" | "demo" | "fail";
+  const post = (
+    bundle_id: string,
+    action: WebAction,
+    date?: string,
+    hours?: string,
+    undo_of?: string,
+  ): Promise<Sent> =>
+    enqueue(async () => {
+      for (let attempt = 0; attempt < 4; attempt++) {
+        try {
+          const r = await sendAction({
+            data: { entity: deck.entity_id, t: token, bundle_id, action, date, hours, undo_of },
+          });
+          if (r.ok) return r.demo ? "demo" : "ok";
+          if (r.error !== "BUSY") return "fail";
+        } catch {
+          return "fail";
+        }
+        await new Promise((res) => setTimeout(res, 2500)); // another write (e.g. from Telegram) is running
+      }
+      return "fail";
+    });
+
+  const restore = (key: string) =>
+    setDone((s) => {
+      const n = new Set(s);
+      n.delete(key);
+      return n;
+    });
+
+  // Undo is offered once, for the latest decision of this session (Apply can only undo its last write).
+  const [undoUsed, setUndoUsed] = useState(false);
 
   /** right = approve (SUGGEST) or closed (ASK); left = decline (SUGGEST) or open as usual (ASK); edit = typed hours. */
   const decide = async (c: Card, how: "right" | "left" | "edit", typed?: string) => {
@@ -94,6 +133,7 @@ export function OwnerApp({
     const outcome: Outcome =
       how === "edit" ? "edited" : how === "right" ? "approved" : ask ? "regular" : "declined";
     setDone((s) => new Set(s).add(c.key));
+    setUndoUsed(false);
     setLocal((h) => [
       {
         key: c.key,
@@ -105,45 +145,44 @@ export function OwnerApp({
         card: c,
         local: true,
       },
-      ...h,
+      ...h.filter((x) => x.key !== c.key),
     ]);
-    const res = await post(c.bundle.bundle_id, action, c.item.date, hours);
-    if (res === "fail") {
-      setDone((s) => {
-        const n = new Set(s);
-        n.delete(c.key);
-        return n;
-      });
-      setLocal((h) => h.filter((x) => x.key !== c.key));
-      return flash(t.failed);
-    }
-    const name = holidayName(c.item.day_name, lang);
-    flash(
-      outcome === "declined"
-        ? t.skipped
-        : `${name} → ${hoursLabel(hours, t)} · ${res === "demo" ? t.demoSent : t.sent}`,
-    );
     const yes = (o: Outcome) => o === "approved" || o === "edited";
     if (yes(outcome) && !standing && !local.some((x) => yes(x.outcome))) setAskStanding(true);
-    if (res === "ok") onChanged();
+    const res = await post(c.bundle.bundle_id, action, c.item.date, hours);
+    const name = holidayName(c.item.day_name, lang);
+    if (res === "fail") {
+      restore(c.key);
+      setLocal((h) => h.filter((x) => x.key !== c.key));
+      return flash(`${name}: ${t.failed}`);
+    }
+    flash(
+      outcome === "declined"
+        ? `${name}: ${t.skipped}`
+        : `${name} → ${hoursLabel(hours, t)} · ${res === "demo" ? t.demoSent : t.sent}`,
+    );
   };
 
-  const lastLocal = local[0];
+  const lastLocal = undoUsed ? undefined : local[0];
   const undo = async () => {
-    if (!lastLocal) return;
-    const needsYext = lastLocal.outcome === "approved" || lastLocal.outcome === "edited";
-    const res = needsYext
-      ? await post(lastLocal.bundle.bundle_id, "UNDO", lastLocal.item.date)
-      : "ok";
-    if (res === "fail") return flash(t.failed);
-    setLocal((h) => h.slice(1));
-    setDone((s) => {
-      const n = new Set(s);
-      n.delete(lastLocal.key);
-      return n;
-    });
-    flash(`${t.restored}: ${hoursLabel(lastLocal.item.shown_hours, t)}`);
-    if (res === "ok" && needsYext) onChanged();
+    const last = lastLocal;
+    if (!last) return;
+    setUndoUsed(true);
+    // a decline never reached Yext: n8n only logs the undo; every other decision is undone in Yext
+    const res = await post(
+      last.bundle.bundle_id,
+      "UNDO",
+      last.item.date,
+      undefined,
+      last.outcome === "declined" ? "DECLINE" : undefined,
+    );
+    if (res === "fail") {
+      setUndoUsed(false);
+      return flash(t.failed);
+    }
+    setLocal((h) => h.filter((x) => x.key !== last.key));
+    restore(last.key);
+    flash(`${t.restored}: ${hoursLabel(last.item.shown_hours, t)}`);
   };
 
   const grantStanding = async (on: boolean) => {
@@ -220,7 +259,9 @@ export function OwnerApp({
       {tab === "review" ? (
         <>
           <div className="mt-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
-            <span>{top?.route === "ASK" ? t.hintAsk : t.hint}</span>
+            <span aria-live="polite">
+              {pending > 0 ? t.saving(pending) : top?.route === "ASK" ? t.hintAsk : t.hint}
+            </span>
             <button
               onClick={() => !standing && setAskStanding(true)}
               className="flex shrink-0 items-center gap-1.5"

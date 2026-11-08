@@ -1,0 +1,1280 @@
+{
+  "name": "Connect · Web action",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "connect-web-action",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "fa50a8fc-6f1a-46cb-87c7-b6209194f726",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        400
+      ],
+      "webhookId": "b81e4d41-8eb1-431b-a0cb-ee35443b216f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "YEXT_BASE_URL",
+              "type": "string",
+              "value": "https://sbx-api.yextapis.com/v2/accounts/me"
+            },
+            {
+              "id": "c2",
+              "name": "YEXT_VERSION",
+              "type": "string",
+              "value": "20261106"
+            },
+            {
+              "id": "c3",
+              "name": "TELEGRAM_STAFF_CHAT_ID",
+              "type": "string",
+              "value": "-5485187599"
+            },
+            {
+              "id": "c4",
+              "name": "UNDO_WINDOW_HOURS",
+              "type": "number",
+              "value": 24
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b6e8e762-7040-43a4-90e9-f7b3e33d6474",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ String($('Webhook').first().json.body?.bundle_id || '__none__') }}"
+            }
+          ]
+        }
+      },
+      "id": "6283e655-dc83-4772-bb63-969ad8c197ac",
+      "name": "Get Bundle",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        480,
+        400
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "returnAll": true,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ String($('Webhook').first().json.body?.bundle_id || '__none__') }}"
+            }
+          ]
+        }
+      },
+      "id": "7d881b17-8871-4409-a462-0405db34b47e",
+      "name": "Get Items",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        720,
+        400
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $('Webhook').first().json.body || {};\nconst ACTIONS = [\"APPROVE\", \"EDIT\", \"REGULAR\", \"DECLINE\", \"UNDO\", \"PERMISSION\"];\nconst SET_ACTIONS = [\"APPROVE\", \"EDIT\", \"REGULAR\"];\nconst action = String(body.action || \"\").trim().toUpperCase();\nconst bundleId = String(body.bundle_id || \"\").trim();\nconst entityId = String(body.entity_id || \"\").trim();\nconst bundle = $('Get Bundle').all().map(i => i.json).find(b => b && b.bundle_id === bundleId) || null;\nconst items = $('Get Items').all().map(i => i.json).filter(i => i && i.bundle_id === bundleId);\nconst fail = code => [{ json: { valid: false, ok: false, error: code, action, bundle_id: bundleId } }];\n\nconst pad = n => String(n).padStart(2, \"0\");\n// Same rules as the Validate node in Connect · Parse edit: closed, regular, or HH:MM-HH:MM intervals with start < end.\nfunction normHours(h) {\n  const s = String(h ?? \"\").trim().toLowerCase().replace(/[–—]/g, \"-\").replace(/\\s+/g, \"\");\n  if (s === \"closed\") return \"closed\";\n  if (s === \"regular\") return \"regular\";\n  const out = [];\n  for (const p of s.split(\",\")) {\n    const m = p.match(/^(\\d{1,2})[:.](\\d{2})-(\\d{1,2})[:.](\\d{2})$/);\n    if (!m) return null;\n    const h1 = Number(m[1]), m1 = Number(m[2]), h2 = Number(m[3]), m2 = Number(m[4]);\n    if (h1 > 24 || h2 > 24 || m1 > 59 || m2 > 59) return null;\n    if ((h1 === 24 && m1 > 0) || (h2 === 24 && m2 > 0)) return null;\n    if (h1 * 60 + m1 >= h2 * 60 + m2) return null;\n    out.push(pad(h1) + \":\" + pad(m1) + \"-\" + pad(h2) + \":\" + pad(m2));\n  }\n  return out.length ? out.join(\",\") : null;\n}\n\nif (!ACTIONS.includes(action)) return fail(\"BAD_ACTION\");\nif (!bundleId) return fail(\"BAD_BUNDLE\");\nif (!bundle) return fail(\"BUNDLE_NOT_FOUND\");\nif (entityId && bundle.entity_id !== entityId) return fail(\"ENTITY_MISMATCH\");\nconst route = String(bundle.route || \"\").toUpperCase();\nif (![\"SUGGEST\", \"ASK\", \"AUTO_APPLY\"].includes(route)) return fail(\"ROUTE_\" + (route || \"NONE\"));\n// A write that started less than 10 minutes ago is still running: answer BUSY instead of starting a second one.\nconst startedAt = bundle.updated_at ? new Date(bundle.updated_at).getTime() : 0;\nif (bundle.status === \"APPLYING\" && Date.now() - startedAt <= 10 * 60000) return fail(\"BUSY\");\n\nlet date = null, hours = null, item = null;\nif (action !== \"PERMISSION\") {\n  date = String(body.date || \"\").slice(0, 10);\n  item = items.find(i => String(i.date).slice(0, 10) === date) || null;\n  if (!item) return fail(\"BAD_DATE\");\n}\nif (SET_ACTIONS.includes(action)) {\n  hours = normHours(action === \"REGULAR\" ? (body.hours || \"regular\") : body.hours);\n  if (!hours || (action === \"REGULAR\" && hours !== \"regular\")) return fail(\"BAD_HOURS\");\n}\nreturn [{ json: {\n  valid: true, ok: null, error: null, action,\n  // Undo of a decline: nothing reached Yext, so only the UNDO row is logged (the DECLINE path). Apply UNDO would\n  // restore the hours before the latest write, which belongs to another date.\n  branch: SET_ACTIONS.includes(action) ? \"SET\" : (action === \"UNDO\" && String(body.undo_of || \"\").toUpperCase() === \"DECLINE\") ? \"DECLINE\" : action,\n  bundle_id: bundleId, entity_id: bundle.entity_id, date, hours,\n  item_id: item ? item.id : null, status_before: bundle.status,\n} }];\n"
+      },
+      "id": "82943c38-57d2-4b32-8f64-83815c57ec54",
+      "name": "Validate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.valid }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "aaf4e612-ee2f-42db-b896-e6aacf8f3655",
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.branch }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "SET"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Approve / Edit / Regular"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.branch }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "UNDO"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Undo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.branch }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "DECLINE"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Decline"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.branch }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "PERMISSION"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Permission"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0e643c6e-b82c-4194-8923-eb33de2140f0",
+      "name": "Route action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1440,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Validate').first().json.item_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "final_hours",
+              "fieldValue": "={{ $('Validate').first().json.hours }}"
+            }
+          ]
+        }
+      },
+      "id": "6976100a-0642-4ad4-9553-db4fe6eee93b",
+      "name": "Set final_hours",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        48
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Validate').first().json.bundle_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "APPROVED"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "73681650-1319-4176-b331-cd6df1257fe0",
+      "name": "Set APPROVED",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        48
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "sVqz2sS9rDOZkP5m",
+          "cachedResultName": "Connect · Apply to Yext"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "bundle_id": "={{ $('Validate').first().json.bundle_id }}",
+            "mode": "APPLY",
+            "notify": "NONE",
+            "YEXT_BASE_URL": "={{ $('Config').first().json.YEXT_BASE_URL }}",
+            "YEXT_VERSION": "={{ $('Config').first().json.YEXT_VERSION }}",
+            "TELEGRAM_STAFF_CHAT_ID": "={{ $('Config').first().json.TELEGRAM_STAFF_CHAT_ID }}",
+            "UNDO_WINDOW_HOURS": "={{ $('Config').first().json.UNDO_WINDOW_HOURS }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "bundle_id",
+              "displayName": "bundle_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "notify",
+              "displayName": "notify",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_BASE_URL",
+              "displayName": "YEXT_BASE_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_VERSION",
+              "displayName": "YEXT_VERSION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "TELEGRAM_STAFF_CHAT_ID",
+              "displayName": "TELEGRAM_STAFF_CHAT_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "UNDO_WINDOW_HOURS",
+              "displayName": "UNDO_WINDOW_HOURS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "af490102-2958-434d-8b5c-2e35d55cf0d9",
+      "name": "Run Apply",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2208,
+        48
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "getAll",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "bundle_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Validate').first().json.bundle_id }}"
+            }
+          ]
+        }
+      },
+      "id": "add9dfc0-c64f-4807-a17b-b7f12b891dab",
+      "name": "Read Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        144
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const v = $('Validate').first().json;\nconst read = name => { try { const x = $(name).first(); return x && x.json ? x.json : {}; } catch (e) { return {}; } };\nlet ok = false, error = null, detail = null, bundleStatus = null;\nif (v.branch === \"SET\" || v.branch === \"UNDO\") {\n  // Apply to Yext returns nothing on success when notify is NONE, so the bundle status read afterwards decides.\n  const res = read(v.branch === \"SET\" ? \"Run Apply\" : \"Run Undo\");\n  bundleStatus = read(\"Read Status\").status || null;\n  const want = v.branch === \"SET\" ? \"APPLIED\" : \"UNDONE\";\n  if (res.status === \"SKIPPED_GUARD\") error = res.error || \"SKIPPED\";\n  else if (bundleStatus === want && (!res.status || res.status === \"SUCCESS\")) ok = true;\n  else { error = v.branch === \"SET\" ? \"APPLY_FAILED\" : \"UNDO_FAILED\"; detail = res.error || (\"bundle status \" + bundleStatus); }\n} else if (v.branch === \"PERMISSION\") {\n  const r = read(\"Set has_permission\");\n  ok = !r.error;\n  if (!ok) { error = \"WRITE_FAILED\"; detail = String(r.error.message || r.error); }\n} else {\n  ok = true; // DECLINE: nothing is written to the item, so the date is never sent to Yext.\n}\nreturn [{ json: {\n  ok, error, detail, action: v.action, branch: v.branch, bundle_id: v.bundle_id, entity_id: v.entity_id,\n  date: v.date, hours: v.hours, item_id: v.item_id, bundle_status: bundleStatus,\n  // A failed write must not leave its hours behind; a successful undo puts the date back in the deck.\n  clear_date: (v.branch === \"UNDO\" && ok) || (v.branch === \"SET\" && !ok),\n} }];\n"
+      },
+      "id": "94c741e8-bd4d-4d67-b4de-1f88817a96ee",
+      "name": "Outcome",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2704,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "sVqz2sS9rDOZkP5m",
+          "cachedResultName": "Connect · Apply to Yext"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "bundle_id": "={{ $('Validate').first().json.bundle_id }}",
+            "mode": "UNDO",
+            "notify": "NONE",
+            "YEXT_BASE_URL": "={{ $('Config').first().json.YEXT_BASE_URL }}",
+            "YEXT_VERSION": "={{ $('Config').first().json.YEXT_VERSION }}",
+            "TELEGRAM_STAFF_CHAT_ID": "={{ $('Config').first().json.TELEGRAM_STAFF_CHAT_ID }}",
+            "UNDO_WINDOW_HOURS": "={{ $('Config').first().json.UNDO_WINDOW_HOURS }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "bundle_id",
+              "displayName": "bundle_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "mode",
+              "displayName": "mode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "notify",
+              "displayName": "notify",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_BASE_URL",
+              "displayName": "YEXT_BASE_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "YEXT_VERSION",
+              "displayName": "YEXT_VERSION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "TELEGRAM_STAFF_CHAT_ID",
+              "displayName": "TELEGRAM_STAFF_CHAT_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "UNDO_WINDOW_HOURS",
+              "displayName": "UNDO_WINDOW_HOURS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "5e9e9ab6-5ba5-4d44-bd2c-97064f9a40ea",
+      "name": "Run Undo",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        2208,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "entity_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Validate').first().json.entity_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "has_permission",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "15e3bbf4-5863-4716-884c-06ae7feae0d2",
+      "name": "Set has_permission",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        608
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Outcome').isExecuted ? { ok: false, error: $('Outcome').first().json.error, detail: $('Outcome').first().json.detail } : { ok: false, error: $('Validate').first().json.error }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "82ae8510-7806-494c-ac9c-ebc9c2acebab",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        4080,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.clear_date }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "44adbaba-7468-44ec-bcd5-030badf26621",
+      "name": "Clear the date?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2944,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "update",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "bundle_items",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Outcome').first().json.item_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "final_hours",
+              "fieldValue": "={{ null }}"
+            }
+          ]
+        }
+      },
+      "id": "345fa381-a880-4780-9fe7-a56571962e7b",
+      "name": "Clear final_hours",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3184,
+        288
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Outcome').first().json.ok }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b3412fea-1bce-467b-98bb-d3648fee8bca",
+      "name": "OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3424,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "projectRef": "vmmuzqnqtqlkubllpnut",
+        "tableId": "decisions",
+        "dataToSend": "autoMapInputData"
+      },
+      "id": "708b44ee-3c95-474b-8d49-ae8e054e6951",
+      "name": "Log decision",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3872,
+        288
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseOAuth2Api": {
+          "id": "fw2lRCd5VROCL14R",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, action: $('Outcome').first().json.action, bundle_id: $('Outcome').first().json.bundle_id, date: $('Outcome').first().json.date, bundle_status: $('Outcome').first().json.bundle_status, logged: !$json.error }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "f64a41c1-0f0f-45f5-9898-73e848c81ab9",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        4080,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Connect · Web action\nThe owner app (no login) sends one decision per swipe here. Every write goes through the same **Connect · Apply to Yext** as Telegram, so both channels share the Yext write, apply_log and Undo. With notify = NONE the owner gets no Telegram message (they are looking at the app). Spec: result/n8n/WEB_ACTION.md.",
+        "height": 140,
+        "width": 4180,
+        "color": 7
+      },
+      "id": "ba1ee9ac-8b4f-441d-b381-18c64f0e3684",
+      "name": "Sticky Note 1af8067d",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -416
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Request\nPOST /webhook/connect-web-action\n{ entity_id, bundle_id, action, date, hours }\naction: APPROVE, EDIT, REGULAR, DECLINE, UNDO, PERMISSION\nThe URL is a secret: only the app server knows it.",
+        "height": 200,
+        "width": 440,
+        "color": 5
+      },
+      "id": "0b1f691f-345b-415a-a245-f414a1a8d9ea",
+      "name": "Sticky Note d00c6dc1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Validate (nothing is written before this)\nBundle exists and belongs to entity_id · route SUGGEST, ASK or AUTO_APPLY · date is one of the bundle dates · hours are closed, regular or HH:MM-HH:MM (start < end) · a write started < 10 min ago answers **BUSY**. Any failure answers { ok: false, error }.",
+        "height": 200,
+        "width": 900,
+        "color": 6
+      },
+      "id": "d506e824-662d-4a83-9814-ee4bcb286116",
+      "name": "Sticky Note 87e1d7f5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        448,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Approve / Edit / Regular\nfinal_hours = hours for that date, bundle → APPROVED, then Apply. Apply writes every date that has final_hours, so earlier swipes are written again unchanged.",
+        "height": 150,
+        "width": 760,
+        "color": 4
+      },
+      "id": "4a3124b4-43a8-467a-ba88-68ffae621967",
+      "name": "Sticky Note c5eab315",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Undo / Decline / Permission\n**Undo**: Apply in UNDO mode (restores the hours before the last apply), then the date returns to the deck. **Decline**: nothing written, the date never reaches Yext. **Permission**: has_permission = true for every bundle of the business.",
+        "height": 170,
+        "width": 760,
+        "color": 4
+      },
+      "id": "3719f850-86cb-46a3-a2b2-63bb952345bd",
+      "name": "Sticky Note 168408a5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Result\nApply returns nothing on success with notify NONE, so **Outcome** reads the bundle status back (APPLIED / UNDONE = ok). A failed write clears its final_hours again. Only successful decisions are logged in decisions (raw_text web:ACTION:date, parsed.date), which is how the app knows a date is done after a reload.",
+        "height": 150,
+        "width": 1460,
+        "color": 3
+      },
+      "id": "e8c7dfde-78c9-4bfa-b5cb-800be73d643d",
+      "name": "Sticky Note 3ee8cd70",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2672,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: $('Validate').first().json.error }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "6e53e194-3ed8-4545-87cf-58b65312750b",
+      "name": "Respond Invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const o = $('Outcome').first().json;\n// parsed must be a JSON object (not a string) so the app can read parsed.date. Source = web is visible in raw_text.\nreturn [{ json: {\n  bundle_id: o.bundle_id,\n  action: o.action,\n  raw_text: \"web:\" + o.action + \":\" + (o.date || \"\"),\n  parsed: o.branch === \"PERMISSION\" ? { entity_id: o.entity_id } : { date: o.date, hours: o.hours },\n  parser: \"BUTTON\",\n} }];"
+      },
+      "id": "b093c787-afcf-45d8-a901-9b792a99bdca",
+      "name": "Decision Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3648,
+        288
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Get Bundle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Bundle": {
+      "main": [
+        [
+          {
+            "node": "Get Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Items": {
+      "main": [
+        [
+          {
+            "node": "Validate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate": {
+      "main": [
+        [
+          {
+            "node": "Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid?": {
+      "main": [
+        [
+          {
+            "node": "Route action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route action": {
+      "main": [
+        [
+          {
+            "node": "Set final_hours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Run Undo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set has_permission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set final_hours": {
+      "main": [
+        [
+          {
+            "node": "Set APPROVED",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set APPROVED": {
+      "main": [
+        [
+          {
+            "node": "Run Apply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Apply": {
+      "main": [
+        [
+          {
+            "node": "Read Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Status": {
+      "main": [
+        [
+          {
+            "node": "Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outcome": {
+      "main": [
+        [
+          {
+            "node": "Clear the date?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Undo": {
+      "main": [
+        [
+          {
+            "node": "Read Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set has_permission": {
+      "main": [
+        [
+          {
+            "node": "Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear the date?": {
+      "main": [
+        [
+          {
+            "node": "Clear final_hours",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear final_hours": {
+      "main": [
+        [
+          {
+            "node": "OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OK?": {
+      "main": [
+        [
+          {
+            "node": "Decision Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log decision": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decision Row": {
+      "main": [
+        [
+          {
+            "node": "Log decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "timezone": "Europe/Helsinki"
+  },
+  "versionId": "92bd5640-acc2-440d-bbfc-a893dc6c0cab",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "07d184b165c6174ff8adbaf572afc94b95591c0d70b03269a37660687ca9f7c3"
+  },
+  "nodeGroups": [
+    {
+      "id": "35512d23-3049-4387-8309-1b14a99a236f",
+      "name": "Load and validate",
+      "nodeIds": [
+        "b6e8e762-7040-43a4-90e9-f7b3e33d6474",
+        "6283e655-dc83-4772-bb63-969ad8c197ac",
+        "7d881b17-8871-4409-a462-0405db34b47e",
+        "82943c38-57d2-4b32-8f64-83815c57ec54",
+        "aaf4e612-ee2f-42db-b896-e6aacf8f3655"
+      ],
+      "description": "Reads the bundle and its dates, checks the request; nothing is written if it fails."
+    },
+    {
+      "id": "4a7f6123-e262-4fc9-9a06-ac46ec4f1d73",
+      "name": "Do the action",
+      "nodeIds": [
+        "0e643c6e-b82c-4194-8923-eb33de2140f0",
+        "6976100a-0642-4ad4-9553-db4fe6eee93b",
+        "73681650-1319-4176-b331-cd6df1257fe0",
+        "af490102-2958-434d-8b5c-2e35d55cf0d9",
+        "5e9e9ab6-5ba5-4d44-bd2c-97064f9a40ea",
+        "add9dfc0-c64f-4807-a17b-b7f12b891dab",
+        "15e3bbf4-5863-4716-884c-06ae7feae0d2",
+        "94c741e8-bd4d-4d67-b4de-1f88817a96ee"
+      ],
+      "description": "Approve/Edit/Regular set the date and run Apply; Undo runs Apply in UNDO mode; Permission sets has_permission. Outcome reads the result back."
+    },
+    {
+      "id": "7b4914d6-73d3-4b4a-8156-b87c5359b416",
+      "name": "Answer the app",
+      "nodeIds": [
+        "44adbaba-7468-44ec-bcd5-030badf26621",
+        "345fa381-a880-4780-9fe7-a56571962e7b",
+        "b3412fea-1bce-467b-98bb-d3648fee8bca",
+        "b093c787-afcf-45d8-a901-9b792a99bdca",
+        "708b44ee-3c95-474b-8d49-ae8e054e6951",
+        "f64a41c1-0f0f-45f5-9898-73e848c81ab9",
+        "82ae8510-7806-494c-ac9c-ebc9c2acebab"
+      ],
+      "description": "Cleans up the date if needed, logs successful decisions, answers the app with ok or error."
+    }
+  ],
+  "id": "yltl4YuTf7FtgyZB",
+  "tags": []
+}

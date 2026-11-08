@@ -107,6 +107,7 @@ export type ActionInput = {
   action: WebAction;
   date?: string | undefined;
   hours?: string | undefined;
+  undo_of?: string | undefined;
 };
 
 export const sendAction = createServerFn({ method: "POST" })
@@ -125,6 +126,7 @@ export const sendAction = createServerFn({ method: "POST" })
       action: d.action,
       date: d.date,
       hours: d.hours,
+      undo_of: d.action === "UNDO" && d.undo_of === "DECLINE" ? "DECLINE" : undefined,
     };
   })
   .handler(async ({ data }): Promise<{ ok: boolean; demo?: boolean; error?: string }> => {
@@ -147,6 +149,7 @@ export const sendAction = createServerFn({ method: "POST" })
         action: data.action,
         date: data.date ?? null,
         hours: data.hours ?? null,
+        undo_of: data.undo_of ?? null,
       }),
     });
     let body: { ok?: boolean; error?: string } = {};

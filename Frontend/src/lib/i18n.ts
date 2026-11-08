@@ -73,6 +73,7 @@ const en = {
   retry: "Retry",
   badLink: "This link is not valid. Please open it again from our message.",
   demo: "Demo data: changes are not sent",
+  saving: (n: number) => `Saving ${n}…`,
 };
 export type Dict = typeof en;
 
@@ -141,6 +142,7 @@ const fi: Dict = {
   retry: "Yritä uudelleen",
   badLink: "Linkki ei ole voimassa. Avaa se uudelleen viestistämme.",
   demo: "Demodata: muutoksia ei lähetetä",
+  saving: (n) => `Tallennetaan ${n}…`,
 };
 
 const sv: Dict = {
@@ -207,6 +209,7 @@ const sv: Dict = {
   retry: "Försök igen",
   badLink: "Länken är inte giltig. Öppna den igen från vårt meddelande.",
   demo: "Demodata: ändringar skickas inte",
+  saving: (n) => `Sparar ${n}…`,
 };
 
 const nb: Dict = {
@@ -273,6 +276,7 @@ const nb: Dict = {
   retry: "Prøv igjen",
   badLink: "Lenken er ikke gyldig. Åpne den igjen fra meldingen vår.",
   demo: "Demodata: endringer sendes ikke",
+  saving: (n) => `Lagrer ${n}…`,
 };
 
 export const DICTS: Record<Lang, Dict> = { en, fi, sv, nb };

@@ -68,17 +68,10 @@ export type HistoryEntry = {
   at: string | null;
 };
 
-/** Bundle statuses after which nothing in the bundle is waiting for the owner. */
-const DONE = new Set([
-  "DECLINED",
-  "APPROVED",
-  "APPLYING",
-  "APPLIED",
-  "UNDONE",
-  "APPLY_FAILED",
-  "SKIPPED",
-  "EXPIRED",
-]);
+/** Bundle statuses after which nothing in the bundle is waiting for the owner. APPROVED / APPLYING / APPLIED / UNDONE /
+ *  APPLY_FAILED are left out on purpose: the web app applies one date at a time, so those statuses say nothing about
+ *  the other dates (each date is decided by its own final_hours or decisions row). */
+const DONE = new Set(["DECLINED", "SKIPPED", "EXPIRED"]);
 const OWNER_ROUTES = new Set<Route>(["SUGGEST", "ASK", "AUTO_APPLY"]);
 
 const dateOf = (parsed: unknown): string | null => {

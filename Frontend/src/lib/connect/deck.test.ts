@@ -132,6 +132,15 @@ describe("buildDeck", () => {
     expect(cards).toEqual([]);
     expect(history[0]?.outcome).toBe("auto");
   });
+  it("keeps the other dates of a bundle after one date was applied from the web", () => {
+    const { cards } = buildDeck(
+      deck(
+        [bundle("ASK", "APPLIED")],
+        [item("ASK", "2026-12-26", { final_hours: "regular" }), item("ASK", "2027-01-01")],
+      ),
+    );
+    expect(cards.map((c) => c.item.date)).toEqual(["2027-01-01"]);
+  });
   it("hides the cards of a bundle the owner already handled in Telegram", () => {
     const { cards } = buildDeck(
       deck([bundle("SUGGEST", "DECLINED")], [item("SUGGEST", "2026-12-25")]),
