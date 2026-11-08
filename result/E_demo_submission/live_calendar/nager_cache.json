@@ -1,0 +1,2294 @@
+{
+ "source": "https://date.nager.at (Nager.Date, MIT)",
+ "fetched_on": "2026-11-08",
+ "holidays": [
+  {
+   "date": "2024-01-01",
+   "localName": "Uudenvuodenpäivä",
+   "name": "New Year's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-01-06",
+   "localName": "Loppiainen",
+   "name": "Epiphany",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-03-29",
+   "localName": "Pitkäperjantai",
+   "name": "Good Friday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-03-31",
+   "localName": "Pääsiäispäivä",
+   "name": "Easter Sunday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-04-01",
+   "localName": "Toinen pääsiäispäivä",
+   "name": "Easter Monday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-01",
+   "localName": "Vappu",
+   "name": "May Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-09",
+   "localName": "Helatorstai",
+   "name": "Ascension Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-19",
+   "localName": "Helluntaipäivä",
+   "name": "Pentecost",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-06-21",
+   "localName": "Juhannusaatto",
+   "name": "Midsummer Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-06-22",
+   "localName": "Juhannuspäivä",
+   "name": "Midsummer Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-11-02",
+   "localName": "Pyhäinpäivä",
+   "name": "All Saints' Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-06",
+   "localName": "Itsenäisyyspäivä",
+   "name": "Independence Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-24",
+   "localName": "Jouluaatto",
+   "name": "Christmas Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-25",
+   "localName": "Joulupäivä",
+   "name": "Christmas Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-26",
+   "localName": "Tapaninpäivä",
+   "name": "St. Stephen's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-01-01",
+   "localName": "Uudenvuodenpäivä",
+   "name": "New Year's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-01-06",
+   "localName": "Loppiainen",
+   "name": "Epiphany",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-18",
+   "localName": "Pitkäperjantai",
+   "name": "Good Friday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-20",
+   "localName": "Pääsiäispäivä",
+   "name": "Easter Sunday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-21",
+   "localName": "Toinen pääsiäispäivä",
+   "name": "Easter Monday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-05-01",
+   "localName": "Vappu",
+   "name": "May Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-05-29",
+   "localName": "Helatorstai",
+   "name": "Ascension Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-08",
+   "localName": "Helluntaipäivä",
+   "name": "Pentecost",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-20",
+   "localName": "Juhannusaatto",
+   "name": "Midsummer Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-21",
+   "localName": "Juhannuspäivä",
+   "name": "Midsummer Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-11-01",
+   "localName": "Pyhäinpäivä",
+   "name": "All Saints' Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-06",
+   "localName": "Itsenäisyyspäivä",
+   "name": "Independence Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-24",
+   "localName": "Jouluaatto",
+   "name": "Christmas Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-25",
+   "localName": "Joulupäivä",
+   "name": "Christmas Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-26",
+   "localName": "Tapaninpäivä",
+   "name": "St. Stephen's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-01-01",
+   "localName": "Uudenvuodenpäivä",
+   "name": "New Year's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-01-06",
+   "localName": "Loppiainen",
+   "name": "Epiphany",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-03",
+   "localName": "Pitkäperjantai",
+   "name": "Good Friday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-05",
+   "localName": "Pääsiäispäivä",
+   "name": "Easter Sunday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-06",
+   "localName": "Toinen pääsiäispäivä",
+   "name": "Easter Monday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-01",
+   "localName": "Vappu",
+   "name": "May Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-14",
+   "localName": "Helatorstai",
+   "name": "Ascension Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-24",
+   "localName": "Helluntaipäivä",
+   "name": "Pentecost",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-06-19",
+   "localName": "Juhannusaatto",
+   "name": "Midsummer Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-06-20",
+   "localName": "Juhannuspäivä",
+   "name": "Midsummer Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-10-31",
+   "localName": "Pyhäinpäivä",
+   "name": "All Saints' Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-06",
+   "localName": "Itsenäisyyspäivä",
+   "name": "Independence Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-24",
+   "localName": "Jouluaatto",
+   "name": "Christmas Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-25",
+   "localName": "Joulupäivä",
+   "name": "Christmas Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-26",
+   "localName": "Tapaninpäivä",
+   "name": "St. Stephen's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-01-01",
+   "localName": "Uudenvuodenpäivä",
+   "name": "New Year's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-01-06",
+   "localName": "Loppiainen",
+   "name": "Epiphany",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-26",
+   "localName": "Pitkäperjantai",
+   "name": "Good Friday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-28",
+   "localName": "Pääsiäispäivä",
+   "name": "Easter Sunday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-29",
+   "localName": "Toinen pääsiäispäivä",
+   "name": "Easter Monday",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-01",
+   "localName": "Vappu",
+   "name": "May Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-06",
+   "localName": "Helatorstai",
+   "name": "Ascension Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-16",
+   "localName": "Helluntaipäivä",
+   "name": "Pentecost",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-06-25",
+   "localName": "Juhannusaatto",
+   "name": "Midsummer Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-06-26",
+   "localName": "Juhannuspäivä",
+   "name": "Midsummer Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-11-06",
+   "localName": "Pyhäinpäivä",
+   "name": "All Saints' Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-06",
+   "localName": "Itsenäisyyspäivä",
+   "name": "Independence Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-24",
+   "localName": "Jouluaatto",
+   "name": "Christmas Eve",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-25",
+   "localName": "Joulupäivä",
+   "name": "Christmas Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-26",
+   "localName": "Tapaninpäivä",
+   "name": "St. Stephen's Day",
+   "countryCode": "FI",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-01-01",
+   "localName": "Første nyttårsdag",
+   "name": "New Year's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-03-28",
+   "localName": "Skjærtorsdag",
+   "name": "Maundy Thursday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-03-29",
+   "localName": "Langfredag",
+   "name": "Good Friday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-03-31",
+   "localName": "Første påskedag",
+   "name": "Easter Sunday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-04-01",
+   "localName": "Andre påskedag",
+   "name": "Easter Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-01",
+   "localName": "Første mai",
+   "name": "Labour Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-09",
+   "localName": "Kristi himmelfartsdag",
+   "name": "Ascension Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-17",
+   "localName": "Syttende mai",
+   "name": "Constitution Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-19",
+   "localName": "Første pinsedag",
+   "name": "Pentecost",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-20",
+   "localName": "Andre pinsedag",
+   "name": "Whit Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-24",
+   "localName": "Julaften",
+   "name": "Christmas Eve",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Bank"
+   ]
+  },
+  {
+   "date": "2024-12-25",
+   "localName": "Første juledag",
+   "name": "Christmas Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-26",
+   "localName": "Andre juledag",
+   "name": "St. Stephen's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-01-01",
+   "localName": "Første nyttårsdag",
+   "name": "New Year's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-17",
+   "localName": "Skjærtorsdag",
+   "name": "Maundy Thursday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-18",
+   "localName": "Langfredag",
+   "name": "Good Friday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-20",
+   "localName": "Første påskedag",
+   "name": "Easter Sunday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-21",
+   "localName": "Andre påskedag",
+   "name": "Easter Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-05-01",
+   "localName": "Første mai",
+   "name": "Labour Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-05-17",
+   "localName": "Syttende mai",
+   "name": "Constitution Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-05-29",
+   "localName": "Kristi himmelfartsdag",
+   "name": "Ascension Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-08",
+   "localName": "Første pinsedag",
+   "name": "Pentecost",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-09",
+   "localName": "Andre pinsedag",
+   "name": "Whit Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-24",
+   "localName": "Julaften",
+   "name": "Christmas Eve",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Bank"
+   ]
+  },
+  {
+   "date": "2025-12-25",
+   "localName": "Første juledag",
+   "name": "Christmas Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-26",
+   "localName": "Andre juledag",
+   "name": "St. Stephen's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-01-01",
+   "localName": "Første nyttårsdag",
+   "name": "New Year's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-02",
+   "localName": "Skjærtorsdag",
+   "name": "Maundy Thursday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-03",
+   "localName": "Langfredag",
+   "name": "Good Friday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-05",
+   "localName": "Første påskedag",
+   "name": "Easter Sunday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-06",
+   "localName": "Andre påskedag",
+   "name": "Easter Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-01",
+   "localName": "Første mai",
+   "name": "Labour Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-14",
+   "localName": "Kristi himmelfartsdag",
+   "name": "Ascension Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-17",
+   "localName": "Syttende mai",
+   "name": "Constitution Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-24",
+   "localName": "Første pinsedag",
+   "name": "Pentecost",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-25",
+   "localName": "Andre pinsedag",
+   "name": "Whit Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-24",
+   "localName": "Julaften",
+   "name": "Christmas Eve",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Bank"
+   ]
+  },
+  {
+   "date": "2026-12-25",
+   "localName": "Første juledag",
+   "name": "Christmas Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-26",
+   "localName": "Andre juledag",
+   "name": "St. Stephen's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-01-01",
+   "localName": "Første nyttårsdag",
+   "name": "New Year's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-25",
+   "localName": "Skjærtorsdag",
+   "name": "Maundy Thursday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-26",
+   "localName": "Langfredag",
+   "name": "Good Friday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-28",
+   "localName": "Første påskedag",
+   "name": "Easter Sunday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-29",
+   "localName": "Andre påskedag",
+   "name": "Easter Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-01",
+   "localName": "Første mai",
+   "name": "Labour Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-06",
+   "localName": "Kristi himmelfartsdag",
+   "name": "Ascension Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-16",
+   "localName": "Første pinsedag",
+   "name": "Pentecost",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-17",
+   "localName": "Syttende mai",
+   "name": "Constitution Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-17",
+   "localName": "Andre pinsedag",
+   "name": "Whit Monday",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-24",
+   "localName": "Julaften",
+   "name": "Christmas Eve",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Bank"
+   ]
+  },
+  {
+   "date": "2027-12-25",
+   "localName": "Første juledag",
+   "name": "Christmas Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-26",
+   "localName": "Andre juledag",
+   "name": "St. Stephen's Day",
+   "countryCode": "NO",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-01-01",
+   "localName": "Nyårsdagen",
+   "name": "New Year's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-01-06",
+   "localName": "Trettondedag jul",
+   "name": "Epiphany",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-03-29",
+   "localName": "Långfredagen",
+   "name": "Good Friday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-03-31",
+   "localName": "Påskdagen",
+   "name": "Easter Sunday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-04-01",
+   "localName": "Annandag påsk",
+   "name": "Easter Monday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-01",
+   "localName": "Första maj",
+   "name": "International Workers' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-09",
+   "localName": "Kristi himmelsfärdsdag",
+   "name": "Ascension Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-05-19",
+   "localName": "Pingstdagen",
+   "name": "Pentecost",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-06-06",
+   "localName": "Sveriges nationaldag",
+   "name": "National Day of Sweden",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-06-21",
+   "localName": "Midsommarafton",
+   "name": "Midsummer Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-06-22",
+   "localName": "Midsommardagen",
+   "name": "Midsummer Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-11-02",
+   "localName": "Alla helgons dag",
+   "name": "All Saints' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-24",
+   "localName": "Julafton",
+   "name": "Christmas Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-25",
+   "localName": "Juldagen",
+   "name": "Christmas Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-26",
+   "localName": "Annandag jul",
+   "name": "St. Stephen's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2024-12-31",
+   "localName": "Nyårsafton",
+   "name": "New Year's Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-01-01",
+   "localName": "Nyårsdagen",
+   "name": "New Year's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-01-06",
+   "localName": "Trettondedag jul",
+   "name": "Epiphany",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-18",
+   "localName": "Långfredagen",
+   "name": "Good Friday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-20",
+   "localName": "Påskdagen",
+   "name": "Easter Sunday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-04-21",
+   "localName": "Annandag påsk",
+   "name": "Easter Monday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-05-01",
+   "localName": "Första maj",
+   "name": "International Workers' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-05-29",
+   "localName": "Kristi himmelsfärdsdag",
+   "name": "Ascension Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-06",
+   "localName": "Sveriges nationaldag",
+   "name": "National Day of Sweden",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-08",
+   "localName": "Pingstdagen",
+   "name": "Pentecost",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-20",
+   "localName": "Midsommarafton",
+   "name": "Midsummer Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-06-21",
+   "localName": "Midsommardagen",
+   "name": "Midsummer Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-11-01",
+   "localName": "Alla helgons dag",
+   "name": "All Saints' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-24",
+   "localName": "Julafton",
+   "name": "Christmas Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-25",
+   "localName": "Juldagen",
+   "name": "Christmas Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-26",
+   "localName": "Annandag jul",
+   "name": "St. Stephen's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2025-12-31",
+   "localName": "Nyårsafton",
+   "name": "New Year's Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-01-01",
+   "localName": "Nyårsdagen",
+   "name": "New Year's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-01-06",
+   "localName": "Trettondedag jul",
+   "name": "Epiphany",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-03",
+   "localName": "Långfredagen",
+   "name": "Good Friday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-05",
+   "localName": "Påskdagen",
+   "name": "Easter Sunday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-04-06",
+   "localName": "Annandag påsk",
+   "name": "Easter Monday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-01",
+   "localName": "Första maj",
+   "name": "International Workers' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-14",
+   "localName": "Kristi himmelsfärdsdag",
+   "name": "Ascension Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-05-24",
+   "localName": "Pingstdagen",
+   "name": "Pentecost",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-06-06",
+   "localName": "Sveriges nationaldag",
+   "name": "National Day of Sweden",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-06-19",
+   "localName": "Midsommarafton",
+   "name": "Midsummer Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-06-20",
+   "localName": "Midsommardagen",
+   "name": "Midsummer Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-10-31",
+   "localName": "Alla helgons dag",
+   "name": "All Saints' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-24",
+   "localName": "Julafton",
+   "name": "Christmas Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-25",
+   "localName": "Juldagen",
+   "name": "Christmas Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-26",
+   "localName": "Annandag jul",
+   "name": "St. Stephen's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2026-12-31",
+   "localName": "Nyårsafton",
+   "name": "New Year's Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-01-01",
+   "localName": "Nyårsdagen",
+   "name": "New Year's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-01-06",
+   "localName": "Trettondedag jul",
+   "name": "Epiphany",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-26",
+   "localName": "Långfredagen",
+   "name": "Good Friday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-28",
+   "localName": "Påskdagen",
+   "name": "Easter Sunday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-03-29",
+   "localName": "Annandag påsk",
+   "name": "Easter Monday",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-01",
+   "localName": "Första maj",
+   "name": "International Workers' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-06",
+   "localName": "Kristi himmelsfärdsdag",
+   "name": "Ascension Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-05-16",
+   "localName": "Pingstdagen",
+   "name": "Pentecost",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-06-06",
+   "localName": "Sveriges nationaldag",
+   "name": "National Day of Sweden",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-06-25",
+   "localName": "Midsommarafton",
+   "name": "Midsummer Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-06-26",
+   "localName": "Midsommardagen",
+   "name": "Midsummer Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-11-06",
+   "localName": "Alla helgons dag",
+   "name": "All Saints' Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-24",
+   "localName": "Julafton",
+   "name": "Christmas Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-25",
+   "localName": "Juldagen",
+   "name": "Christmas Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-26",
+   "localName": "Annandag jul",
+   "name": "St. Stephen's Day",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  },
+  {
+   "date": "2027-12-31",
+   "localName": "Nyårsafton",
+   "name": "New Year's Eve",
+   "countryCode": "SE",
+   "fixed": false,
+   "global": true,
+   "counties": null,
+   "launchYear": null,
+   "types": [
+    "Public"
+   ]
+  }
+ ]
+}

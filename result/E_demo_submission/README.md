@@ -9,11 +9,12 @@
 | Owner app online | ✅ https://since-ai-porchlight.vercel.app (signed links from `owner_link.py`) |
 | Demo video (2–3 min) | ⏳ |
 | Pitch deck | ⏳ |
-| Bonus: live source | not done |
+| Bonus: live source | ✅ Nager.Date instead of the calendar file: [`live_calendar/REPORT.md`](live_calendar/REPORT.md) |
+| Demo reset in one command | ✅ [`reset_demo.sh`](reset_demo.sh) |
 
 ## Demo storyline (FI-D0017 Kahvila Kipinä, a new customer with no history)
 
-1. Reset: `result/C_apply_yext/reset.py` and `load_to_supabase.py --reset ... --only FI-D0017` (turn the n8n Scheduler off while recording).
+1. Reset: `./result/E_demo_submission/reset_demo.sh` (Supabase, Yext sandbox, owner link; turn the n8n Scheduler off while recording).
 2. Telegram: the SUGGEST message (Christmas Day → closed, 86 % of similar cafés closed) → Approve → "Updated! Your new
    hours will show on: Google ~2 min …".
 3. Owner app from the signed link: the two ASK cards; Boxing Day → Closed; New Year's Day → Edit "10-14" → confirm → Undo.

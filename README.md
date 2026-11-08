@@ -13,7 +13,7 @@ tap, and **applies** the change through the Yext API, verified by reading it bac
 | **B. Contact & decide** | Bundles per owner (routes SUGGEST / ASK / AUTO_APPLY / STAFF), Telegram messages, the no-login owner app | [`result/B_contact_decide/`](result/B_contact_decide/), [`result/n8n/`](result/n8n/) | ✅ live with Supabase + n8n |
 | **C. Apply to Yext** | Read → merge → write → read back on the Yext sandbox, `apply_log`, Undo, where the hours show | [`result/n8n/`](result/n8n/) (`Connect · Apply to Yext`), [`result/C_apply_yext/`](result/C_apply_yext/) | ✅ verified on sandbox entity `SinceAI13` |
 | **D. Standing permission** | Owner turns automatic updates on / off; only HIGH-confidence suggestions are auto-applied | [`result/D_learning_permission/`](result/D_learning_permission/) | ✅ permission · ⏳ learning from decisions not built |
-| **E. Demo & submission** | Video, pitch deck, screenshots | [`result/E_demo_submission/`](result/E_demo_submission/) | ⏳ video and deck to come |
+| **E. Demo & submission** | Demo reset script, live-calendar bonus, screenshots, video, pitch deck | [`result/E_demo_submission/`](result/E_demo_submission/) | ✅ reset script, bonus · ⏳ video and deck |
 
 Owner app: **https://since-ai-porchlight.vercel.app** (the root page needs a signed owner link once the server has
 Supabase keys; locally it runs in demo mode without keys).
@@ -48,6 +48,9 @@ python3 result/C_apply_yext/reset.py                                    # clean 
 python3 result/B_contact_decide/load_to_supabase.py --reset --chat-id <telegram-chat-id> --yext-entity SinceAI13 --only FI-D0017
 python3 result/B_contact_decide/owner_link.py FI-D0017 --base https://since-ai-porchlight.vercel.app   # no-login link
 ```
+
+Or all of it in one step (asks before deleting; `--dry-run` changes nothing; needs `DEMO_CHAT_ID` in `.env`):
+`./result/E_demo_submission/reset_demo.sh [FI-D0017 ...]`
 
 Then run `Connect · Step 3 Contact` (or `Connect · Scheduler`) in n8n to send the Telegram messages. Deploying the
 owner app: [`result/B_contact_decide/owner_app/README.md`](result/B_contact_decide/owner_app/README.md).
@@ -163,7 +166,25 @@ Will you be open as usual on those days?" · undo → "↩️ Change undone. You
 
 ## Bonus: live source
 
-Not done. The Yext sandbox is used to write, not as a data source.
+We replaced `data/calendar_special_days.csv` with the live **Nager.Date** API (`date.nager.at`, public holidays of
+FI, SE and NO for 2024–2027) and ran the unchanged engine on it: script and full report in
+[`result/E_demo_submission/live_calendar/`](result/E_demo_submission/live_calendar/REPORT.md).
+
+| Calendar | Dev 2026 | Back-test 2025 |
+|---|---|---|
+| Organisers' file (reference) | 65.92 | 62.73 |
+| Nager only | 61.38 | 57.16 |
+| Nager + our own eves, days between holidays and commercial days | 65.92 | 62.73 |
+
+- **Coverage:** all 116 public holidays in the organisers' file are in Nager on the same date, and Nager already lists
+  the next season (39 days in 2027).
+- **Gap:** Nager has only public holidays. The 107 other rows (41 eves, 27 days between Christmas and New Year, 21
+  observances, 18 commercial days) are missing, and they are where hours go wrong most; without them the engine
+  loses 4.5 / 5.6 points.
+- **Quality:** Christmas Eve, Midsummer Eve and (in Sweden) New Year's Eve are public holidays in Nager but behave
+  as eves for opening hours; names differ (`St. Stephen's Day` vs `Boxing Day`), so a fixed name map is needed.
+- **Production design:** public holidays from a live API, eves and commercial days from Connect's own rules. This
+  gives exactly the reference scores.
 
 ---
 
@@ -328,6 +349,7 @@ On the back-test, exact suggestions rose from 3,267 to 3,945 and wrong state fro
 | Python standard library | PSF | Part A engine, Part B bundle builder and Supabase loader, Part C sandbox scripts (no third-party Python packages) |
 | Organisers' starter code (`examples/`, `evaluation/`, `mock_api/`) | MIT | Baseline, scoring, mock API |
 | Synthetic dataset (`data/`) | CC BY 4.0 | All parts |
+| Nager.Date public-holiday API (`date.nager.at`), cached in `result/E_demo_submission/live_calendar/nager_cache.json` | MIT (Nager.Date project) | Bonus: live calendar |
 | React, React DOM | MIT | Owner app (`result/B_contact_decide/owner_app/`) |
 | TanStack Start, Router, Query (`@tanstack/*`) | MIT | Owner app: routing, server functions, SSR |
 | Radix UI primitives (`@radix-ui/react-*`) | MIT | Owner app UI components |
