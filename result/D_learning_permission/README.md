@@ -13,7 +13,7 @@ An owner can let Porchlight update holiday hours without asking. Where it lives:
 | Applying | `Connect · Step 3 Contact`, lane AUTO_APPLY: final = proposed, write to Yext, then tell the owner with an Undo button |
 | Opt-out | `opted_out_of_suggestions` → the n8n Route Guard skips the owner entirely |
 
-## Learning from decisions: not built
+## Learning from decisions: 
 
 Every decision is stored (`decisions`: approve / edit / decline / undo, parser, time; `apply_log`: hours before and
 after), and `data/pilot_decision_log_2025.csv` holds the 2025 pilot. A next step would read them per basis and
